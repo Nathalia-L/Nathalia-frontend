@@ -1,0 +1,116 @@
+import { Routes, Route, Navigate } from 'react-router-dom'
+import Login from './pages/Login'
+import Register from './pages/Register'
+import AuthCallback from './pages/AuthCallback'
+import AdminLogin from './pages/AdminLogin'
+import RutaProtegida from './components/RutaProtegida'
+import RutaProtegidaCliente from './components/RutaProtegidaCliente'
+import NotFound from './pages/NotFound'
+import DashboardLayout from './layouts/DashboardLayout'
+import DashboardHome from './pages/DashboardHome'
+import ContenidoPagina from './pages/ContenidoPagina'
+import { Toaster } from 'react-hot-toast'
+import ResetPassword from './pages/Reset-Password'
+import OlvidePassword from './pages/OlvidePassword'
+import Landing from './pages/Landing'
+import OlvidePasswordAdmin from './pages/OlvidePasswordAdmin'
+import ResetPasswordAdmin from './pages/ResetPasswordAdmin'
+import ControlStock from './pages/ControlStock'
+import GestionPedidos from './pages/GestionPedidos'
+import RegistroDeVentas from './pages/RegistroDeVentas'
+import ReportesVentas from './pages/ReportesVentas'
+import Catalogo from './pages/Catalogo'
+import VerificarCuenta from './pages/VerificarCuenta'
+import ClienteLayout from './layouts/ClienteLayout'
+import ClienteInicio from './pages/ClienteInicio'
+import MiCuenta from './pages/MiCuenta'
+import MisPedidos from './pages/MisPedidos'
+import CarritoPage from './pages/CarritoPage'
+import ConfigurarPedidoPage from './pages/ConfigurarPedidoPage'
+import EstadoPedidoPage from './pages/EstadoPedidoPage'
+import ComparacionPage from './pages/ComparacionPage'
+import Empresas from './pages/Empresas'
+
+function App() {
+  return (
+    <>
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          style: {
+            background: '#FBF3F6',
+            color: '#3A2430',
+            border: '1px solid rgba(58,36,48,0.12)',
+          },
+          error: {
+            iconTheme: {
+              primary: '#D64550',
+              secondary: '#FBF3F6',
+            },
+          },
+          success: {
+            iconTheme: {
+              primary: '#C77A9C',
+              secondary: '#FBF3F6',
+            },
+          },
+        }}
+      />
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/auth/callback" element={<AuthCallback />} />
+        <Route path="/control-interno" element={<AdminLogin />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/olvide-password" element={<OlvidePassword />} />
+        <Route path="/olvide-password-admin" element={<OlvidePasswordAdmin />} />
+        <Route path="/reset-password-admin" element={<ResetPasswordAdmin />} />
+        <Route path="/verificar-cuenta" element={<VerificarCuenta />} />
+
+        <Route path="/cliente" element={
+          <RutaProtegidaCliente>
+            <ClienteLayout />
+          </RutaProtegidaCliente>
+        }>
+          <Route index element={<ClienteInicio />} />
+          <Route path="catalogo" element={<Catalogo />} />
+          <Route path="pedidos" element={<MisPedidos />} />
+          <Route path="pedidos/:id" element={<EstadoPedidoPage />} />
+          <Route path="cuenta" element={<MiCuenta />} />
+          <Route path="carrito" element={<CarritoPage />} />
+          <Route path="configurar-pedido" element={<ConfigurarPedidoPage />} />
+          <Route path="comparar" element={<ComparacionPage />} />
+          <Route path="empresas" element={<Empresas />} />
+        </Route>
+
+        {/* Compatibilidad: cualquier link viejo a /catalogo cae en la vista nueva */}
+        <Route path="/catalogo" element={<Navigate to="/cliente/catalogo" replace />} />
+
+        <Route path="/dashboard" element={
+          <RutaProtegida>
+            <DashboardLayout />
+          </RutaProtegida>
+        }>
+          <Route index element={<DashboardHome />} />
+          <Route path="contenido" element={<ContenidoPagina />} />
+
+          {/* Ventas */}
+          <Route path="ventas" element={<RegistroDeVentas />} />
+          <Route path="reportes" element={<ReportesVentas />} />
+
+          {/* Pedidos */}
+          <Route path="pedidos" element={<GestionPedidos />} />
+
+          {/* Inventario */}
+          <Route path="inventario" element={<ControlStock />} />
+        </Route>
+
+        {/* Catch-all: siempre al final por claridad, aunque en RR v6 el orden no cambia la prioridad del wildcard */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </>
+  )
+}
+
+export default App

@@ -1,0 +1,172 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: 'Fraunces', serif;
+  --font-sans: 'Inter', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+}
+
+/* ── Paleta Nathalia (moda & belleza) ─────────────────────
+   Rosa, blush y dorado: identidad elegante de la marca.     */
+:root {
+  --na-bg-dark: #1A0E13;        /* ciruela profundo (fondo principal) */
+  --na-bg-alt: #2A1521;         /* vino (secciones alternas) */
+  --na-rose: #C77A9C;           /* rosa primario */
+  --na-rose-dark: #A65E80;      /* rosa hover/press */
+  --na-rose-soft: #D9A3B7;      /* rosa suave */
+  --na-rose-light: #EBC6D6;     /* rosa claro (texto sobre oscuro) */
+  --na-blush: #F9E7EE;          /* blush */
+  --na-gold: #D4AF37;           /* dorado acento */
+  --na-gold-light: #E9CD8A;     /* dorado claro */
+  --na-ink: #3A2430;            /* tinta ciruela (texto oscuro) */
+  --na-cream: #FBF3F6;          /* crema (fondos claros) */
+  --na-soft-bg: #F9F0F3;        /* fondo claro suave (admin) */
+  --na-error: #D64550;          /* errores */
+}
+
+/* ── Entradas de modales / paneles ─────────────────────── */
+@keyframes overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes sheet-in-right {
+  from { opacity: 0; transform: translateX(24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes sheet-in-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pop-in {
+  from { opacity: 0; transform: scale(0.97) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.anim-overlay { animation: overlay-in 0.18s ease-out; }
+.anim-sheet-right { animation: sheet-in-right 0.28s cubic-bezier(0.16, 1, 0.3, 1); }
+.anim-sheet-up { animation: sheet-in-up 0.24s cubic-bezier(0.16, 1, 0.3, 1); }
+.anim-pop { animation: pop-in 0.22s cubic-bezier(0.16, 1, 0.3, 1); }
+
+/* ── Skeleton de carga ──────────────────────────────────── */
+@keyframes skeleton-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.12) 37%, rgba(255,255,255,0.05) 63%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+/* ── Aurora Background (hero animado) ─────────────────── */
+@keyframes aurora-drift-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(40px, -30px) scale(1.05); }
+  50% { transform: translate(-25px, 20px) scale(0.95); }
+  75% { transform: translate(20px, 35px) scale(1.02); }
+}
+@keyframes aurora-drift-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(-50px, 15px) scale(1.08); }
+  66% { transform: translate(30px, -25px) scale(0.92); }
+}
+@keyframes aurora-drift-3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  20% { transform: translate(25px, 30px) scale(1.04); }
+  50% { transform: translate(-35px, -20px) scale(0.96); }
+  80% { transform: translate(15px, -35px) scale(1.03); }
+}
+@keyframes aurora-drift-4 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  40% { transform: translate(-30px, 25px) scale(1.06); }
+  70% { transform: translate(40px, -15px) scale(0.94); }
+} 
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-overlay, .anim-sheet-right, .anim-sheet-up, .anim-pop, .skeleton, .aurora-blob { animation: none; }
+}
+
+::selection {
+  background: rgba(199, 122, 156, 0.25);
+  color: #3A2430;
+}
+
+/* Feedback táctil sutil al presionar cualquier botón */
+button:not(:disabled) {
+  transition: transform 0.12s ease, background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+button:not(:disabled):active {
+  transform: scale(0.97);
+}
+@media (prefers-reduced-motion: reduce) {
+  button:not(:disabled):active { transform: none; }
+}
+
+.fade-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* ─────────────────────────────────────────────
+   Panel admin — tema fijo elegante (rosa/dorado).
+   Se conservan los overrides por si la clase .dark
+   quedó guardada en localStorage, pero ya adaptados
+   a la paleta Nathalia.
+   ───────────────────────────────────────────── */
+.dark { color-scheme: dark; }
+
+.dark .bg-white { background-color: #241219 !important; }
+.dark .bg-gray-50 { background-color: #1d0f15 !important; }
+.dark .bg-gray-100 { background-color: #2a1521 !important; }
+
+.dark .text-gray-800 { color: #FCE9F0 !important; }
+.dark .text-gray-700 { color: #F0D6E0 !important; }
+.dark .text-gray-600 { color: #DCB4C4 !important; }
+.dark .text-gray-500 { color: #B98CA0 !important; }
+.dark .text-gray-400 { color: #9A6F83 !important; }
+.dark .text-gray-300 { color: #F0D6E0 !important; }
+
+.dark .border-gray-100,
+.dark .border-gray-200,
+.dark .border-gray-300 { border-color: #3A2430 !important; }
+
+.dark .divide-gray-100 > * + * { border-color: #3A2430 !important; }
+
+.dark input,
+.dark select,
+.dark textarea {
+  background-color: #1d0f15;
+  color: #FCE9F0;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder { color: #9A6F83; }
+
+.dark .shadow,
+.dark .shadow-sm,
+.dark .shadow-lg { box-shadow: 0 4px 16px rgba(0,0,0,0.4) !important; }
+
+.dark .bg-green-100 { background-color: rgba(199,122,156,0.18) !important; }
+.dark .bg-amber-100 { background-color: rgba(212,175,55,0.18) !important; }
+.dark .bg-red-100 { background-color: rgba(214,69,80,0.18) !important; }
+.dark .bg-red-50 { background-color: rgba(214,69,80,0.10) !important; }
+.dark .bg-amber-50 { background-color: rgba(212,175,55,0.10) !important; }
+
+/* Títulos del panel admin: adaptados a la paleta Nathalia */
+.text-admin-heading { color: #8A5A70; }
+.dark .text-admin-heading { color: #FCE9F0 !important; }
+
+.text-admin-page-title { color: #8A5A70; }
+.dark .text-admin-page-title { color: #FCE9F0 !important; }
+.text-admin-page-subtitle { color: rgba(138,90,112,0.65); }
+.dark .text-admin-page-subtitle { color: rgba(252,233,240,0.6) !important; }
