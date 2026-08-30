@@ -1,30 +1,320 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
-  --font-display: 'Fraunces', serif;
-  --font-sans: 'Inter', sans-serif;
+  --font-display: var(--na-fuente-display, 'Fraunces', serif);
+  --font-sans: var(--na-fuente-texto, 'Inter', sans-serif);
   --font-mono: 'IBM Plex Mono', monospace;
 }
 
-/* ── Paleta Nathalia (moda & belleza) ─────────────────────
-   Rosa, blush y dorado: identidad elegante de la marca.     */
+/* ─────────────────────────────────────────────
+   Design tokens Nathalia — Moda & Belleza
+   Tema claro (por defecto en CSS) y oscuro (.dark)
+   ───────────────────────────────────────────── */
 :root {
-  --na-bg-dark: #1A0E13;        /* ciruela profundo (fondo principal) */
-  --na-bg-alt: #2A1521;         /* vino (secciones alternas) */
-  --na-rose: #C77A9C;           /* rosa primario */
-  --na-rose-dark: #A65E80;      /* rosa hover/press */
-  --na-rose-soft: #D9A3B7;      /* rosa suave */
-  --na-rose-light: #EBC6D6;     /* rosa claro (texto sobre oscuro) */
-  --na-blush: #F9E7EE;          /* blush */
-  --na-gold: #D4AF37;           /* dorado acento */
-  --na-gold-light: #E9CD8A;     /* dorado claro */
-  --na-ink: #3A2430;            /* tinta ciruela (texto oscuro) */
-  --na-cream: #FBF3F6;          /* crema (fondos claros) */
-  --na-soft-bg: #F9F0F3;        /* fondo claro suave (admin) */
-  --na-error: #D64550;          /* errores */
+  color-scheme: light;
+
+  /* Fondo */
+  --bg: #FAF2F5;
+  --bg-soft: #F3E6EB;
+  --bg-card: #FFFFFF;
+  --bg-elevated: #FFFFFF;
+  --bg-input: #FFFFFF;
+  --bg-inverse: #1A0E13;
+  --bg-overlay: rgba(42, 21, 33, 0.55);
+
+  /* Texto */
+  --text-1: #321B27;
+  --text-2: #6E4A5C;
+  --text-3: #9C7788;
+  --text-inverse: #FCE9F0;
+  --text-inverse-2: #DCB4C4;
+  --text-inverse-3: #B98CA0;
+
+  /* Bordes */
+  --border: rgba(74, 44, 58, 0.12);
+  --border-strong: rgba(74, 44, 58, 0.24);
+
+  /* Acentos de marca */
+  --na-rose: #B4517B;
+  --na-rose-strong: #9C3F66;
+  --na-rose-soft: #E9C3D4;
+  --na-rose-light: #F6E0E9;
+  --na-blush: #FAEFF4;
+  --na-gold: #B8912c;
+  --na-gold-light: #A87F1F;
+  --na-extra1: #8E6BB6;
+  --na-extra2: #5E9C8A;
+  --na-extra3: #C77A9C;
+  --na-extra4: #E9CD8A;
+  --na-ink: #321B27;
+  --na-cream: #FAF2F5;
+  --na-error: #D64550;
+  --na-success: #2FA36B;
+  --na-warning: #C98A18;
+
+  /* Sombras */
+  --shadow-card: 0 1px 2px rgba(50, 27, 39, 0.04), 0 8px 24px -12px rgba(50, 27, 39, 0.12);
+  --shadow-float: 0 12px 40px -12px rgba(50, 27, 39, 0.25);
+  --shadow-glow: 0 8px 32px -8px rgba(180, 81, 123, 0.45);
 }
 
-/* ── Entradas de modales / paneles ─────────────────────── */
+.dark {
+  color-scheme: dark;
+
+  --bg: #140A10;
+  --bg-soft: #1E1018;
+  --bg-card: #241219;
+  --bg-elevated: #2C1620;
+  --bg-input: #1B0D14;
+  --bg-inverse: #F7E9F0;
+  --bg-overlay: rgba(10, 5, 8, 0.6);
+
+  --text-1: #FCE9F0;
+  --text-2: #DCB4C4;
+  --text-3: #B98CA0;
+  --text-inverse: #3A2430;
+  --text-inverse-2: #6E4A5C;
+  --text-inverse-3: #9A6F83;
+
+  --border: rgba(255, 255, 255, 0.09);
+  --border-strong: rgba(255, 255, 255, 0.18);
+
+  --na-rose: #C77A9C;
+  --na-rose-strong: #A65E80;
+  --na-rose-soft: #D9A3B7;
+  --na-rose-light: #EBC6D6;
+  --na-blush: #331726;
+  --na-gold: #D4AF37;
+  --na-gold-light: #E9CD8A;
+  --na-extra1: #B39AD1;
+  --na-extra2: #8FBFB0;
+  --na-extra3: #9C6B82;
+  --na-extra4: #D8C494;
+  --na-ink: #FCE9F0;
+  --na-cream: #FBF3F6;
+  --na-error: #E06A74;
+  --na-success: #4CC48A;
+  --na-warning: #E0B252;
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px -12px rgba(0, 0, 0, 0.5);
+  --shadow-float: 0 12px 40px -12px rgba(0, 0, 0, 0.6);
+  --shadow-glow: 0 8px 32px -8px rgba(199, 122, 156, 0.4);
+}
+
+/* Exponer tokens como utilidades Tailwind */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-soft: var(--bg-soft);
+  --color-surface: var(--bg-card);
+  --color-elevated: var(--bg-elevated);
+  --color-input: var(--bg-input);
+  --color-inverse: var(--bg-inverse);
+  --color-ink: var(--text-1);
+  --color-ink-2: var(--text-2);
+  --color-ink-3: var(--text-3);
+  --color-ink-inverse: var(--text-inverse);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-accent: var(--na-rose);
+  --color-accent-strong: var(--na-rose-strong);
+  --color-accent-soft: var(--na-rose-soft);
+  --color-accent-light: var(--na-rose-light);
+  --color-blush: var(--na-blush);
+  --color-gold: var(--na-gold);
+  --color-gold-light: var(--na-gold-light);
+  --color-gold-soft: var(--na-gold-light);
+  --color-extra1: var(--na-extra1);
+  --color-extra2: var(--na-extra2);
+  --color-extra3: var(--na-extra3);
+  --color-extra4: var(--na-extra4);
+  --color-error: var(--na-error);
+  --color-success: var(--na-success);
+  --color-warning: var(--na-warning);
+  --color-overlay: var(--bg-overlay);
+}
+
+/* ── Base ────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text-1);
+  font-family: var(--na-fuente-texto, 'Inter', sans-serif);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Tipografía editable en vivo: la fuente elegida gana sobre la utilidad */
+.font-display {
+  font-family: var(--na-fuente-display, 'Fraunces', serif);
+}
+.font-sans {
+  font-family: var(--na-fuente-texto, 'Inter', sans-serif);
+}
+
+::selection {
+  background: color-mix(in srgb, var(--na-rose) 30%, transparent);
+  color: var(--text-1);
+}
+
+:focus-visible {
+  outline: 2px solid var(--na-rose);
+  outline-offset: 2px;
+}
+
+/* ── Scrollbar ───────────────────────────────── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--na-rose) 40%, transparent) transparent;
+}
+*::-webkit-scrollbar { width: 9px; height: 9px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--na-rose) 40%, transparent);
+  border-radius: 999px;
+}
+
+/* ── Tipografía decorativa ───────────────────── */
+.text-gradient {
+  background: linear-gradient(100deg, var(--na-rose-soft) 0%, var(--na-gold-light) 45%, var(--na-rose) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--na-gold);
+}
+
+.kicker::before {
+  content: "";
+  width: 1.25rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--na-gold));
+}
+
+/* ── Botones ─────────────────────────────────── */
+.btn {
+  border-radius: 0.9rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.btn:disabled { opacity: 0.55; pointer-events: none; }
+.btn:active { transform: scale(0.97); }
+
+.btn-primary {
+  background: linear-gradient(120deg, var(--na-rose) 0%, var(--na-rose-strong) 100%);
+  color: #fff;
+  box-shadow: var(--shadow-glow);
+}
+.btn-primary:hover { filter: brightness(1.06); transform: translateY(-1px); }
+
+.btn-gold {
+  background: linear-gradient(120deg, var(--na-gold-light) 0%, var(--na-gold) 100%);
+  color: #3A2028;
+  box-shadow: 0 8px 28px -10px rgba(212, 175, 55, 0.55);
+}
+.btn-gold:hover { filter: brightness(1.05); transform: translateY(-1px); }
+
+.btn-ghost {
+  background: transparent;
+  border-color: var(--border-strong);
+  color: var(--text-1);
+}
+.btn-ghost:hover { background: color-mix(in srgb, var(--na-rose) 8%, transparent); border-color: var(--na-rose); }
+
+.btn-white {
+  background: #fff;
+  color: #4A2436;
+  box-shadow: 0 8px 28px -10px rgba(255, 255, 255, 0.35);
+}
+.btn-white:hover { transform: translateY(-1px); }
+
+.btn-sm { padding: 0.45rem 0.9rem; font-size: 0.8rem; }
+.btn-md { padding: 0.7rem 1.4rem; font-size: 0.875rem; }
+.btn-lg { padding: 0.9rem 1.9rem; font-size: 0.95rem; }
+
+/* ── Tarjetas y superficies ──────────────────── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  box-shadow: var(--shadow-card);
+}
+.card-hover {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-float);
+  border-color: color-mix(in srgb, var(--na-rose) 35%, var(--border));
+}
+
+.glass {
+  background: color-mix(in srgb, var(--bg-card) 70%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+}
+
+.divider-gold {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--na-gold), transparent);
+}
+
+/* ── Formularios ─────────────────────────────── */
+.input {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border-strong);
+  border-radius: 0.8rem;
+  padding: 0.7rem 1rem;
+  font-size: 0.9rem;
+  color: var(--text-1);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.input::placeholder { color: var(--text-3); }
+.input:focus {
+  outline: none;
+  border-color: var(--na-rose);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--na-rose) 20%, transparent);
+}
+
+/* ── Badges y chips ──────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+}
+.badge-rose { background: color-mix(in srgb, var(--na-rose) 14%, transparent); color: var(--na-rose); }
+.badge-gold { background: color-mix(in srgb, var(--na-gold) 14%, transparent); color: var(--na-gold); }
+.badge-success { background: color-mix(in srgb, var(--na-success) 14%, transparent); color: var(--na-success); }
+.badge-error { background: color-mix(in srgb, var(--na-error) 14%, transparent); color: var(--na-error); }
+
+/* ── Entradas de modales / paneles ───────────── */
 @keyframes overlay-in {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -46,18 +336,18 @@
 .anim-sheet-up { animation: sheet-in-up 0.24s cubic-bezier(0.16, 1, 0.3, 1); }
 .anim-pop { animation: pop-in 0.22s cubic-bezier(0.16, 1, 0.3, 1); }
 
-/* ── Skeleton de carga ──────────────────────────────────── */
+/* ── Skeleton ────────────────────────────────── */
 @keyframes skeleton-shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
 .skeleton {
-  background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.12) 37%, rgba(255,255,255,0.05) 63%);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--na-rose) 6%, transparent) 25%, color-mix(in srgb, var(--na-rose) 14%, transparent) 37%, color-mix(in srgb, var(--na-rose) 6%, transparent) 63%);
   background-size: 200% 100%;
   animation: skeleton-shimmer 1.4s ease-in-out infinite;
 }
 
-/* ── Aurora Background (hero animado) ─────────────────── */
+/* ── Aurora (blobs animados) ─────────────────── */
 @keyframes aurora-drift-1 {
   0%, 100% { transform: translate(0, 0) scale(1); }
   25% { transform: translate(40px, -30px) scale(1.05); }
@@ -79,94 +369,178 @@
   0%, 100% { transform: translate(0, 0) scale(1); }
   40% { transform: translate(-30px, 25px) scale(1.06); }
   70% { transform: translate(40px, -15px) scale(0.94); }
-} 
+}
+
+@keyframes float-soft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+.float-soft { animation: float-soft 6s ease-in-out infinite; }
+
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--na-gold) 40%, transparent); }
+  70% { box-shadow: 0 0 0 10px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+.pulse-ring { animation: pulse-ring 2.4s ease-out infinite; }
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 30s linear infinite;
+}
+
+/* ── Extras «wow» ──────────────────────────────── */
+@keyframes spin-slow {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+.sparkle {
+  animation: sparkle 4s ease-in-out infinite;
+}
+@keyframes sparkle {
+  0%, 100% { opacity: 0.15; transform: translateY(0) scale(0.85); }
+  50% { opacity: 0.95; transform: translateY(-16px) scale(1.15); }
+}
+.hero-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(82vw, 780px);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  background: conic-gradient(from 0deg,
+    transparent 0%, var(--na-rose) 12%, transparent 28%,
+    var(--na-gold) 45%, transparent 62%,
+    var(--na-rose-soft) 80%, transparent 100%);
+  filter: blur(60px);
+  opacity: 0.4;
+  animation: spin-slow 26s linear infinite;
+  pointer-events: none;
+}
+@keyframes shine-sweep {
+  from { transform: translateX(-160%) skewX(-20deg); }
+  to   { transform: translateX(260%) skewX(-20deg); }
+}
+.btn-shine { position: relative; overflow: hidden; }
+.btn-shine::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+  transform: translateX(-160%) skewX(-20deg);
+  pointer-events: none;
+}
+.btn-shine:hover::after { animation: shine-sweep 0.9s ease; }
+
+.card-gradient {
+  background:
+    radial-gradient(120% 120% at 100% 0%, color-mix(in srgb, var(--na-rose) 9%, transparent), transparent 55%),
+    radial-gradient(120% 120% at 0% 100%, color-mix(in srgb, var(--na-gold) 7%, transparent), transparent 55%),
+    var(--bg-card);
+}
+.card-shine { position: relative; overflow: hidden; }
+.card-shine::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.35) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.7s ease;
+  pointer-events: none;
+}
+.card-shine:hover::before { transform: translateX(100%); }
 
 @media (prefers-reduced-motion: reduce) {
-  .anim-overlay, .anim-sheet-right, .anim-sheet-up, .anim-pop, .skeleton, .aurora-blob { animation: none; }
+  .anim-overlay, .anim-sheet-right, .anim-sheet-up, .anim-pop, .skeleton, .aurora-blob, .float-soft, .pulse-ring, .marquee-track, .hero-ring, .sparkle { animation: none; }
+  .btn-shine::after, .card-shine::before { animation: none; transition: none; }
 }
 
-::selection {
-  background: rgba(199, 122, 156, 0.25);
-  color: #3A2430;
-}
-
-/* Feedback táctil sutil al presionar cualquier botón */
+/* ── Feedback táctil ─────────────────────────── */
 button:not(:disabled) {
   transition: transform 0.12s ease, background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
-button:not(:disabled):active {
-  transform: scale(0.97);
-}
+button:not(:disabled):active { transform: scale(0.97); }
 @media (prefers-reduced-motion: reduce) {
   button:not(:disabled):active { transform: none; }
 }
 
+/* ── Scroll reveal ───────────────────────────── */
 .fade-up {
   opacity: 0;
   transform: translateY(30px);
   transition: opacity 0.7s ease, transform 0.7s ease;
 }
-
 .fade-up.visible {
   opacity: 1;
   transform: translateY(0);
 }
 
-
-html {
-  scroll-behavior: smooth;
-}
-
 /* ─────────────────────────────────────────────
-   Panel admin — tema fijo elegante (rosa/dorado).
-   Se conservan los overrides por si la clase .dark
-   quedó guardada en localStorage, pero ya adaptados
-   a la paleta Nathalia.
+   Compatibilidad legada (páginas admin con clases
+   de utilidad Tailwind grises) adaptadas a la
+   paleta Nathalia según el tema activo.
    ───────────────────────────────────────────── */
-.dark { color-scheme: dark; }
+.light .bg-white { background-color: #FFFFFF !important; }
 
 .dark .bg-white { background-color: #241219 !important; }
-.dark .bg-gray-50 { background-color: #1d0f15 !important; }
-.dark .bg-gray-100 { background-color: #2a1521 !important; }
+.dark .bg-gray-50 { background-color: #1B0D14 !important; }
+.dark .bg-gray-100 { background-color: #2A1521 !important; }
 
+.light .text-gray-900 { color: #321B27; }
+.dark .text-gray-900 { color: #FCE9F0 !important; }
+.light .text-gray-800 { color: #3A2430; }
 .dark .text-gray-800 { color: #FCE9F0 !important; }
+.light .text-gray-700 { color: #5A3A4B; }
 .dark .text-gray-700 { color: #F0D6E0 !important; }
+.light .text-gray-600 { color: #6E4A5C; }
 .dark .text-gray-600 { color: #DCB4C4 !important; }
+.light .text-gray-500 { color: #9C7788; }
 .dark .text-gray-500 { color: #B98CA0 !important; }
+.light .text-gray-400 { color: #B49A86; }
 .dark .text-gray-400 { color: #9A6F83 !important; }
+.light .text-gray-300 { color: #D2B9C4; }
 .dark .text-gray-300 { color: #F0D6E0 !important; }
 
+.light .border-gray-100 { border-color: rgba(74, 44, 58, 0.08); }
+.light .border-gray-200 { border-color: rgba(74, 44, 58, 0.12); }
+.light .border-gray-300 { border-color: rgba(74, 44, 58, 0.2); }
 .dark .border-gray-100,
 .dark .border-gray-200,
 .dark .border-gray-300 { border-color: #3A2430 !important; }
 
+.light .divide-gray-100 > * + * { border-color: rgba(74, 44, 58, 0.08); }
 .dark .divide-gray-100 > * + * { border-color: #3A2430 !important; }
 
+.light input,
+.light select,
+.light textarea { background-color: #FFFFFF; color: #321B27; }
 .dark input,
 .dark select,
-.dark textarea {
-  background-color: #1d0f15;
-  color: #FCE9F0;
-}
+.dark textarea { background-color: #1B0D14; color: #FCE9F0; }
 
 .dark input::placeholder,
 .dark textarea::placeholder { color: #9A6F83; }
 
 .dark .shadow,
 .dark .shadow-sm,
-.dark .shadow-lg { box-shadow: 0 4px 16px rgba(0,0,0,0.4) !important; }
+.dark .shadow-lg { box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important; }
 
-.dark .bg-green-100 { background-color: rgba(199,122,156,0.18) !important; }
-.dark .bg-amber-100 { background-color: rgba(212,175,55,0.18) !important; }
-.dark .bg-red-100 { background-color: rgba(214,69,80,0.18) !important; }
-.dark .bg-red-50 { background-color: rgba(214,69,80,0.10) !important; }
-.dark .bg-amber-50 { background-color: rgba(212,175,55,0.10) !important; }
+.dark .bg-green-100 { background-color: rgba(199, 122, 156, 0.18) !important; }
+.dark .bg-amber-100 { background-color: rgba(212, 175, 55, 0.18) !important; }
+.dark .bg-red-100 { background-color: rgba(214, 69, 80, 0.18) !important; }
+.dark .bg-red-50 { background-color: rgba(214, 69, 80, 0.10) !important; }
+.dark .bg-amber-50 { background-color: rgba(212, 175, 55, 0.10) !important; }
 
-/* Títulos del panel admin: adaptados a la paleta Nathalia */
 .text-admin-heading { color: #8A5A70; }
 .dark .text-admin-heading { color: #FCE9F0 !important; }
-
 .text-admin-page-title { color: #8A5A70; }
 .dark .text-admin-page-title { color: #FCE9F0 !important; }
-.text-admin-page-subtitle { color: rgba(138,90,112,0.65); }
-.dark .text-admin-page-subtitle { color: rgba(252,233,240,0.6) !important; }
+.text-admin-page-subtitle { color: rgba(138, 90, 112, 0.65); }
+.dark .text-admin-page-subtitle { color: rgba(252, 233, 240, 0.6) !important; }

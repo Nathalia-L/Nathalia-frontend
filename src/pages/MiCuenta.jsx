@@ -221,77 +221,75 @@ function MiCuenta() {
     ] : []),
   ]
 
-  const estilosInput = {
-    background: 'rgba(255,255,255,0.08)',
-    border: '1px solid rgba(255,255,255,0.15)',
-  }
+  const inputClase =
+    'w-full px-4 py-3 rounded-xl text-sm bg-surface text-ink placeholder:text-ink-3 border border-line focus:border-accent outline-none transition disabled:opacity-50'
 
   return (
-    <div className="min-h-screen" style={{ background: '#1A0E13' }}>
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12 sm:py-16 text-white">
-        <span className="text-xs font-medium text-[#EBC6D6] uppercase tracking-wide">Tu perfil</span>
-        <h1 className="text-2xl sm:text-3xl font-semibold mt-2 mb-8 sm:mb-10 tracking-tight">Mi cuenta</h1>
+    <div className="py-12 sm:py-16">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6">
+        <span className="kicker">Tu perfil</span>
+        <h1 className="text-2xl sm:text-3xl font-semibold text-ink mt-2 mb-8 sm:mb-10 tracking-tight">Mi cuenta</h1>
 
         {/* CABECERA DE PERFIL */}
-        <div className="rounded-2xl p-6 sm:p-8 flex items-center gap-5 mb-5 bg-white/[0.08] backdrop-blur-xl border border-white/15 shadow-sm">
+        <div className="card p-6 sm:p-8 flex items-center gap-5 mb-5">
           {cliente.foto ? (
             <img src={cliente.foto} alt={cliente.nombre} className="w-16 h-16 rounded-full object-cover shrink-0" />
           ) : (
-            <div className="w-16 h-16 rounded-full bg-[#C77A9C] text-white flex items-center justify-center text-2xl font-semibold shrink-0">
+            <div className="w-16 h-16 rounded-full bg-accent text-white flex items-center justify-center text-2xl font-semibold shrink-0">
               {inicial}
             </div>
           )}
           <div className="min-w-0">
-            <p className="text-lg font-semibold truncate">{nombreCompleto}</p>
-            <p className="text-white/45 text-sm truncate">{cliente.email}</p>
+            <p className="text-lg font-semibold text-ink truncate">{nombreCompleto}</p>
+            <p className="text-ink-3 text-sm truncate">{cliente.email}</p>
           </div>
         </div>
 
         {/* DATOS ACTUALES */}
-        <div className="rounded-2xl p-6 sm:p-8 mb-5 bg-white/[0.08] backdrop-blur-xl border border-white/15 shadow-sm">
+        <div className="card p-6 sm:p-8 mb-5">
           <div className="flex items-center gap-2 mb-5">
-            <IconoUsuario className="text-white/40" />
-            <p className="text-sm font-semibold text-white">Información de la cuenta</p>
+            <IconoUsuario className="text-ink-3" />
+            <p className="text-sm font-semibold text-ink">Información de la cuenta</p>
           </div>
           <div className="flex flex-col">
             {campos.map((c) => (
-              <div key={c.label} className="flex items-center justify-between py-3.5 border-b border-white/15 last:border-0 last:pb-0">
-                <span className="text-white/45 text-sm">{c.label}</span>
-                <span className="text-white text-sm font-medium">{c.valor}</span>
+              <div key={c.label} className="flex items-center justify-between py-3.5 border-b border-line last:border-0 last:pb-0">
+                <span className="text-ink-3 text-sm">{c.label}</span>
+                <span className="text-ink text-sm font-medium">{c.valor}</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* DESCUENTOS (EMPRESA / PREMIO) */}
-        <div className={`rounded-2xl p-6 sm:p-8 mb-5 border shadow-sm ${(esJuridica || tienePremio) ? 'bg-[#C77A9C]/15 border-[#C77A9C]/40' : 'bg-white/[0.08] border-white/15'}`}>
+        <div className={`card p-6 sm:p-8 mb-5 border ${(esJuridica || tienePremio) ? 'bg-accent-light/30 border-accent/40' : ''}`}>
           {esJuridica ? (
             <>
-              <p className="text-lg font-semibold text-white mb-1">🏢 Tienes 10% de descuento en todos tus pedidos</p>
-              <p className="text-sm text-white/60 leading-relaxed">
+              <p className="text-lg font-semibold text-ink mb-1">🏢 Tienes 10% de descuento en todos tus pedidos</p>
+              <p className="text-sm text-ink-3 leading-relaxed">
                 Por comprar como empresa, el 10% se aplica automáticamente en cada pedido.
               </p>
             </>
           ) : tienePremio ? (
             <>
-              <p className="text-lg font-semibold text-white mb-1">🎉 ¡Tienes 10% de descuento disponible!</p>
-              <p className="text-sm text-white/60 leading-relaxed">
+              <p className="text-lg font-semibold text-ink mb-1">🎉 ¡Tienes 10% de descuento disponible!</p>
+              <p className="text-sm text-ink-3 leading-relaxed">
                 Gracias a tu última compra al por mayor. Se aplicará automáticamente en tu próxima compra.
               </p>
             </>
           ) : (
             <>
-              <p className="text-lg font-semibold text-white mb-1">🔥 Compra y gana 10% de descuento</p>
-              <p className="text-sm text-white/60 leading-relaxed">
+              <p className="text-lg font-semibold text-ink mb-1">🔥 Compra y gana 10% de descuento</p>
+              <p className="text-sm text-ink-3 leading-relaxed">
                 Compra 5 productos (en uno o varios pedidos, se van sumando) y ganas 10% de descuento para tu próxima compra.
               </p>
               {Number(cliente.unidades_acumuladas) > 0 && (
-                <p className="text-sm text-[#EBC6D6] mt-3 leading-relaxed">
+                <p className="text-sm text-accent mt-3 leading-relaxed">
                   🏆 Llevas {Number(cliente.unidades_acumuladas)} de 5 productos acumulados para tu premio.
                 </p>
               )}
               {!tieneDocumento && (
-                <p className="text-sm text-[#EBC6D6] mt-3 leading-relaxed">
+                <p className="text-sm text-accent mt-3 leading-relaxed">
                   💡 ¿Compras como empresa? Registra tu NIT en la sección Identificación y obtén 10% en todos tus pedidos.
                 </p>
               )}
@@ -300,7 +298,7 @@ function MiCuenta() {
         </div>
 
         {/* LEALTAD (Frente D): nivel, puntos, progreso y canje */}
-        <div className="rounded-2xl p-6 sm:p-8 mb-5 bg-white/[0.08] backdrop-blur-xl border border-white/15 shadow-sm">
+        <div className="card p-6 sm:p-8 mb-5">
           <div className="flex flex-col sm:flex-row items-center gap-8">
             {/* Anillo de lealtad */}
             <LoyaltyRing
@@ -314,24 +312,24 @@ function MiCuenta() {
             {/* Panel de canje */}
             <div className="flex-1 w-full">
             {cuponObtenido ? (
-            <div className="rounded-xl p-4 bg-[#C77A9C]/15 border border-[#C77A9C]/40">
-              <p className="text-sm font-semibold text-white">🎟️ ¡Tu cupón está listo!</p>
-              <p className="text-xs text-white/60 mt-1">Código: <span className="font-mono font-bold text-[#EBC6D6] text-sm">{cuponObtenido.codigo}</span></p>
-              <p className="text-xs text-white/60 mt-1">Descuento de {Number(cuponObtenido.descuento_pct)}% · válido por {cuponObtenido.vigencia_dias} días · úsalo en el checkout</p>
+            <div className="rounded-xl p-4 bg-accent-light/30 border border-accent/40">
+              <p className="text-sm font-semibold text-ink">🎟️ ¡Tu cupón está listo!</p>
+              <p className="text-xs text-ink-3 mt-1">Código: <span className="font-mono font-bold text-accent text-sm">{cuponObtenido.codigo}</span></p>
+              <p className="text-xs text-ink-3 mt-1">Descuento de {Number(cuponObtenido.descuento_pct)}% · válido por {cuponObtenido.vigencia_dias} días · úsalo en el checkout</p>
             </div>
           ) : esJuridica ? (
-            <p className="text-sm text-white/50 leading-relaxed">
+            <p className="text-sm text-ink-3 leading-relaxed">
               🏢 Tu descuento de empresa (10%) ya supera los cupones de lealtad — tus puntos se siguen acumulando para tu rango.
             </p>
           ) : (
             <>
-              <p className="text-xs text-white/50 mb-3">Canjea tus puntos por un cupón de descuento para tu próxima compra:</p>
+              <p className="text-xs text-ink-3 mb-3">Canjea tus puntos por un cupón de descuento para tu próxima compra:</p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   type="button"
                   onClick={() => canjearPuntos(500)}
                   disabled={canjeando || puntos < 500}
-                  className="flex-1 py-3 rounded-xl text-sm font-medium bg-[#C77A9C] text-white hover:bg-[#A65E80] transition disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="flex-1 py-3 rounded-xl text-sm font-medium bg-accent text-white hover:bg-accent-strong transition disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   🎟️ 500 pts → Cupón 5%
                 </button>
@@ -339,7 +337,7 @@ function MiCuenta() {
                   type="button"
                   onClick={() => canjearPuntos(1000)}
                   disabled={canjeando || puntos < 1000}
-                  className="flex-1 py-3 rounded-xl text-sm font-medium bg-[#C77A9C] text-white hover:bg-[#A65E80] transition disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="flex-1 py-3 rounded-xl text-sm font-medium bg-accent text-white hover:bg-accent-strong transition disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                    🎟️ 1.000 pts → Cupón 10%
                 </button>
@@ -351,27 +349,27 @@ function MiCuenta() {
         </div>
 
         {/* MIS CUPONES ACTIVOS (persisten en la BD) */}
-        <div className="rounded-2xl p-6 sm:p-8 mb-5 bg-white/[0.08] backdrop-blur-xl border border-white/15 shadow-sm">
+        <div className="card p-6 sm:p-8 mb-5">
           <div className="flex items-center gap-2 mb-4">
             <span className="text-xl">🎟️</span>
-            <p className="text-sm font-semibold text-white">Mis cupones activos</p>
+            <p className="text-sm font-semibold text-ink">Mis cupones activos</p>
           </div>
           {cupones.length === 0 ? (
-            <p className="text-sm text-white/50 leading-relaxed">
+            <p className="text-sm text-ink-3 leading-relaxed">
               Aún no tienes cupones. Canjea tus puntos arriba y tu cupón quedará guardado aquí para siempre.
             </p>
           ) : (
             <div className="flex flex-col gap-2.5">
               {cupones.map(c => (
-                <div key={c.codigo} className="flex items-center justify-between gap-3 rounded-xl px-4 py-3 bg-[#C77A9C]/10 border border-[#C77A9C]/25">
+                <div key={c.codigo} className="flex items-center justify-between gap-3 rounded-xl px-4 py-3 bg-accent-light/30 border border-accent/25">
                   <div className="min-w-0">
-                    <p className="text-sm font-mono font-bold text-[#EBC6D6]">{c.codigo}</p>
-                    <p className="text-xs text-white/50 mt-0.5">Descuento de {Number(c.descuento_pct)}% · úsalo en el checkout</p>
+                    <p className="text-sm font-mono font-bold text-accent">{c.codigo}</p>
+                    <p className="text-xs text-ink-3 mt-0.5">Descuento de {Number(c.descuento_pct)}% · úsalo en el checkout</p>
                   </div>
                   <button
                     type="button"
                     onClick={() => copiarCodigo(c.codigo)}
-                    className="shrink-0 px-3.5 py-2 rounded-lg text-xs font-medium bg-[#C77A9C] text-white hover:bg-[#A65E80] transition"
+                    className="shrink-0 px-3.5 py-2 rounded-lg text-xs font-medium bg-accent text-white hover:bg-accent-strong transition"
                   >
                     Copiar
                   </button>
@@ -382,17 +380,17 @@ function MiCuenta() {
         </div>
 
         {/* IDENTIFICACIÓN */}
-        <div className="rounded-2xl p-6 sm:p-8 mb-8 bg-white/[0.08] backdrop-blur-xl border border-white/15 shadow-sm">
+        <div className="card p-6 sm:p-8 mb-8">
           <div className="flex items-center justify-between mb-5">
             <div className="flex items-center gap-2">
-              <IconoUbicacion className="text-white/40" />
-              <p className="text-sm font-semibold text-white">Identificación</p>
+              <IconoUbicacion className="text-ink-3" />
+              <p className="text-sm font-semibold text-ink">Identificación</p>
             </div>
             {!editando && (
               <button
                 type="button"
                 onClick={() => setEditando(true)}
-                className="text-xs font-medium text-[#EBC6D6] hover:underline bg-transparent border-0 p-0 cursor-pointer"
+                className="text-xs font-medium text-accent hover:underline bg-transparent border-0 p-0 cursor-pointer"
               >
                 {tieneDocumento ? 'Editar' : 'Completar'}
               </button>
@@ -402,9 +400,9 @@ function MiCuenta() {
           {!editando ? (
             <div className="flex flex-col">
               {camposIdentificacion.map((campo) => (
-                <div key={campo.label} className="flex items-center justify-between py-3 border-b border-white/15 last:border-0 last:pb-0">
-                  <span className="text-white/45 text-sm">{campo.label}</span>
-                  <span className="text-white text-sm font-medium">{campo.valor}</span>
+                <div key={campo.label} className="flex items-center justify-between py-3 border-b border-line last:border-0 last:pb-0">
+                  <span className="text-ink-3 text-sm">{campo.label}</span>
+                  <span className="text-ink text-sm font-medium">{campo.valor}</span>
                 </div>
               ))}
             </div>
@@ -419,10 +417,11 @@ function MiCuenta() {
                     key={opcion.valor}
                     type="button"
                     onClick={() => handleCambioIdentificacion({ target: { name: 'tipo_persona', value: opcion.valor } })}
-                    className="py-2.5 rounded-xl text-sm font-medium transition"
-                    style={formIdentificacion.tipo_persona === opcion.valor
-                      ? { background: 'rgba(199,122,156,0.15)', border: '1px solid #C77A9C', color: '#fff' }
-                      : { background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.6)' }}
+                    className={`py-2.5 rounded-xl text-sm font-medium transition border ${
+                      formIdentificacion.tipo_persona === opcion.valor
+                        ? 'bg-accent-light/30 border-accent text-ink'
+                        : 'bg-surface border-line text-ink-3 hover:text-ink'
+                    }`}
                   >
                     {opcion.etiqueta}
                   </button>
@@ -430,15 +429,14 @@ function MiCuenta() {
               </div>
 
               <div>
-                <label htmlFor="tipo-documento-perfil" className="block text-sm text-white/70 mb-1.5">Tipo de documento</label>
+                <label htmlFor="tipo-documento-perfil" className="block text-sm text-ink-2 mb-1.5">Tipo de documento</label>
                 <select
                   id="tipo-documento-perfil"
                   name="tipo_documento"
                   value={formIdentificacion.tipo_documento}
                   onChange={handleCambioIdentificacion}
                   disabled={formIdentificacion.tipo_persona === 'juridica'}
-                  className="w-full px-4 py-3 rounded-xl text-sm text-white focus:outline-none transition disabled:opacity-50"
-                  style={estilosInput}
+                  className={inputClase}
                 >
                   {formIdentificacion.tipo_persona === 'juridica' ? (
                     <option value="NIT">NIT</option>
@@ -453,7 +451,7 @@ function MiCuenta() {
               </div>
 
               <div>
-                <label htmlFor="numero-documento-perfil" className="block text-sm text-white/70 mb-1.5">Número de documento</label>
+                <label htmlFor="numero-documento-perfil" className="block text-sm text-ink-2 mb-1.5">Número de documento</label>
                 <input
                   id="numero-documento-perfil"
                   type="text"
@@ -461,15 +459,14 @@ function MiCuenta() {
                   value={formIdentificacion.numero_documento}
                   onChange={handleCambioIdentificacion}
                   placeholder={formIdentificacion.tipo_persona === 'juridica' ? 'Número del NIT' : 'Número de cédula'}
-                  className="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-white/30 focus:outline-none transition"
-                  style={estilosInput}
+                  className={inputClase}
                 />
               </div>
 
               {formIdentificacion.tipo_persona === 'juridica' && (
                 <>
                   <div>
-                    <label htmlFor="razon-social-perfil" className="block text-sm text-white/70 mb-1.5">Razón social</label>
+                    <label htmlFor="razon-social-perfil" className="block text-sm text-ink-2 mb-1.5">Razón social</label>
                     <input
                       id="razon-social-perfil"
                       type="text"
@@ -477,12 +474,11 @@ function MiCuenta() {
                       value={formIdentificacion.razon_social}
                       onChange={handleCambioIdentificacion}
                       placeholder="Nombre de la empresa"
-                      className="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-white/30 focus:outline-none transition"
-                      style={estilosInput}
+                      className={inputClase}
                     />
                   </div>
                   <div>
-                    <label htmlFor="digito-verificacion-perfil" className="block text-sm text-white/70 mb-1.5">Dígito de verificación</label>
+                    <label htmlFor="digito-verificacion-perfil" className="block text-sm text-ink-2 mb-1.5">Dígito de verificación</label>
                     <input
                       id="digito-verificacion-perfil"
                       type="text"
@@ -490,8 +486,7 @@ function MiCuenta() {
                       value={formIdentificacion.digito_verificacion}
                       onChange={handleCambioIdentificacion}
                       placeholder="Último dígito del NIT"
-                      className="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-white/30 focus:outline-none transition"
-                      style={estilosInput}
+                      className={inputClase}
                     />
                   </div>
                 </>
@@ -502,8 +497,7 @@ function MiCuenta() {
                   type="button"
                   onClick={() => setEditando(false)}
                   disabled={guardando}
-                  className="flex-1 py-3 rounded-xl text-sm text-white/70 hover:bg-white/10 transition disabled:opacity-50"
-                  style={{ border: '1px solid rgba(255,255,255,0.15)' }}
+                  className="flex-1 py-3 rounded-xl text-sm text-ink-2 hover:bg-accent-light/30 btn-ghost disabled:opacity-50"
                 >
                   Cancelar
                 </button>
@@ -511,7 +505,7 @@ function MiCuenta() {
                   type="button"
                   onClick={guardarIdentificacion}
                   disabled={guardando}
-                  className="flex-1 py-3 bg-[#C77A9C] text-white rounded-xl text-sm font-medium hover:bg-[#A65E80] transition disabled:opacity-50"
+                  className="flex-1 py-3 bg-accent text-white rounded-xl text-sm font-medium hover:bg-accent-strong transition disabled:opacity-50"
                 >
                   {guardando ? 'Guardando...' : 'Guardar'}
                 </button>
@@ -523,7 +517,7 @@ function MiCuenta() {
         <button
           type="button"
           onClick={cerrarSesion}
-          className="px-5 py-2.5 rounded-xl text-sm font-medium text-[#D4AF37] hover:bg-[#D4AF37]/5 border border-[#D4AF37]/25 transition flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] focus-visible:ring-offset-2"
+          className="px-5 py-2.5 rounded-xl text-sm font-medium text-error hover:bg-error/5 border border-error/25 transition flex items-center gap-2"
         >
           <IconoSalir /> Cerrar sesión
         </button>

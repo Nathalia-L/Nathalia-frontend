@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import registerBg from '../assets/register-bg.mp4'
-import toast from 'react-hot-toast'
-import { API_URL } from "../config";
+import { Eye, EyeOff, Loader2, Lock, ShieldCheck, Check } from 'lucide-react'
+import { toast } from 'react-hot-toast'
+import AuthLayout from '../components/AuthLayout'
+import { API_URL } from '../config'
 
 function ResetPasswordAdmin() {
   const navigate = useNavigate()
@@ -20,6 +21,11 @@ function ResetPasswordAdmin() {
     especial: false,
   })
 
+  const contraseñaValida = Object.values(reglasContraseña).every(Boolean)
+  const confirmarTocado = formData.confirmarContraseña.length > 0
+  const contraseñasCoinciden = formData.nuevaContraseña === formData.confirmarContraseña
+  const puedeActualizar = contraseñaValida && confirmarTocado && contraseñasCoinciden
+
   useEffect(() => {
     if (yaProcesado.current) return
     yaProcesado.current = true
@@ -34,7 +40,7 @@ function ResetPasswordAdmin() {
     }
 
     setToken(tokenUrl)
-  }, [])
+  }, [navigate])
 
   function handleChange(e) {
     const { name, value } = e.target
@@ -50,19 +56,6 @@ function ResetPasswordAdmin() {
     }
   }
 
-  const IconoOjo = ({ ver }) => ver ? (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-      <line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-    </svg>
-  ) : (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-      <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2"/>
-    </svg>
-  )
-
   async function handleReset(e) {
     e.preventDefault()
     toast.dismiss('error-reset-admin')
@@ -71,13 +64,11 @@ function ResetPasswordAdmin() {
       toast.error('Completa todos los campos', { id: 'error-reset-admin' })
       return
     }
-
-    if (!reglasContraseña.longitud || !reglasContraseña.mayuscula || !reglasContraseña.numero || !reglasContraseña.especial) {
+    if (!contraseñaValida) {
       toast.error('La contraseña no cumple los requisitos de seguridad', { id: 'error-reset-admin' })
       return
     }
-
-    if (formData.nuevaContraseña !== formData.confirmarContraseña) {
+    if (!contraseñasCoinciden) {
       toast.error('Las contraseñas no coinciden', { id: 'error-reset-admin' })
       return
     }
@@ -88,10 +79,7 @@ function ResetPasswordAdmin() {
       const respuesta = await fetch(`${API_URL}/auth/reset-password-admin`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          token,
-          nuevaContraseña: formData.nuevaContraseña,
-        }),
+        body: JSON.stringify({ token, nuevaContraseña: formData.nuevaContraseña }),
       })
 
       const datos = await respuesta.json()
@@ -111,93 +99,115 @@ function ResetPasswordAdmin() {
     }
   }
 
+  const reglasLista = [
+    { id: 'longitud', label: 'Mínimo 6 caracteres', cumplida: reglasContraseña.longitud },
+    { id: 'mayuscula', label: 'Una letra mayúscula', cumplida: reglasContraseña.mayuscula },
+    { id: 'numero', label: 'Un número', cumplida: reglasContraseña.numero },
+    { id: 'especial', label: 'Un carácter especial', cumplida: reglasContraseña.especial },
+  ]
+
   return (
-    <div className="min-h-screen flex items-center justify-center relative overflow-hidden px-4">
-      <video autoPlay loop muted playsInline
-        className="absolute inset-0 w-full h-full object-cover"
-        src={registerBg}
-      />
-      <div className="absolute inset-0 bg-[#1A0E13]/80"></div>
+    <AuthLayout subtitulo="Acceso privado" ancho="max-w-sm">
+      <h1 className="font-display text-xl sm:text-2xl font-bold text-center mb-1.5 flex items-center justify-center gap-2">
+        <ShieldCheck size={20} className="text-accent" /> Nueva contraseña
+      </h1>
+      <p className="text-sm text-ink-3 text-center mb-6">Elige una contraseña segura para el panel administrativo</p>
 
-      <div className="relative z-10 w-full max-w-sm rounded-2xl p-8"
-        style={{ background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.15)' }}>
-
-        <div className="flex justify-center mb-6">
-          <span className="text-[#F9E7EE] text-2xl font-medium tracking-tight">Nathalia</span>
-        </div>
-
-        <h2 className="text-xl font-medium text-white mb-1 text-center">Nueva contraseña</h2>
-        <p className="text-sm text-white/60 mb-6 text-center">Elige una contraseña segura para el panel administrativo</p>
-
-        <form onSubmit={handleReset}>
-
-          {/* Nueva contraseña */}
-          <div className="mb-2 relative">
-            <label htmlFor="nueva-password-admin" className="block text-sm text-white/70 mb-1.5">Nueva contraseña</label>
+      <form onSubmit={handleReset}>
+        <div className="mb-2">
+          <label htmlFor="nueva-password-admin" className="block text-sm font-medium text-ink mb-1.5">Nueva contraseña</label>
+          <div className="relative">
+            <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-3" />
             <input
               id="nueva-password-admin"
               type={verContraseña ? 'text' : 'password'}
               name="nuevaContraseña"
               value={formData.nuevaContraseña}
               onChange={handleChange}
+              disabled={cargando}
               placeholder="••••••••"
-              className="w-full px-4 py-2.5 rounded-xl text-sm text-white placeholder-white/30 focus:outline-none transition pr-10"
-              style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)' }}
+              className="input pl-10 pr-10"
+              autoComplete="new-password"
             />
             <button
               type="button"
               onClick={() => setVerContraseña(!verContraseña)}
-              className="absolute right-3 top-9 text-white/40 hover:text-white/80 transition"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-3 hover:text-accent transition"
+              tabIndex={-1}
+              aria-label="Mostrar contraseña"
             >
-              <IconoOjo ver={verContraseña} />
+              {verContraseña ? <EyeOff size={17} /> : <Eye size={17} />}
             </button>
           </div>
+        </div>
 
-          {/* Reglas de contraseña */}
-          <div className="mb-4 space-y-1">
-            {!reglasContraseña.longitud && <p className="text-xs text-white/40">○ Mínimo 6 caracteres</p>}
-            {!reglasContraseña.mayuscula && <p className="text-xs text-white/40">○ Una letra mayúscula</p>}
-            {!reglasContraseña.numero && <p className="text-xs text-white/40">○ Un número</p>}
-            {!reglasContraseña.especial && <p className="text-xs text-white/40">○ Un carácter especial</p>}
-            {reglasContraseña.longitud && reglasContraseña.mayuscula && reglasContraseña.numero && reglasContraseña.especial && (
-              <p className="text-xs text-[#EBC6D6]">✓ Contraseña segura</p>
-            )}
+        <div className={`overflow-hidden transition-all duration-300 ${formData.nuevaContraseña && !contraseñaValida ? 'max-h-32 opacity-100 my-3' : 'max-h-0 opacity-0'}`}>
+          <div className="flex flex-col gap-1.5">
+            {reglasLista.map((regla) => (
+              <div
+                key={regla.id}
+                className={`transition-all duration-300 flex items-center gap-2 text-xs ${regla.cumplida ? 'text-success opacity-60' : 'text-ink-3'}`}
+              >
+                <span className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${regla.cumplida ? 'bg-success/20 border-success' : 'border-line-strong'}`}>
+                  {regla.cumplida && <Check size={9} className="text-success" />}
+                </span>
+                {regla.label}
+              </div>
+            ))}
           </div>
+        </div>
+        {contraseñaValida && formData.nuevaContraseña && (
+          <p className="text-xs text-success flex items-center gap-1.5 mb-2 mt-1">
+            <ShieldCheck size={13} /> Contraseña segura
+          </p>
+        )}
 
-          {/* Confirmar contraseña */}
-          <div className="mb-6 relative">
-            <label htmlFor="confirmar-password-admin" className="block text-sm text-white/70 mb-1.5">Confirmar contraseña</label>
+        <div className="mb-2">
+          <label htmlFor="confirmar-password-admin" className="block text-sm font-medium text-ink mb-1.5">Confirmar contraseña</label>
+          <div className="relative">
+            <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-3" />
             <input
               id="confirmar-password-admin"
               type={verConfirmar ? 'text' : 'password'}
               name="confirmarContraseña"
               value={formData.confirmarContraseña}
               onChange={handleChange}
+              disabled={cargando}
               placeholder="••••••••"
-              className="w-full px-4 py-2.5 rounded-xl text-sm text-white placeholder-white/30 focus:outline-none transition pr-10"
-              style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)' }}
+              className="input pl-10 pr-10"
+              autoComplete="new-password"
             />
             <button
               type="button"
               onClick={() => setVerConfirmar(!verConfirmar)}
-              className="absolute right-3 top-9 text-white/40 hover:text-white/80 transition"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-3 hover:text-accent transition"
+              tabIndex={-1}
+              aria-label="Mostrar contraseña"
             >
-              <IconoOjo ver={verConfirmar} />
+              {verConfirmar ? <EyeOff size={17} /> : <Eye size={17} />}
             </button>
           </div>
+        </div>
+        <div className={`overflow-hidden transition-all duration-300 ${confirmarTocado && !contraseñasCoinciden ? 'max-h-6 opacity-100 my-2' : 'max-h-0 opacity-0'}`}>
+          <p className="text-xs text-error">Las contraseñas no coinciden</p>
+        </div>
+        {confirmarTocado && contraseñasCoinciden && (
+          <p className="text-xs text-success flex items-center gap-1.5 my-2">
+            <Check size={13} /> Las contraseñas coinciden
+          </p>
+        )}
 
-          <button
-            type="submit"
-            disabled={cargando}
-            className="w-full py-2.5 bg-[#C77A9C] text-white rounded-xl text-sm font-medium hover:bg-[#A65E80] transition disabled:opacity-50"
-          >
-            {cargando ? 'Actualizando...' : 'Actualizar contraseña'}
-          </button>
-
-        </form>
-
-      </div>
-    </div>
+        <button type="submit" disabled={cargando || !puedeActualizar} className="btn btn-primary btn-lg w-full mt-2">
+          {cargando ? (
+            <>
+              <Loader2 size={16} className="animate-spin" /> Actualizando...
+            </>
+          ) : (
+            'Actualizar contraseña'
+          )}
+        </button>
+      </form>
+    </AuthLayout>
   )
 }
 

@@ -129,7 +129,7 @@ function GestionPedidos() {
     { label: 'Pedidos pendientes', value: String(resumen.pendientes), change: 'requieren acción', valueClass: 'text-amber-500', changeClass: 'text-amber-500' },
     { label: 'Pedidos confirmados', value: String(resumen.confirmados), change: 'total acumulado', valueClass: 'text-gray-800', changeClass: 'text-gray-400' },
     { label: 'Pedidos rechazados', value: String(resumen.rechazados), change: 'total acumulado', valueClass: 'text-red-500', changeClass: 'text-red-500' },
-    { label: 'Total en pedidos', value: formatMoney(resumen.totalEnPedidos), change: `${resumen.cambioTotal >= 0 ? '↑ +' : ''}${resumen.cambioTotal}% vs mes anterior`, valueClass: 'text-gray-800', changeClass: 'text-[#C77A9C]' },
+    { label: 'Total en pedidos', value: formatMoney(resumen.totalEnPedidos), change: `${resumen.cambioTotal >= 0 ? '↑ +' : ''}${resumen.cambioTotal}% vs mes anterior`, valueClass: 'text-gray-800', changeClass: 'text-accent' },
   ] : []
 
   const tabs = [
@@ -165,7 +165,7 @@ function GestionPedidos() {
           type="button"
           onClick={exportarExcel}
           disabled={exportando}
-          className="flex items-center gap-1.5 text-sm px-4 py-2 rounded-lg border border-gray-300 bg-[#C77A9C] text-white hover:bg-[#178a64] transition disabled:opacity-50"
+          className="flex items-center gap-1.5 text-sm px-4 py-2 rounded-lg border border-gray-300 bg-accent text-white hover:bg-accent-strong transition disabled:opacity-50"
         >
           ↓ {exportando ? 'Generando...' : `Exportar página ${pagina}`}
         </button>
@@ -211,7 +211,7 @@ function GestionPedidos() {
                     <td className={`py-3 px-5 font-medium ${p.estado === 'Rechazado' ? 'text-red-500' : 'text-gray-600'}`}>{p.pedido}</td>
                     <td className="py-3 px-5">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-[#C77A9C] flex items-center justify-center text-white text-xs font-medium flex-shrink-0">
+                        <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-white text-xs font-medium flex-shrink-0">
                           {p.cliente.charAt(0)}
                         </div>
                         <div>
@@ -240,7 +240,7 @@ function GestionPedidos() {
                             type="button"
                             onClick={() => aceptarPedido(p.id)}
                             disabled={procesando === p.id}
-                            className="text-xs px-3 py-1.5 rounded-lg bg-[#C77A9C] text-white hover:bg-[#178a64] transition whitespace-nowrap disabled:opacity-50"
+                            className="text-xs px-3 py-1.5 rounded-lg bg-accent text-white hover:bg-accent-strong transition whitespace-nowrap disabled:opacity-50"
                           >
                             ✓ Aceptar
                           </button>
@@ -279,7 +279,7 @@ function GestionPedidos() {
                 key={n}
                 onClick={() => setPagina(n)}
                 className={`w-8 h-8 rounded-lg text-sm transition ${
-                  n === pagina ? 'bg-[#C77A9C]/10 text-[#C77A9C] font-medium' : 'text-gray-500 hover:bg-gray-50'
+                  n === pagina ? 'bg-accent/10 text-accent font-medium' : 'text-gray-500 hover:bg-gray-50'
                 }`}
               >
                 {n}

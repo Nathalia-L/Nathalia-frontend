@@ -2,44 +2,50 @@ import { useNavigate } from 'react-router-dom'
 import { useCarrito } from '../context/CarritoContext'
 import FilaProducto from '../components/FilaProducto'
 import ResumenPedido from '../components/ResumenPedido'
+import { ArrowLeft, ShoppingBag, Plus } from 'lucide-react'
 
 function CarritoPage() {
   const navigate = useNavigate()
   const { productos } = useCarrito()
 
   return (
-    <div className="min-h-screen" style={{ background: '#1A0E13' }}>
-      <div className="max-w-6xl mx-auto px-4 sm:px-8 py-10 sm:py-12">
+    <div className="py-10 sm:py-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-8">
 
-        <button type="button" onClick={() => navigate(-1)} className="flex items-center gap-2 text-[#EBC6D6] text-sm mb-6 hover:underline">
-          ← Volver
+        <button type="button" onClick={() => navigate(-1)} className="flex items-center gap-2 text-ink-2 text-sm mb-6 hover:text-accent transition-colors">
+          <ArrowLeft size={15} /> Volver
         </button>
 
-        <span className="text-xs font-medium text-[#EBC6D6] uppercase tracking-wide">Carrito</span>
-        <h1 className="text-2xl sm:text-3xl font-semibold text-white mt-2 mb-1 tracking-tight">
+        <span className="kicker">Carrito</span>
+        <h1 className="text-2xl sm:text-3xl font-semibold text-ink mt-2 mb-1 tracking-tight">
           Tu carrito de compras
         </h1>
-        <p className="text-white/40 text-sm mb-8">
-          Revisa los productos que seleccionaste aquí 🛒
+        <p className="text-ink-3 text-sm mb-8">
+          Revisa los productos que seleccionaste aquí
         </p>
 
         <div className="flex flex-col lg:flex-row gap-8">
 
-          {/* Columna izquierda */}
           <div className="flex-1">
-            <div className="rounded-xl overflow-hidden bg-[#241219] border border-white/[0.08]">
-
-              {/* Encabezado */}
-              <div className="grid grid-cols-[1fr_auto_auto] sm:grid-cols-3 gap-3 px-4 sm:px-6 py-4 border-b border-white/[0.07]" style={{ background: '#0D1D13' }}>
-                <span className="text-xs font-semibold text-white/40 uppercase">Producto</span>
-                <span className="text-xs font-semibold text-white/40 uppercase">Precio</span>
-                <span className="text-xs font-semibold text-white/40 uppercase justify-self-end">Cantidad</span>
+            <div className="card overflow-hidden">
+              <div className="grid grid-cols-[1fr_auto_auto] sm:grid-cols-3 gap-3 px-4 sm:px-6 py-4 border-b border-line bg-surface">
+                <span className="text-xs font-semibold text-ink-3 uppercase">Producto</span>
+                <span className="text-xs font-semibold text-ink-3 uppercase">Precio</span>
+                <span className="text-xs font-semibold text-ink-3 uppercase justify-self-end">Cantidad</span>
               </div>
 
-              {/* Productos desde el Context */}
               {productos.length === 0 ? (
-                <div className="px-6 py-12 text-center text-sm text-white/40">
-                  No hay productos en el carrito.
+                <div className="px-6 py-14 text-center flex flex-col items-center gap-4">
+                  <div className="w-16 h-16 rounded-full bg-accent-light/40 flex items-center justify-center">
+                    <ShoppingBag size={24} className="text-accent" />
+                  </div>
+                  <div>
+                    <p className="text-ink font-medium">Tu carrito está vacío</p>
+                    <p className="text-sm text-ink-3 mt-1">Descubre nuestros productos y agrega tus favoritos.</p>
+                  </div>
+                  <button type="button" onClick={() => navigate('/cliente/catalogo')} className="btn-gold flex items-center gap-2">
+                    <Plus size={15} /> Ir al catálogo
+                  </button>
                 </div>
               ) : (
                 productos.map(p => (
@@ -55,18 +61,15 @@ function CarritoPage() {
                 ))
               )}
 
-              {/* Footer */}
-              <div className="px-4 sm:px-6 py-4 border-t border-white/[0.07] flex justify-between items-center" style={{ background: '#0D1D13' }}>
-                <button type="button" onClick={() => navigate('/cliente/catalogo')} className="text-[#EBC6D6] text-sm hover:underline">
-                  + Agregar más productos
+              <div className="px-4 sm:px-6 py-4 border-t border-line bg-surface flex justify-between items-center">
+                <button type="button" onClick={() => navigate('/cliente/catalogo')} className="text-accent text-sm hover:underline flex items-center gap-1.5">
+                  <Plus size={14} /> Agregar más productos
                 </button>
-                <span className="text-white/40 text-xl">🛒</span>
               </div>
 
             </div>
           </div>
 
-          {/* Columna derecha */}
           <div className="w-full lg:w-80 shrink-0">
             <ResumenPedido />
           </div>

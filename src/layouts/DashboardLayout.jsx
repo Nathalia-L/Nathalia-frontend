@@ -97,19 +97,6 @@ function DashboardLayout() {
       path: '/dashboard',
       clase: 'menu-dashboard',
     },
-    {
-      icon: (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-          <circle cx="9" cy="7" r="4" stroke="currentColor" strokeWidth="2"/>
-          <path d="M23 21v-2a4 4 0 0 0-3-3.87" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-          <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-        </svg>
-      ),
-      label: 'Contenido',
-      path: '/dashboard/contenido',
-      clase: 'menu-contenido',
-    },
   ]
 
   const menuGrupos = [
@@ -156,13 +143,12 @@ function DashboardLayout() {
     },
   ]
 
-  // Si la ruta activa vive dentro de un grupo, ese grupo debe abrirse solo al cargar/navegar.
-  useEffect(() => {
-    const grupoActivo = menuGrupos.find((g) => g.items.some((item) => item.path === location.pathname))
-    if (grupoActivo) {
-      setSeccionesAbiertas((prev) => (prev.includes(grupoActivo.id) ? prev : [...prev, grupoActivo.id]))
-    }
-  }, [location.pathname])
+  // Si la ruta activa vive dentro de un grupo, ese grupo debe abrirse solo.
+  // Se ajusta el estado durante el render (patrón recomendado), sin efecto.
+  const grupoActivo = menuGrupos.find((g) => g.items.some((item) => item.path === location.pathname))
+  if (grupoActivo && !seccionesAbiertas.includes(grupoActivo.id)) {
+    setSeccionesAbiertas((prev) => (prev.includes(grupoActivo.id) ? prev : [...prev, grupoActivo.id]))
+  }
 
   function toggleGrupo(id) {
     setSeccionesAbiertas((prev) => (prev.includes(id) ? prev.filter((g) => g !== id) : [...prev, id]))
@@ -191,23 +177,6 @@ function DashboardLayout() {
     }
   }
 
-  // Tema fijo claro/elegante — se eliminó el toggle claro/oscuro
-  const modoOscuro = false
-
-  const glass = modoOscuro ? {
-    background: 'rgba(17,28,23,0.92)',
-    border: '1px solid rgba(255,255,255,0.08)',
-    backdropFilter: 'blur(20px) saturate(160%)',
-    WebkitBackdropFilter: 'blur(20px) saturate(160%)',
-    boxShadow: '0 8px 28px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04)',
-  } : {
-    background: 'rgba(255,255,255,0.92)',
-    border: '1px solid rgba(58,36,48,0.14)',
-    backdropFilter: 'blur(20px) saturate(160%)',
-    WebkitBackdropFilter: 'blur(20px) saturate(160%)',
-    boxShadow: '0 8px 28px rgba(58,36,48,0.14), inset 0 1px 0 rgba(255,255,255,0.9)',
-  }
-
   return (
     <>
       <Joyride
@@ -219,7 +188,7 @@ function DashboardLayout() {
         callback={handleTutorialFinalizado}
         styles={{
           options: {
-            primaryColor: '#C77A9C',
+            primaryColor: 'var(--na-rose)',
             backgroundColor: '#ffffff',
             textColor: '#3A2430',
             arrowColor: '#ffffff',
@@ -230,7 +199,7 @@ function DashboardLayout() {
             boxShadow: '0 10px 40px rgba(58,36,48,0.15)',
           },
           buttonNext: {
-            backgroundColor: '#C77A9C',
+            backgroundColor: 'var(--na-rose)',
             borderRadius: '8px',
           },
           buttonSkip: {
@@ -246,16 +215,16 @@ function DashboardLayout() {
         }}
       />
 
-      <div className="relative flex h-screen overflow-hidden" style={{ background: 'linear-gradient(160deg, #F9F0F3 0%, #F1E3E9 100%)' }}>
+      <div className="relative flex h-screen overflow-hidden bg-bg">
 
         <div className="pointer-events-none fixed inset-0 overflow-hidden">
           <div
             className="absolute -top-40 -left-32 w-[36rem] h-[36rem] rounded-full"
-            style={{ background: 'radial-gradient(circle, rgba(199,122,156,0.06) 0%, transparent 70%)' }}
+            style={{ background: 'radial-gradient(circle, var(--na-rose-soft) 0%, transparent 70%)' }}
           />
           <div
             className="absolute bottom-[-10rem] right-[-8rem] w-[30rem] h-[30rem] rounded-full"
-            style={{ background: 'radial-gradient(circle, rgba(199,122,156,0.05) 0%, transparent 70%)' }}
+            style={{ background: 'radial-gradient(circle, var(--na-rose-soft) 0%, transparent 70%)' }}
           />
         </div>
 
@@ -274,15 +243,14 @@ function DashboardLayout() {
 
         {/* SIDEBAR */}
         <aside
-          className={`fixed lg:static top-0 left-0 h-full w-64 flex flex-col py-6 px-4 z-40 m-0 lg:my-3 lg:ml-3 lg:rounded-3xl transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
-          style={glass}
+          className={`fixed lg:static top-0 left-0 h-full w-64 flex flex-col py-6 px-4 z-40 m-0 lg:my-3 lg:ml-3 lg:rounded-3xl transition-transform duration-300 bg-surface/90 border border-line backdrop-blur-xl ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
         >
 
           {/* Logo */}
           <div className="flex items-center gap-2 px-3 mb-8">
             <LogoNathalia size={34} showText={false} />
-            <span className="sidebar-logo font-display text-lg font-semibold tracking-tight" style={{ color: '#3A2430' }}>Nathalia</span>
-            <span className="text-xs ml-1" style={{ color: 'rgba(58,36,48,0.4)' }}>Admin</span>
+            <span className="sidebar-logo font-display text-lg font-semibold tracking-tight text-ink">Nathalia</span>
+            <span className="text-xs text-ink-3">Admin</span>
           </div>
 
           {/* Menú */}
@@ -294,14 +262,11 @@ function DashboardLayout() {
                             type="button"
                             key={item.path}
                             onClick={() => handleNavigate(item.path)}
-                            className="flex items-center gap-2 pl-4 pr-3 py-2 rounded-lg text-sm transition-all duration-200 text-left"
-                  style={
-                    activo
-                      ? { background: 'rgba(199,122,156,0.12)', color: '#C77A9C', fontWeight: 500 }
-                      : { background: 'transparent', color: modoOscuro ? 'rgba(234,255,242,0.55)' : 'rgba(58,36,48,0.55)' }
-                  }
-                  onMouseEnter={(e) => { if (!activo) e.currentTarget.style.background = modoOscuro ? 'rgba(255,255,255,0.06)' : 'rgba(58,36,48,0.05)' }}
-                  onMouseLeave={(e) => { if (!activo) e.currentTarget.style.background = 'transparent' }}
+                            className={`flex items-center gap-2 pl-4 pr-3 py-2 rounded-lg text-sm transition-all duration-200 text-left ${
+                              activo
+                                ? 'bg-accent/15 text-accent font-medium'
+                                : 'bg-transparent text-ink-2 hover:bg-accent-light/40 hover:text-ink'
+                            }`}
                 >
                   {item.icon}
                   {item.label}
@@ -309,7 +274,7 @@ function DashboardLayout() {
               )
             })}
 
-            <div className="h-px my-2" style={{ background: modoOscuro ? 'rgba(255,255,255,0.08)' : 'rgba(58,36,48,0.08)' }} />
+            <div className="h-px my-2 bg-line" />
 
             {menuGrupos.map((grupo) => {
               const abierto = seccionesAbiertas.includes(grupo.id)
@@ -319,21 +284,17 @@ function DashboardLayout() {
                   <button
                     type="button"
                     onClick={() => toggleGrupo(grupo.id)}
-                    className={`grupo-${grupo.id} flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200`}
-                    style={
+                    className={`grupo-${grupo.id} flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 ${
                       grupoTieneActivo && !abierto
-                        ? { background: 'rgba(199,122,156,0.08)', color: '#C77A9C', fontWeight: 500 }
-                        : { background: 'transparent', color: modoOscuro ? 'rgba(234,255,242,0.55)' : 'rgba(58,36,48,0.55)' }
-                    }
-                    onMouseEnter={(e) => { if (!grupoTieneActivo) e.currentTarget.style.background = modoOscuro ? 'rgba(255,255,255,0.06)' : 'rgba(58,36,48,0.05)' }}
-                    onMouseLeave={(e) => { if (!(grupoTieneActivo && !abierto)) e.currentTarget.style.background = 'transparent' }}
+                        ? 'bg-accent/15 text-accent font-medium'
+                        : 'bg-transparent text-ink-2 hover:bg-accent-light/40 hover:text-ink'
+                    }`}
                   >
                     {grupo.icon}
                     <span className="flex-1 text-left">{grupo.titulo}</span>
                     <svg
                       width="14" height="14" viewBox="0 0 24 24" fill="none"
-                      className="transition-transform duration-200 flex-shrink-0"
-                      style={{ transform: abierto ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                      className={`transition-transform duration-200 flex-shrink-0 ${abierto ? 'rotate-180' : ''}`}
                     >
                       <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
@@ -351,15 +312,11 @@ function DashboardLayout() {
                   type="button"
                   key={item.path}
                   onClick={() => handleNavigate(item.path)}
-                  className={`${item.clase || ''} flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200`}
-                            style={{
-                              borderLeft: activo ? '2px solid #C77A9C' : `2px solid ${modoOscuro ? 'rgba(255,255,255,0.12)' : 'rgba(58,36,48,0.10)'}`,
-                              color: activo ? '#C77A9C' : (modoOscuro ? 'rgba(234,255,242,0.55)' : 'rgba(58,36,48,0.55)'),
-                              fontWeight: activo ? 500 : 400,
-                              background: activo ? 'rgba(199,122,156,0.08)' : 'transparent',
-                            }}
-                            onMouseEnter={(e) => { if (!activo) e.currentTarget.style.background = modoOscuro ? 'rgba(255,255,255,0.06)' : 'rgba(58,36,48,0.05)' }}
-                            onMouseLeave={(e) => { if (!activo) e.currentTarget.style.background = 'transparent' }}
+                  className={`${item.clase || ''} flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 ${
+                    activo
+                      ? 'bg-accent/15 text-accent font-medium border-l-2 border-accent'
+                      : 'bg-transparent text-ink-2 border-l-2 border-line hover:bg-accent-light/40 hover:text-ink'
+                  }`}
                           >
                             {item.label}
                           </button>
@@ -374,29 +331,17 @@ function DashboardLayout() {
 
           {/* Usuario */}
           <div
-            className="px-3 py-3 mb-2 rounded-2xl"
-            style={modoOscuro
-              ? { background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }
-              : { background: 'rgba(58,36,48,0.06)', border: '1px solid rgba(58,36,48,0.12)' }
-            }
+            className="px-3 py-3 mb-2 rounded-2xl bg-accent-light/30 border border-accent/15"
           >
-            <p className="text-xs mb-0.5" style={{ color: modoOscuro ? 'rgba(255,255,255,0.4)' : 'rgba(58,36,48,0.4)' }}>Sesión activa</p>
-            <p className="text-sm truncate" style={{ color: modoOscuro ? 'rgba(255,255,255,0.85)' : 'rgba(58,36,48,0.8)' }}>{nombreAdmin}</p>
+            <p className="text-xs mb-0.5 text-ink-3">Sesión activa</p>
+            <p className="text-sm truncate text-ink-2">{nombreAdmin}</p>
           </div>
 
           {/* Cerrar sesión */}
           <button
             type="button"
             onClick={handleLogout}
-            className="boton-cerrar-sesion flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200"
-            style={{
-              color: '#dc2626',
-              background: 'rgba(220,38,38,0.06)',
-              border: '1px solid rgba(220,38,38,0.45)',
-              boxShadow: '0 0 0 1px rgba(220,38,38,0.12), 0 0 10px rgba(220,38,38,0.35)',
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(220,38,38,0.14)'; e.currentTarget.style.boxShadow = '0 0 0 1px rgba(220,38,38,0.2), 0 0 16px rgba(220,38,38,0.5)' }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(220,38,38,0.06)'; e.currentTarget.style.boxShadow = '0 0 0 1px rgba(220,38,38,0.12), 0 0 10px rgba(220,38,38,0.35)' }}
+            className="boton-cerrar-sesion flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 text-error border border-error/40 bg-error/5 hover:bg-error/15"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -411,15 +356,14 @@ function DashboardLayout() {
 
           {/* Header móvil */}
           <header
-            className="lg:hidden flex items-center justify-between px-4 py-4 m-3 rounded-2xl"
-            style={glass}
+            className="lg:hidden flex items-center justify-between px-4 py-4 m-3 rounded-2xl bg-surface/90 border border-line backdrop-blur-xl"
           >
-            <button type="button" onClick={() => setSidebarOpen(true)} className="transition" style={{ color: modoOscuro ? 'rgba(234,255,242,0.6)' : 'rgba(58,36,48,0.6)' }}>
+            <button type="button" onClick={() => setSidebarOpen(true)} className="transition text-ink-2">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
               </svg>
             </button>
-            <span className="text-base font-medium" style={{ color: '#3A2430' }}>Nathalia Admin</span>
+            <span className="text-base font-medium text-ink">Nathalia Admin</span>
             <div className="w-6" />
           </header>
 

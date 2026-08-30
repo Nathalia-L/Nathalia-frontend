@@ -2,9 +2,9 @@ import { motion } from "framer-motion";
 
 const PASOS = [
   { id: "pendiente",   label: "Pedido recibido",  icono: "🕐", desc: "Estamos procesando tu compra" },
-  { id: "en_proceso",  label: "En preparación",   icono: "📦", desc: "Tostamos y empacamos tu café" },
+  { id: "en_proceso",  label: "En preparación",   icono: "📦", desc: "Preparamos y empaquetamos tu pedido" },
   { id: "enviado",     label: "En camino",        icono: "🚚", desc: "Va hacia tu ciudad" },
-  { id: "entregado",   label: "Entregado",        icono: "🏠", desc: "¡Café en tu puerta!" },
+  { id: "entregado",   label: "Entregado",        icono: "🏠", desc: "¡Tu pedido en tu puerta!" },
 ];
 
 // Mapea el estado del backend al índice del stepper
@@ -28,11 +28,11 @@ export default function OrderStepper({ estado, compacto = false, fechaPedido = n
               viewport={{ once: true }}
               transition={{ delay: i * 0.1, type: "spring", stiffness: 400, damping: 15 }}
               className={`w-2.5 h-2.5 rounded-full ${
-                i <= indexActual ? "bg-[#C77A9C] shadow-sm shadow-[#C77A9C]/40" : "bg-white/15"
+                i <= indexActual ? "bg-accent shadow-sm shadow-accent/40" : "bg-ink-3/40"
               }`}
             />
             {i < PASOS.length - 1 && (
-              <div className={`w-4 h-px ${i < indexActual ? "bg-[#C77A9C]" : "bg-white/15"}`} />
+              <div className={`w-4 h-px ${i < indexActual ? "bg-accent" : "bg-line"}`} />
             )}
           </div>
         ))}
@@ -52,29 +52,29 @@ export default function OrderStepper({ estado, compacto = false, fechaPedido = n
               transition={{ delay: i * 0.15, type: "spring", stiffness: 400, damping: 15 }}
               className={`w-10 h-10 rounded-full flex items-center justify-center border-2 z-10 ${
                 i < indexActual
-                  ? "bg-[#C77A9C] border-[#C77A9C] text-white"
+                  ? "bg-accent border-accent text-white"
                   : i === indexActual
-                  ? "bg-[#C77A9C] border-[#C77A9C] text-white ring-4 ring-[#C77A9C]/30"
-                  : "bg-transparent border-white/20 text-white/40"
+                  ? "bg-accent border-accent text-white ring-4 ring-accent/30"
+                  : "bg-transparent border-line text-ink-3"
               } ${i === indexActual ? "animate-pulse" : ""}`}
             >
               {paso.icono}
             </motion.div>
             <p className={`text-xs mt-2 text-center font-medium ${
-              i <= indexActual ? "text-white" : "text-white/40"
+              i <= indexActual ? "text-ink" : "text-ink-3"
             }`}>
               {paso.label}
             </p>
             {i === 0 && fechaPedido && (
-              <p className="text-[10px] text-white/30">{fechaPedido}</p>
+              <p className="text-[10px] text-ink-3">{fechaPedido}</p>
             )}
             {i > indexActual && (
-              <p className="text-[10px] text-white/30">{paso.desc}</p>
+              <p className="text-[10px] text-ink-3">{paso.desc}</p>
             )}
           </div>
           {i < PASOS.length - 1 && (
             <div className={`h-px w-full mt-5 mx-1 ${
-              i < indexActual ? "bg-[#C77A9C]" : "bg-white/15"
+              i < indexActual ? "bg-accent" : "bg-line"
             }`} />
           )}
         </div>

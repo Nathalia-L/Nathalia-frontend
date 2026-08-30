@@ -1,11 +1,9 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useState } from 'react'
-import LogoNathalia from '../components/LogoNathalia'
-import registerBg from '../assets/register-bg.mp4'
-import toast from 'react-hot-toast'
-import { API_URL } from "../config";
-
-
+import { Eye, EyeOff, Loader2, Mail, Lock, User as UserIcon, ArrowLeft, ArrowRight, Check, ShieldCheck } from 'lucide-react'
+import { toast } from 'react-hot-toast'
+import AuthLayout from '../components/AuthLayout'
+import { API_URL } from '../config'
 
 const REGEX_EMAIL = /^[^\s@]{1,64}@[^\s@]{1,255}\.[^\s@]{1,24}$/
 const REGEX_MAYUSCULA = /[A-Z]/
@@ -20,19 +18,6 @@ function evaluarReglasContraseña(value) {
     especial: REGEX_ESPECIAL.test(value),
   }
 }
-
-const IconoOjo = ({ ver }) => ver ? (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-    <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-    <line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-  </svg>
-) : (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-    <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2"/>
-  </svg>
-)
 
 function Register() {
   const navigate = useNavigate()
@@ -60,7 +45,7 @@ function Register() {
 
   const nombreCompletoValido = (() => {
     const partes = formData.nombreCompleto.trim().split(/\s+/).filter(Boolean)
-    return partes.length >= 2 && partes.every(p => p.length >= 2)
+    return partes.length >= 2 && partes.every((p) => p.length >= 2)
   })()
   const emailValidoPaso1 = REGEX_EMAIL.test(formData.email.trim())
   const puedeContinuarPaso1 = nombreCompletoValido && emailValidoPaso1
@@ -75,18 +60,13 @@ function Register() {
 
     if (name === 'nombreCompleto') {
       const partes = value.trim().split(/\s+/).filter(Boolean)
-      if (partes.length < 2) {
-        setErroresNombre('Falta el apellido')
-      } else if (!partes.every(p => p.length >= 2)) {
-        setErroresNombre('Cada nombre debe tener mínimo 2 letras')
-      } else {
-        setErroresNombre('')
-      }
+      if (partes.length < 2) setErroresNombre('Falta el apellido')
+      else if (!partes.every((p) => p.length >= 2)) setErroresNombre('Cada nombre debe tener mínimo 2 letras')
+      else setErroresNombre('')
     }
 
     if (name === 'email') {
-      const emailValido = REGEX_EMAIL.test(value)
-      setErroresEmail(value && !emailValido ? 'Correo no válido' : '')
+      setErroresEmail(value && !REGEX_EMAIL.test(value) ? 'Correo no válido' : '')
     }
   }
 
@@ -99,20 +79,15 @@ function Register() {
     }
 
     const partes = formData.nombreCompleto.trim().split(/\s+/).filter(Boolean)
-
     if (partes.length < 2) {
       toast.error('Ingresa tu nombre y apellido', { id: 'error-register' })
       return
     }
-
-    const todasValidas = partes.every(p => p.length >= 2)
-    if (!todasValidas) {
+    if (!partes.every((p) => p.length >= 2)) {
       toast.error('Cada nombre y apellido debe tener al menos 2 letras', { id: 'error-register' })
       return
     }
-
-    const emailValido = REGEX_EMAIL.test(formData.email.trim())
-    if (!emailValido) {
+    if (!REGEX_EMAIL.test(formData.email.trim())) {
       toast.error('Ingresa un correo electrónico válido', { id: 'error-register' })
       return
     }
@@ -126,7 +101,6 @@ function Register() {
         toast.error('No se pudo verificar el correo, intenta de nuevo', { id: 'error-register' })
         return
       }
-
       if (!datos.disponible) {
         toast.error('Ese correo ya está registrado', { id: 'error-register' })
         return
@@ -148,12 +122,10 @@ function Register() {
       toast.error('Todos los campos son obligatorios', { id: 'error-register' })
       return
     }
-
     if (!contraseñaValida) {
       toast.error('La contraseña debe tener al menos 6 caracteres, una mayúscula, un número y un carácter especial', { id: 'error-register' })
       return
     }
-
     if (!contraseñasCoinciden) {
       toast.error('Las contraseñas no coinciden', { id: 'error-register' })
       return
@@ -201,204 +173,220 @@ function Register() {
   ]
 
   return (
+    <AuthLayout subtitulo="Únete a Nathalia" ancho="max-w-[440px]">
+      {/* Indicador de pasos */}
+      <div className="flex items-center justify-center gap-2 mb-8">
+        {[1, 2, 3].map((s) => (
+          <div key={s} className="flex items-center gap-2">
+            <span
+              className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold transition-all ${
+                step >= s ? 'bg-gradient-to-br from-accent to-accent-strong text-white shadow-md' : 'bg-elevated text-ink-3 border border-line'
+              }`}
+            >
+              {step > s ? <Check size={14} /> : s}
+            </span>
+            {s < 3 && <span className={`w-8 h-px transition-all ${step > s ? 'bg-accent' : 'bg-line-strong'}`} />}
+          </div>
+        ))}
+      </div>
 
-    
-    <div className="min-h-screen flex items-center justify-center relative overflow-hidden px-4">
+      {/* Paso 1 */}
+      {step === 1 && (
+        <div className="anim-sheet-up">
+          <h2 className="font-display text-2xl font-bold mb-1">Datos personales</h2>
+          <p className="text-sm text-ink-3 mb-6">Cuéntanos quién eres</p>
 
-      <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover" src={registerBg} />
-      <div className="absolute inset-0 bg-[#1A0E13]/75"></div>
-      <div className="absolute inset-0 bg-[#1A0E13]/75"></div>
-
-        <button
-  type="button"
-  onClick={() => navigate('/')}
-  className="absolute top-6 left-6 z-20 flex items-center gap-1.5 text-sm text-white/50 hover:text-white transition"
->
-  ← Volver
-</button>  
-      <div className="relative z-10 w-full max-w-md mx-4 my-10 rounded-2xl p-6 sm:p-8" style={{ background: 'rgba(42,21,33,0.45)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.15)' }}>
-
-        <div className="flex flex-col items-center justify-center gap-2 mb-6">
-          <LogoNathalia size={54} />
-          <span className="text-[#F9E7EE] text-xl font-medium tracking-tight">Únete a Nathalia</span>
-        </div>
-
-        {/* Indicador de pasos */}
-        <div className="flex items-center justify-center gap-2 mb-8">
-          {[1, 2, 3].map((s) => (
-            <div key={s} className="flex items-center gap-2">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium transition-all ${step >= s ? 'bg-[#C77A9C] text-white' : 'bg-white/10 text-white/40'}`}>
-                {s}
-              </div>
-              {s < 3 && <div className={`w-8 h-px transition-all ${step > s ? 'bg-[#C77A9C]' : 'bg-white/20'}`}></div>}
-            </div>
-          ))}
-        </div>
-
-
-
-          
-        {/* Paso 1 */}
-        {step === 1 && (
-          <div>
-            <h2 className="text-2xl font-medium text-white mb-1">Datos personales</h2>
-            <p className="text-sm text-white/60 mb-6">Cuéntanos quién eres</p>
-
-            <div className="mb-4">
-              <label htmlFor="nombre-register" className="block text-sm text-white/70 mb-1.5">Nombre completo</label>
+          <div className="mb-4">
+            <label htmlFor="nombre-register" className="block text-sm font-medium text-ink mb-1.5">Nombre completo</label>
+            <div className="relative">
+              <UserIcon size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-3" />
               <input
                 id="nombre-register"
                 type="text"
-                name='nombreCompleto'
+                name="nombreCompleto"
                 value={formData.nombreCompleto}
                 onChange={handleChange}
                 placeholder="Tu nombre completo"
-                className="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-white/30 focus:outline-none transition"
-                style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)' }}
+                className="input pl-10"
+                autoComplete="name"
               />
-              {erroresNombre && <p className="text-xs text-[#F2A0B5] mt-1">{erroresNombre}</p>}
             </div>
+            {erroresNombre && <p className="text-xs text-error mt-1.5">{erroresNombre}</p>}
+          </div>
 
-            <div className="mb-6">
-              <label htmlFor="email-register" className="block text-sm text-white/70 mb-1.5">Correo electrónico</label>
+          <div className="mb-6">
+            <label htmlFor="email-register" className="block text-sm font-medium text-ink mb-1.5">Correo electrónico</label>
+            <div className="relative">
+              <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-3" />
               <input
                 id="email-register"
                 type="email"
-                name='email'
+                name="email"
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="tucorreo@ejemplo.com"
-                className="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-white/30 focus:outline-none transition"
-                style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)' }}
+                className="input pl-10"
+                autoComplete="email"
               />
-              {erroresEmail && <p className="text-xs text-[#F2A0B5] mt-1">{erroresEmail}</p>}
             </div>
-
-            <button type="button" onClick={handleSiguientePaso1} disabled={!puedeContinuarPaso1 || verificandoEmail} className="w-full py-3 bg-[#C77A9C] text-white rounded-xl text-sm font-medium hover:bg-[#A65E80] transition disabled:opacity-50">
-              {verificandoEmail ? 'Verificando...' : 'Continuar'}
-            </button>
+            {erroresEmail && <p className="text-xs text-error mt-1.5">{erroresEmail}</p>}
           </div>
-        )}
 
-        {/* Paso 2 */}
-        {step === 2 && (
-          <div>
-            <h2 className="text-2xl font-medium text-white mb-1">Crea tu acceso</h2>
-            <p className="text-sm text-white/60 mb-6">Elige una contraseña segura</p>
+          <button
+            type="button"
+            onClick={handleSiguientePaso1}
+            disabled={!puedeContinuarPaso1 || verificandoEmail}
+            className="btn btn-primary btn-lg w-full"
+          >
+            {verificandoEmail ? (
+              <>
+                <Loader2 size={16} className="animate-spin" /> Verificando...
+              </>
+            ) : (
+              <>Continuar <ArrowRight size={16} /></>
+            )}
+          </button>
+        </div>
+      )}
 
-            {/* Contraseña */}
-            <div className="mb-2 relative">
-              <label htmlFor="password-register" className="block text-sm text-white/70 mb-1.5">Contraseña</label>
+      {/* Paso 2 */}
+      {step === 2 && (
+        <div className="anim-sheet-up">
+          <h2 className="font-display text-2xl font-bold mb-1">Crea tu acceso</h2>
+          <p className="text-sm text-ink-3 mb-6">Elige una contraseña segura</p>
+
+          <div className="mb-2 relative">
+            <label htmlFor="password-register" className="block text-sm font-medium text-ink mb-1.5">Contraseña</label>
+            <div className="relative">
+              <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-3" />
               <input
                 id="password-register"
                 type={verContraseña ? 'text' : 'password'}
-                name='contraseña'
+                name="contraseña"
                 value={formData.contraseña}
                 onChange={handleChange}
                 onFocus={() => setContraseñaFocus(true)}
                 onBlur={() => setContraseñaFocus(false)}
                 disabled={cargando}
                 placeholder="••••••••"
-                className="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-white/30 focus:outline-none transition pr-10 disabled:opacity-50"
-                style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)' }}
+                className="input pl-10 pr-10"
+                autoComplete="new-password"
               />
               <button
                 type="button"
                 onClick={() => setVerContraseña(!verContraseña)}
-                className="absolute right-3 top-9 text-white/40 hover:text-white/80 transition"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-3 hover:text-accent transition"
                 tabIndex={-1}
+                aria-label="Mostrar contraseña"
               >
-                <IconoOjo ver={verContraseña} />
+                {verContraseña ? <EyeOff size={17} /> : <Eye size={17} />}
               </button>
             </div>
+          </div>
 
-            {/* Reglas de contraseña, con desaparición animada */}
-            <div className={`overflow-hidden transition-all duration-300 ${(contraseñaFocus || formData.contraseña) && !contraseñaValida ? 'max-h-32 opacity-100 mb-3' : 'max-h-0 opacity-0 mb-0'}`}>
-              <div className="flex flex-col gap-1 py-1">
-                {reglasLista.map((regla) => (
-                  <div
-                    key={regla.id}
-                    className={`overflow-hidden transition-all duration-300 ${regla.cumplida ? 'max-h-0 opacity-0' : 'max-h-6 opacity-100'}`}
-                  >
-                    <p className="text-xs text-white/40">○ {regla.label}</p>
-                  </div>
-                ))}
-              </div>
+          <div className={`overflow-hidden transition-all duration-300 ${(contraseñaFocus || formData.contraseña) && !contraseñaValida ? 'max-h-32 opacity-100 my-3' : 'max-h-0 opacity-0'}`}>
+            <div className="flex flex-col gap-1.5">
+              {reglasLista.map((regla) => (
+                <div
+                  key={regla.id}
+                  className={`transition-all duration-300 flex items-center gap-2 text-xs ${regla.cumplida ? 'text-success opacity-60' : 'text-ink-3'}`}
+                >
+                  <span className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${regla.cumplida ? 'bg-success/20 border-success' : 'border-line-strong'}`}>
+                    {regla.cumplida && <Check size={9} className="text-success" />}
+                  </span>
+                  {regla.label}
+                </div>
+              ))}
             </div>
-            {contraseñaValida && formData.contraseña && (
-              <p className="text-xs text-[#EBC6D6] mb-4">✓ Contraseña segura</p>
-            )}
+          </div>
+          {contraseñaValida && formData.contraseña && (
+            <p className="text-xs text-success flex items-center gap-1.5 mb-2 mt-1">
+              <ShieldCheck size={13} /> Contraseña segura
+            </p>
+          )}
 
-            {/* Confirmar contraseña */}
-            <div className="mb-2 relative">
-              <label htmlFor="confirmar-password-register" className="block text-sm text-white/70 mb-1.5">Confirmar contraseña</label>
+          <div className="mb-2 relative">
+            <label htmlFor="confirmar-password-register" className="block text-sm font-medium text-ink mb-1.5">Confirmar contraseña</label>
+            <div className="relative">
+              <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-3" />
               <input
                 id="confirmar-password-register"
                 type={verConfirmar ? 'text' : 'password'}
-                name='confirmarContraseña'
+                name="confirmarContraseña"
                 value={formData.confirmarContraseña}
                 onChange={handleChange}
                 disabled={cargando}
                 placeholder="••••••••"
-                className="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-white/30 focus:outline-none transition pr-10 disabled:opacity-50"
-                style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)' }}
+                className="input pl-10 pr-10"
+                autoComplete="new-password"
               />
               <button
                 type="button"
                 onClick={() => setVerConfirmar(!verConfirmar)}
-                className="absolute right-3 top-9 text-white/40 hover:text-white/80 transition"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-3 hover:text-accent transition"
                 tabIndex={-1}
+                aria-label="Mostrar contraseña"
               >
-                <IconoOjo ver={verConfirmar} />
-              </button>
-            </div>
-            <div className={`overflow-hidden transition-all duration-300 ${confirmarTocado && !contraseñasCoinciden ? 'max-h-6 opacity-100 mb-4' : 'max-h-0 opacity-0 mb-0'}`}>
-              <p className="text-xs text-[#F2A0B5]">Las contraseñas no coinciden</p>
-            </div>
-            {confirmarTocado && contraseñasCoinciden && (
-              <p className="text-xs text-[#EBC6D6] mb-6">✓ Coinciden</p>
-            )}
-
-            <div className="flex gap-3">
-              <button type="button" onClick={() => setStep(1)} disabled={cargando} className="flex-1 py-3 rounded-xl text-sm text-white/70 hover:bg-white/10 transition disabled:opacity-50" style={{ border: '1px solid rgba(255,255,255,0.15)' }}>
-                Atrás
-              </button>
-              <button type="button" onClick={handleRegister} disabled={cargando || !puedeContinuarPaso2} className="flex-1 py-3 bg-[#C77A9C] text-white rounded-xl text-sm font-medium hover:bg-[#A65E80] transition disabled:opacity-50">
-                {cargando ? 'Registrando...' : 'Continuar'}
+                {verConfirmar ? <EyeOff size={17} /> : <Eye size={17} />}
               </button>
             </div>
           </div>
-        )}
-
-        {/* Paso 3 */}
-        {step === 3 && (
-          <div className="text-center">
-            <div className="w-16 h-16 bg-[#C77A9C] rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-                <path d="M5 13l4 4L19 7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </div>
-            <h2 className="text-2xl font-medium text-white mb-2">¡Ya casi!</h2>
-            <p className="text-sm text-white/60 mb-8">
-              Te enviamos un correo a <span className="text-[#EBC6D6]">{formData.email}</span>. Confirma tu cuenta desde ese enlace antes de iniciar sesión.
+          <div className={`overflow-hidden transition-all duration-300 ${confirmarTocado && !contraseñasCoinciden ? 'max-h-6 opacity-100 my-2' : 'max-h-0 opacity-0'}`}>
+            <p className="text-xs text-error">Las contraseñas no coinciden</p>
+          </div>
+          {confirmarTocado && contraseñasCoinciden && (
+            <p className="text-xs text-success flex items-center gap-1.5 my-2">
+              <Check size={13} /> Las contraseñas coinciden
             </p>
-            <button type="button" onClick={() => navigate('/login')} className="w-full py-3 bg-[#C77A9C] text-white rounded-xl text-sm font-medium hover:bg-[#A65E80] transition">
-              Iniciar sesión
+          )}
+
+          <div className="flex gap-3 mt-5">
+            <button type="button" onClick={() => setStep(1)} disabled={cargando} className="btn btn-ghost btn-lg flex-1">
+              <ArrowLeft size={16} /> Atrás
+            </button>
+            <button
+              type="button"
+              onClick={handleRegister}
+              disabled={cargando || !puedeContinuarPaso2}
+              className="btn btn-primary btn-lg flex-1"
+            >
+              {cargando ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" /> Registrando...
+                </>
+              ) : (
+                <>Crear cuenta</>
+              )}
             </button>
           </div>
-        )}
+        </div>
+      )}
 
-        {step !== 3 && (
-          <p className="text-center text-sm text-white/50 mt-6">
-            ¿Ya tienes cuenta?{' '}
-            <button type="button" className="text-[#EBC6D6] cursor-pointer hover:underline bg-transparent border-0 p-0 font-inherit" onClick={() => navigate('/login')}>
-              Inicia sesión
-            </button>
+      {/* Paso 3 */}
+      {step === 3 && (
+        <div className="text-center anim-pop">
+          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-accent to-accent-strong flex items-center justify-center mx-auto mb-5 shadow-lg">
+            <Check size={30} className="text-white" />
+          </div>
+          <h2 className="font-display text-2xl font-bold mb-2">¡Ya casi!</h2>
+          <p className="text-sm text-ink-3 mb-8">
+            Te enviamos un correo a <span className="text-accent font-semibold">{formData.email}</span>. Confirma tu cuenta desde ese enlace antes de iniciar sesión.
           </p>
-        )}
+          <button type="button" onClick={() => navigate('/login')} className="btn btn-primary btn-lg w-full">
+            Iniciar sesión
+          </button>
+        </div>
+      )}
 
-      </div>
-    </div>
+      {step !== 3 && (
+        <p className="text-center text-sm text-ink-3 mt-6">
+          ¿Ya tienes cuenta?{' '}
+          <Link to="/login" className="text-accent font-semibold hover:underline">
+            Inicia sesión
+          </Link>
+        </p>
+      )}
+    </AuthLayout>
   )
 }
 

@@ -1,9 +1,11 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import registerBg from '../assets/register-bg.mp4'
-import LogoNathalia from '../components/LogoNathalia'
-import toast from 'react-hot-toast'
-import { API_URL } from "../config";
+import { useNavigate, Link } from 'react-router-dom'
+import { Eye, EyeOff, Loader2, Mail, Lock, ShieldCheck, LogIn } from 'lucide-react'
+import { toast } from 'react-hot-toast'
+import AuthLayout from '../components/AuthLayout'
+import { API_URL } from '../config'
+
+const REGEX_EMAIL = /^[^\s@]{1,64}@[^\s@]{1,255}\.[^\s@]{1,24}$/
 
 function AdminLogin() {
   const navigate = useNavigate()
@@ -24,8 +26,7 @@ function AdminLogin() {
       return
     }
 
-    const emailValido = /^[^\s@]{1,64}@[^\s@]{1,255}\.[^\s@]{1,24}$/.test(formData.email)
-    if (!emailValido) {
+    if (!REGEX_EMAIL.test(formData.email)) {
       toast.error('Ingresa un correo electrónico válido', { id: 'error-admin' })
       return
     }
@@ -51,7 +52,7 @@ function AdminLogin() {
 
       localStorage.setItem('token', datos.token)
       localStorage.setItem('usuario', JSON.stringify(datos.usuario))
-      navigate('/dashboard')
+      navigate('/')
     } catch (error) {
       console.error('Error en AdminLogin:', error)
       toast.error('No se pudo conectar con el servidor', { id: 'error-admin' })
@@ -60,40 +61,18 @@ function AdminLogin() {
     }
   }
 
-  const IconoOjo = ({ ver }) => ver ? (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-      <line x1="1" y1="1" x2="23" y2="23" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-    </svg>
-  ) : (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-      <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2"/>
-    </svg>
-  )
-
   return (
-    <div className="min-h-screen flex items-center justify-center relative overflow-y-auto px-4 py-10">
+    <AuthLayout subtitulo="Acceso privado" ancho="max-w-sm">
+      <h1 className="font-display text-xl sm:text-2xl font-bold text-center mb-1.5 flex items-center justify-center gap-2">
+        <ShieldCheck size={22} className="text-accent" /> Panel de Administración
+      </h1>
+      <p className="text-sm text-ink-3 text-center mb-7">Ingresa para gestionar Nathalia</p>
 
-      <video autoPlay loop muted playsInline
-        className="absolute inset-0 w-full h-full object-cover"
-        src={registerBg}
-      />
-      <div className="absolute inset-0 bg-[#1A0E13]/80"></div>
-
-      <div className="relative z-10 w-full max-w-sm rounded-2xl p-6 sm:p-8 my-auto"
-        style={{ background: 'rgba(42,21,33,0.45)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.15)' }}>
-
-        <div className="flex flex-col items-center gap-2 mb-6 sm:mb-8">
-          <LogoNathalia size={52} />
-          <span className="font-display text-[#F9E7EE] text-lg font-semibold tracking-tight text-center">Panel de Administración</span>
-        </div>
-
-        <form onSubmit={handleLogin}>
-
-          <div className="mb-4">
-            <label htmlFor="email-admin" className="block text-sm text-white/70 mb-1.5">Correo</label>
+      <form onSubmit={handleLogin}>
+        <div className="mb-4">
+          <label htmlFor="email-admin" className="block text-sm font-medium text-ink mb-1.5">Correo</label>
+          <div className="relative">
+            <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-3" />
             <input
               id="email-admin"
               type="email"
@@ -101,13 +80,16 @@ function AdminLogin() {
               value={formData.email}
               onChange={handleChange}
               placeholder="admin@nathalia.com"
-              className="w-full px-4 py-2.5 rounded-xl text-sm text-white placeholder-white/30 focus:outline-none transition"
-              style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)' }}
+              className="input pl-10"
+              autoComplete="email"
             />
           </div>
+        </div>
 
-          <div className="mb-2 relative">
-            <label htmlFor="password-admin" className="block text-sm text-white/70 mb-1.5">Contraseña</label>
+        <div className="mb-2">
+          <label htmlFor="password-admin" className="block text-sm font-medium text-ink mb-1.5">Contraseña</label>
+          <div className="relative">
+            <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-3" />
             <input
               id="password-admin"
               type={verContraseña ? 'text' : 'password'}
@@ -115,38 +97,38 @@ function AdminLogin() {
               value={formData.contraseña}
               onChange={handleChange}
               placeholder="••••••••"
-              className="w-full px-4 py-2.5 rounded-xl text-sm text-white placeholder-white/30 focus:outline-none transition pr-10"
-              style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)' }}
+              className="input pl-10 pr-10"
+              autoComplete="current-password"
             />
             <button
               type="button"
               onClick={() => setVerContraseña(!verContraseña)}
-              className="absolute right-3 top-9 text-white/40 hover:text-white/80 transition"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-3 hover:text-accent transition"
+              tabIndex={-1}
+              aria-label="Mostrar contraseña"
             >
-              <IconoOjo ver={verContraseña} />
+              {verContraseña ? <EyeOff size={17} /> : <Eye size={17} />}
             </button>
           </div>
+        </div>
 
-          <button
-            type="button"
-            className="block ml-auto text-right text-xs text-[#EBC6D6] mb-6 cursor-pointer hover:underline bg-transparent border-0 p-0"
-            onClick={() => navigate('/olvide-password-admin')}
-          >
-            ¿Olvidaste tu contraseña?
-          </button>
+        <Link to="/olvide-password-admin" className="block text-right text-xs text-accent hover:underline mb-6 mt-1">
+          ¿Olvidaste tu contraseña?
+        </Link>
 
-          <button
-            type="submit"
-            disabled={cargando}
-            className="w-full py-2.5 bg-[#C77A9C] text-white rounded-xl text-sm font-medium hover:bg-[#A65E80] transition disabled:opacity-50"
-          >
-            {cargando ? 'Ingresando...' : 'Ingresar'}
-          </button>
-
-        </form>
-
-      </div>
-    </div>
+        <button type="submit" disabled={cargando} className="btn btn-primary btn-lg w-full">
+          {cargando ? (
+            <>
+              <Loader2 size={16} className="animate-spin" /> Ingresando...
+            </>
+          ) : (
+            <>
+              <LogIn size={16} /> Ingresar
+            </>
+          )}
+        </button>
+      </form>
+    </AuthLayout>
   )
 }
 

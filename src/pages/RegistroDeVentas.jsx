@@ -108,9 +108,9 @@ function RegistroVentas() {
   if (error) return <p className="text-red-500">Error al cargar ventas: {error}</p>
 
   const stats = resumen ? [
-    { label: 'Ventas del mes', value: formatMoney(resumen.ventasDelMes), change: `${resumen.cambioVentas >= 0 ? '↑ +' : ''}${resumen.cambioVentas}% vs mes anterior`, changeClass: 'text-[#C77A9C]' },
-    { label: 'Clientes activos', value: String(resumen.clientesActivos), change: `↑ +${resumen.clientesNuevos} nuevos este mes`, changeClass: 'text-[#C77A9C]' },
-    { label: 'Kg vendidos', value: resumen.kgVendidos.toLocaleString('es-CO'), change: '↑ este mes', changeClass: 'text-[#C77A9C]' },
+    { label: 'Ventas del mes', value: formatMoney(resumen.ventasDelMes), change: `${resumen.cambioVentas >= 0 ? '↑ +' : ''}${resumen.cambioVentas}% vs mes anterior`, changeClass: 'text-accent' },
+    { label: 'Clientes activos', value: String(resumen.clientesActivos), change: `↑ +${resumen.clientesNuevos} nuevos este mes`, changeClass: 'text-accent' },
+    { label: 'Kg vendidos', value: resumen.kgVendidos.toLocaleString('es-CO'), change: '↑ este mes', changeClass: 'text-accent' },
     { label: 'Facturas emitidas', value: String(resumen.facturasEmitidas), change: 'este mes', changeClass: 'text-gray-400' },
   ] : []
 
@@ -141,14 +141,14 @@ function RegistroVentas() {
             type="button"
             onClick={exportarExcel}
             disabled={exportando}
-            className="flex items-center gap-1.5 text-sm px-4 py-2 rounded-lg bg-[#C77A9C] text-white hover:bg-[#178a64] transition disabled:opacity-50"
+            className="flex items-center gap-1.5 text-sm px-4 py-2 rounded-lg bg-accent text-white hover:bg-accent-strong transition disabled:opacity-50"
           >
             ↓ {exportando ? 'Generando...' : `Exportar página ${pagina}`}
           </button>
           <button
             type="button"
             onClick={() => setMostrarModal(true)}
-            className="flex items-center gap-1.5 text-sm px-4 py-2 rounded-lg bg-[#C77A9C] text-white hover:bg-[#178a64] transition"
+            className="flex items-center gap-1.5 text-sm px-4 py-2 rounded-lg bg-accent text-white hover:bg-accent-strong transition"
           >
             + Nueva venta
           </button>
@@ -168,7 +168,7 @@ function RegistroVentas() {
               value={busqueda}
               onChange={(e) => cambiarBusqueda(e.target.value)}
               placeholder="Buscar cliente, producto o factura..."
-              className="w-full pl-9 pr-4 py-2 bg-gray-50 rounded-lg text-sm focus:outline-none focus:bg-white focus:border focus:border-[#C77A9C] transition placeholder:text-[#5c7a6b] text-admin-heading"
+              className="w-full pl-9 pr-4 py-2 bg-gray-50 rounded-lg text-sm focus:outline-none focus:bg-white focus:border focus:border-accent transition placeholder:text-ink-3 text-admin-heading"
             />
           </div>
         </div>
@@ -203,7 +203,7 @@ function RegistroVentas() {
                       <td className="py-3 px-5 text-gray-600">{v.factura}</td>
                       <td className="py-3 px-5">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-[#C77A9C] flex items-center justify-center text-white text-xs font-medium flex-shrink-0">
+                          <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-white text-xs font-medium flex-shrink-0">
                             {v.cliente.charAt(0)}
                           </div>
                           <div>
@@ -264,7 +264,7 @@ function RegistroVentas() {
                 key={n}
                 onClick={() => setPagina(n)}
                 className={`w-8 h-8 rounded-lg text-sm transition ${
-                  n === pagina ? 'bg-[#C77A9C]/10 text-[#C77A9C] font-medium' : 'text-gray-500 hover:bg-gray-50'
+                  n === pagina ? 'bg-accent/10 text-accent font-medium' : 'text-gray-500 hover:bg-gray-50'
                 }`}
               >
                 {n}

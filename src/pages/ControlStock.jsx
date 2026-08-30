@@ -19,7 +19,7 @@ function colorParaProducto(id) {
 function barColorPorEstado(estado) {
   if (estado === 'Agotado') return '#E11D48'
   if (estado === 'Stock bajo') return '#D8932F'
-  return '#C77A9C'
+  return 'var(--na-rose)'
 }
 
 function textColorPorEstado(estado) {
@@ -132,7 +132,7 @@ function ControlStock() {
   const stats = resumen ? [
     { label: 'Productos', value: String(resumen.totalProductos), change: `↑ ${resumen.nuevosMes} este mes`, valueClass: 'text-gray-800', changeClass: 'text-gray-400' },
     { label: 'Stock bajo', value: String(resumen.stockBajo), change: 'requieren acción', valueClass: 'text-amber-500', changeClass: 'text-amber-500' },
-    { label: 'Ventas hoy', value: formatMoney(resumen.ventasHoy), change: `${resumen.cambioVentasHoy >= 0 ? '↑ +' : ''}${resumen.cambioVentasHoy}% vs ayer`, valueClass: 'text-gray-800', changeClass: 'text-[#C77A9C]' },
+    { label: 'Ventas hoy', value: formatMoney(resumen.ventasHoy), change: `${resumen.cambioVentasHoy >= 0 ? '↑ +' : ''}${resumen.cambioVentasHoy}% vs ayer`, valueClass: 'text-gray-800', changeClass: 'text-accent' },
     { label: 'Agotados', value: String(resumen.agotados), change: resumen.agotados > 0 ? 'requieren reabastecer' : 'todo en orden', valueClass: 'text-red-500', changeClass: 'text-red-500' },
   ] : []
 
@@ -169,14 +169,14 @@ function ControlStock() {
             type="button"
             onClick={exportarExcel}
             disabled={exportando}
-            className="flex items-center gap-1.5 text-sm px-4 py-2 rounded-lg border border-gray-300 bg-[#C77A9C] text-white hover:bg-[#178a64] transition disabled:opacity-50"
+            className="flex items-center gap-1.5 text-sm px-4 py-2 rounded-lg border border-gray-300 bg-accent text-white hover:bg-accent-strong transition disabled:opacity-50"
           >
             ↓ {exportando ? 'Generando...' : 'Exportar'}
           </button>
           <button
             type="button"
             onClick={() => abrirModal(null)}
-            className="flex items-center gap-1.5 text-sm px-4 py-2 rounded-lg bg-[#C77A9C] text-white hover:bg-[#178a64] transition"
+            className="flex items-center gap-1.5 text-sm px-4 py-2 rounded-lg bg-accent text-white hover:bg-accent-strong transition"
           >
             + Nuevo producto
           </button>
@@ -210,7 +210,7 @@ function ControlStock() {
               value={busqueda}
               onChange={(e) => cambiarBusqueda(e.target.value)}
               placeholder="Buscar producto, origen, variedad..."
-              className="w-full pl-9 pr-4 py-2 bg-gray-50 rounded-lg text-sm focus:outline-none focus:bg-white focus:border focus:border-[#C77A9C] transition"
+              className="w-full pl-9 pr-4 py-2 bg-gray-50 rounded-lg text-sm focus:outline-none focus:bg-white focus:border focus:border-accent transition"
             />
           </div>
         </div>
@@ -306,7 +306,7 @@ function ControlStock() {
                 key={n}
                 onClick={() => setPagina(n)}
                 className={`w-8 h-8 rounded-lg text-sm transition ${
-                  n === pagina ? 'bg-[#C77A9C]/10 text-[#C77A9C] font-medium' : 'text-gray-500 hover:bg-gray-50'
+                  n === pagina ? 'bg-accent/10 text-accent font-medium' : 'text-gray-500 hover:bg-gray-50'
                 }`}
               >
                 {n}

@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import registerBg from '../assets/register-bg.mp4'
-import toast from 'react-hot-toast'
-import { API_URL } from "../config";
-
+import { Eye, EyeOff, Loader2, Lock, ShieldCheck, Check } from 'lucide-react'
+import { toast } from 'react-hot-toast'
+import AuthLayout from '../components/AuthLayout'
+import { API_URL } from '../config'
 
 const REGEX_MAYUSCULA = /[A-Z]/
 const REGEX_NUMERO = /[0-9]/
@@ -55,7 +55,7 @@ function ResetPassword() {
     }
 
     setToken(tokenUrl)
-  }, [])
+  }, [navigate])
 
   function handleChange(e) {
     const { name, value } = e.target
@@ -74,12 +74,10 @@ function ResetPassword() {
       toast.error('Completa todos los campos', { id: 'error-reset' })
       return
     }
-
     if (!contraseñaValida) {
       toast.error('La contraseña no cumple los requisitos de seguridad', { id: 'error-reset' })
       return
     }
-
     if (!contraseñasCoinciden) {
       toast.error('Las contraseñas no coinciden', { id: 'error-reset' })
       return
@@ -91,10 +89,7 @@ function ResetPassword() {
       const respuesta = await fetch(`${API_URL}/auth/reset-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          token,
-          nuevaContraseña: formData.nuevaContraseña,
-        }),
+        body: JSON.stringify({ token, nuevaContraseña: formData.nuevaContraseña }),
       })
 
       const datos = await respuesta.json()
@@ -114,20 +109,6 @@ function ResetPassword() {
     }
   }
 
-  const IconoOjo = ({ ver }) => ver ? (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
-      <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" />
-      <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" />
-      <line x1="2" y1="2" x2="22" y2="22" />
-    </svg>
-  ) : (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z" />
-      <circle cx="12" cy="12" r="3" />
-    </svg>
-  )
-
   const reglasLista = [
     { id: 'longitud', label: 'Mínimo 6 caracteres', cumplida: reglasContraseña.longitud },
     { id: 'mayuscula', label: 'Una letra mayúscula', cumplida: reglasContraseña.mayuscula },
@@ -136,26 +117,15 @@ function ResetPassword() {
   ]
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative overflow-hidden px-4">
-      <video autoPlay loop muted playsInline
-        className="absolute inset-0 w-full h-full object-cover"
-        src={registerBg}
-      />
-      <div className="absolute inset-0 bg-[#1A0E13]/80"></div>
+    <AuthLayout subtitulo="Recupera tu acceso" ancho="max-w-sm">
+      <h1 className="font-display text-xl sm:text-2xl font-bold text-center mb-1.5">Nueva contraseña</h1>
+      <p className="text-sm text-ink-3 text-center mb-6">Elige una contraseña segura para tu cuenta</p>
 
-      <div className="relative z-10 w-full max-w-sm rounded-2xl p-8"
-        style={{ background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.15)' }}>
-
-        <div className="flex justify-center mb-6">
-          <span className="text-[#F9E7EE] text-2xl font-medium tracking-tight">Nathalia</span>
-        </div>
-
-        <h2 className="text-xl font-medium text-white mb-1 text-center">Nueva contraseña</h2>
-        <p className="text-sm text-white/60 mb-6 text-center">Elige una contraseña segura para tu cuenta</p>
-
-        <form onSubmit={handleReset}>
-          <div className="mb-2 relative">
-            <label htmlFor="nueva-password-reset" className="block text-sm text-white/70 mb-1.5">Nueva contraseña</label>
+      <form onSubmit={handleReset}>
+        <div className="mb-2">
+          <label htmlFor="nueva-password-reset" className="block text-sm font-medium text-ink mb-1.5">Nueva contraseña</label>
+          <div className="relative">
+            <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-3" />
             <input
               id="nueva-password-reset"
               type={verContraseña ? 'text' : 'password'}
@@ -166,38 +136,46 @@ function ResetPassword() {
               onBlur={() => setContraseñaFocus(false)}
               disabled={cargando}
               placeholder="••••••••"
-              className="w-full px-4 py-2.5 pr-11 rounded-xl text-sm text-white placeholder-white/30 focus:outline-none transition disabled:opacity-50"
-              style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)' }}
+              className="input pl-10 pr-10"
+              autoComplete="new-password"
             />
             <button
               type="button"
               onClick={() => setVerContraseña(!verContraseña)}
-              className="absolute right-3 top-9 text-white/40 hover:text-white/80 transition"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-3 hover:text-accent transition"
               tabIndex={-1}
+              aria-label="Mostrar contraseña"
             >
-              <IconoOjo ver={verContraseña} />
+              {verContraseña ? <EyeOff size={17} /> : <Eye size={17} />}
             </button>
           </div>
+        </div>
 
-          {/* Reglas de contraseña, con desaparición animada */}
-          <div className={`overflow-hidden transition-all duration-300 ${(contraseñaFocus || formData.nuevaContraseña) && !contraseñaValida ? 'max-h-32 opacity-100 mb-3' : 'max-h-0 opacity-0 mb-0'}`}>
-            <div className="flex flex-col gap-1 py-1">
-              {reglasLista.map((regla) => (
-                <div
-                  key={regla.id}
-                  className={`overflow-hidden transition-all duration-300 ${regla.cumplida ? 'max-h-0 opacity-0' : 'max-h-6 opacity-100'}`}
-                >
-                  <p className="text-xs text-white/40">○ {regla.label}</p>
-                </div>
-              ))}
-            </div>
+        <div className={`overflow-hidden transition-all duration-300 ${(contraseñaFocus || formData.nuevaContraseña) && !contraseñaValida ? 'max-h-32 opacity-100 my-3' : 'max-h-0 opacity-0'}`}>
+          <div className="flex flex-col gap-1.5">
+            {reglasLista.map((regla) => (
+              <div
+                key={regla.id}
+                className={`transition-all duration-300 flex items-center gap-2 text-xs ${regla.cumplida ? 'text-success opacity-60' : 'text-ink-3'}`}
+              >
+                <span className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${regla.cumplida ? 'bg-success/20 border-success' : 'border-line-strong'}`}>
+                  {regla.cumplida && <Check size={9} className="text-success" />}
+                </span>
+                {regla.label}
+              </div>
+            ))}
           </div>
-          {contraseñaValida && formData.nuevaContraseña && (
-            <p className="text-xs text-[#C77A9C] mb-4">✓ Contraseña segura</p>
-          )}
+        </div>
+        {contraseñaValida && formData.nuevaContraseña && (
+          <p className="text-xs text-success flex items-center gap-1.5 mb-2 mt-1">
+            <ShieldCheck size={13} /> Contraseña segura
+          </p>
+        )}
 
-          <div className="mb-2 relative">
-            <label htmlFor="confirmar-password-reset" className="block text-sm text-white/70 mb-1.5">Confirmar contraseña</label>
+        <div className="mb-2">
+          <label htmlFor="confirmar-password-reset" className="block text-sm font-medium text-ink mb-1.5">Confirmar contraseña</label>
+          <div className="relative">
+            <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-3" />
             <input
               id="confirmar-password-reset"
               type={verConfirmar ? 'text' : 'password'}
@@ -206,36 +184,40 @@ function ResetPassword() {
               onChange={handleChange}
               disabled={cargando}
               placeholder="••••••••"
-              className="w-full px-4 py-2.5 pr-11 rounded-xl text-sm text-white placeholder-white/30 focus:outline-none transition disabled:opacity-50"
-              style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)' }}
+              className="input pl-10 pr-10"
+              autoComplete="new-password"
             />
             <button
               type="button"
               onClick={() => setVerConfirmar(!verConfirmar)}
-              className="absolute right-3 top-9 text-white/40 hover:text-white/80 transition"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-3 hover:text-accent transition"
               tabIndex={-1}
+              aria-label="Mostrar contraseña"
             >
-              <IconoOjo ver={verConfirmar} />
+              {verConfirmar ? <EyeOff size={17} /> : <Eye size={17} />}
             </button>
           </div>
-          <div className={`overflow-hidden transition-all duration-300 ${confirmarTocado && !contraseñasCoinciden ? 'max-h-6 opacity-100 mb-4' : 'max-h-0 opacity-0 mb-0'}`}>
-            <p className="text-xs text-red-400">Las contraseñas no coinciden</p>
-          </div>
-          {confirmarTocado && contraseñasCoinciden && (
-            <p className="text-xs text-[#C77A9C] mb-6">✓ Coinciden</p>
+        </div>
+        <div className={`overflow-hidden transition-all duration-300 ${confirmarTocado && !contraseñasCoinciden ? 'max-h-6 opacity-100 my-2' : 'max-h-0 opacity-0'}`}>
+          <p className="text-xs text-error">Las contraseñas no coinciden</p>
+        </div>
+        {confirmarTocado && contraseñasCoinciden && (
+          <p className="text-xs text-success flex items-center gap-1.5 my-2">
+            <Check size={13} /> Las contraseñas coinciden
+          </p>
+        )}
+
+        <button type="submit" disabled={cargando || !puedeActualizar} className="btn btn-primary btn-lg w-full mt-2">
+          {cargando ? (
+            <>
+              <Loader2 size={16} className="animate-spin" /> Actualizando...
+            </>
+          ) : (
+            'Actualizar contraseña'
           )}
-
-          <button
-            type="submit"
-            disabled={cargando || !puedeActualizar}
-            className="w-full py-2.5 bg-[#C77A9C] text-white rounded-xl text-sm font-medium hover:bg-[#A65E80] transition disabled:opacity-50 mt-2"
-          >
-            {cargando ? 'Actualizando...' : 'Actualizar contraseña'}
-          </button>
-        </form>
-
-      </div>
-    </div>
+        </button>
+      </form>
+    </AuthLayout>
   )
 }
 

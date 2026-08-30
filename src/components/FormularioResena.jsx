@@ -48,10 +48,10 @@ function FormularioResena({ id_detalle, producto_nombre, onCerrar, onEnviado }) 
   }
 
   return (
-    <div className="rounded-xl border border-white/15 bg-white/[0.08] backdrop-blur-xl p-6 sm:p-8">
+    <div className="card p-6 sm:p-8">
       <div className="flex justify-between items-start mb-4">
-        <h3 className="text-sm font-semibold text-white">Reseñar {producto_nombre}</h3>
-        <button type="button" onClick={onCerrar} className="text-white/40 text-xs hover:text-white">✕</button>
+        <h3 className="text-sm font-semibold text-ink">Reseñar {producto_nombre}</h3>
+        <button type="button" onClick={onCerrar} className="text-ink-3 text-xs hover:text-ink">✕</button>
       </div>
 
       <div className="flex gap-2 mb-4">
@@ -62,7 +62,7 @@ function FormularioResena({ id_detalle, producto_nombre, onCerrar, onEnviado }) 
             onClick={() => setCalificacion(valor)}
             onMouseEnter={() => setHoverCalificacion(valor)}
             onMouseLeave={() => setHoverCalificacion(0)}
-            className="text-3xl leading-none transition-transform hover:scale-110"
+            className="text-3xl leading-none text-gold transition-transform hover:scale-110"
           >
             {(hoverCalificacion || calificacion) >= valor ? '★' : '☆'}
           </button>
@@ -72,26 +72,26 @@ function FormularioResena({ id_detalle, producto_nombre, onCerrar, onEnviado }) 
       <textarea
         value={comentario}
         onChange={(e) => setComentario(e.target.value)}
-        placeholder="Cuéntanos qué te pareció este café: sabor, aroma, empaque..."
+        placeholder="Cuéntanos qué te pareció el producto: calidad, acabado, precio..."
         rows={4}
-        className="w-full text-sm bg-white/[0.05] border border-white/10 rounded-lg p-4
-                   text-white placeholder-white/30 focus:outline-none focus:border-[#C77A9C]
+        className="w-full text-sm bg-surface border border-line rounded-lg p-4
+                   text-ink placeholder:text-ink-3 focus:outline-none focus:border-accent
                    resize-none"
       />
 
-      {error && <p className="text-xs text-[#D4AF37] mt-2">{error}</p>}
+      {error && <p className="text-xs text-gold mt-2">{error}</p>}
 
       <div className="flex gap-3 mt-4">
         <button
           type="button"
           onClick={enviarResena}
           disabled={enviando}
-          className="text-sm bg-[#C77A9C] text-white px-5 py-2.5 rounded-lg font-medium
-                     disabled:opacity-50"
+          className="text-sm bg-accent text-white px-5 py-2.5 rounded-lg font-medium
+                     hover:bg-accent-strong disabled:opacity-50"
         >
           {enviando ? 'Enviando...' : 'Enviar reseña'}
         </button>
-        <button type="button" onClick={onCerrar} className="text-sm text-white/40 px-5 py-2.5">
+        <button type="button" onClick={onCerrar} className="text-sm text-ink-3 px-5 py-2.5">
           Cancelar
         </button>
       </div>

@@ -1,10 +1,9 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import registerBg from '../assets/register-bg.mp4'
-import toast from 'react-hot-toast'
-import { API_URL } from "../config";
-
-
+import { useNavigate, Link } from 'react-router-dom'
+import { Mail, Loader2, ArrowLeft } from 'lucide-react'
+import { toast } from 'react-hot-toast'
+import AuthLayout from '../components/AuthLayout'
+import { API_URL } from '../config'
 
 const REGEX_EMAIL = /^[^\s@]{1,64}@[^\s@]{1,255}\.[^\s@]{1,24}$/
 
@@ -13,7 +12,7 @@ function OlvidePassword() {
   const [email, setEmail] = useState('')
   const [cargando, setCargando] = useState(false)
   const [erroresEmail, setErroresEmail] = useState('')
-  
+
   const emailValido = REGEX_EMAIL.test(email.trim())
 
   function handleChange(e) {
@@ -30,7 +29,6 @@ function OlvidePassword() {
       toast.error('Ingresa tu correo electrónico', { id: 'error-olvide' })
       return
     }
-
     if (!emailValido) {
       toast.error('Ingresa un correo electrónico válido', { id: 'error-olvide' })
       return
@@ -47,9 +45,6 @@ function OlvidePassword() {
 
       const datos = await respuesta.json()
 
-      // Igual que en OlvidePasswordAdmin: fetch no lanza excepción por códigos
-      // de error HTTP (429, 400, 500...), solo por fallos de red. Hay que
-      // revisar respuesta.ok explícitamente o un 429 se muestra como éxito.
       if (!respuesta.ok) {
         toast.error(datos.error || 'No se pudo enviar el correo', { id: 'error-olvide' })
         return
@@ -66,26 +61,15 @@ function OlvidePassword() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative overflow-hidden px-4">
-      <video autoPlay loop muted playsInline
-        className="absolute inset-0 w-full h-full object-cover"
-        src={registerBg}
-      />
-      <div className="absolute inset-0 bg-[#1A0E13]/80"></div>
+    <AuthLayout subtitulo="Recupera tu acceso" ancho="max-w-sm">
+      <h1 className="font-display text-xl sm:text-2xl font-bold text-center mb-1.5">¿Olvidaste tu contraseña?</h1>
+      <p className="text-sm text-ink-3 text-center mb-7">Ingresa tu correo y te enviaremos un enlace para restablecerla</p>
 
-      <div className="relative z-10 w-full max-w-sm rounded-2xl p-8"
-        style={{ background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.15)' }}>
-
-        <div className="flex justify-center mb-6">
-          <span className="text-[#F9E7EE] text-2xl font-medium tracking-tight">Nathalia</span>
-        </div>
-
-        <h2 className="text-xl font-medium text-white mb-1 text-center">¿Olvidaste tu contraseña?</h2>
-        <p className="text-sm text-white/60 mb-6 text-center">Ingresa tu correo y te enviaremos un enlace para restablecerla</p>
-
-        <form onSubmit={handleSubmit}>
-          <div className="mb-6">
-            <label htmlFor="email-olvide" className="block text-sm text-white/70 mb-1.5">Correo electrónico</label>
+      <form onSubmit={handleSubmit}>
+        <div className="mb-6">
+          <label htmlFor="email-olvide" className="block text-sm font-medium text-ink mb-1.5">Correo electrónico</label>
+          <div className="relative">
+            <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-3" />
             <input
               id="email-olvide"
               type="email"
@@ -93,29 +77,30 @@ function OlvidePassword() {
               onChange={handleChange}
               disabled={cargando}
               placeholder="tucorreo@ejemplo.com"
-              className="w-full px-4 py-2.5 rounded-xl text-sm text-white placeholder-white/30 focus:outline-none transition disabled:opacity-50"
-              style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)' }}
+              className="input pl-10"
+              autoComplete="email"
             />
-            {erroresEmail && <p className="text-xs text-red-400 mt-1">{erroresEmail}</p>}
           </div>
+          {erroresEmail && <p className="text-xs text-error mt-1.5">{erroresEmail}</p>}
+        </div>
 
-          <button
-            type="submit"
-            disabled={cargando || !emailValido}
-            className="w-full py-2.5 bg-[#C77A9C] text-white rounded-xl text-sm font-medium hover:bg-[#A65E80] transition disabled:opacity-50 mb-4"
-          >
-            {cargando ? 'Enviando...' : 'Enviar enlace'}
-          </button>
+        <button type="submit" disabled={cargando || !emailValido} className="btn btn-primary btn-lg w-full mb-4">
+          {cargando ? (
+            <>
+              <Loader2 size={16} className="animate-spin" /> Enviando...
+            </>
+          ) : (
+            'Enviar enlace'
+          )}
+        </button>
 
-          <p className="text-center text-sm text-white/50">
-            <button type="button" className="text-[#EBC6D6] cursor-pointer hover:underline bg-transparent border-0 p-0 font-inherit" onClick={() => navigate('/login')}>
-              Volver al inicio de sesión
-            </button>
-          </p>
-        </form>
-
-      </div>
-    </div>
+        <p className="text-center text-sm text-ink-3">
+          <Link to="/login" className="inline-flex items-center gap-1.5 text-accent font-semibold hover:underline">
+            <ArrowLeft size={14} /> Volver al inicio de sesión
+          </Link>
+        </p>
+      </form>
+    </AuthLayout>
   )
 }
 

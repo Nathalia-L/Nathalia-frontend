@@ -1,6 +1,12 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { ShoppingBag, Menu, X, ArrowLeft } from 'lucide-react'
 import LogoNathalia from '../components/LogoNathalia'
+import EditorInSitu from '../components/EditorInSitu'
+import PanelMarca from '../components/PanelMarca'
+import ThemeToggle from '../components/ThemeToggle'
+import { useCarrito } from '../context/CarritoContext'
+import { suscribirseContenido, esAdmin } from '../utils/contenido'
 
 const ENLACES = [
   { to: '/cliente', label: 'Inicio', end: true },
@@ -11,55 +17,46 @@ const ENLACES = [
 function ClienteLayout() {
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
-  const [cuentaOpen, setCuentaOpen] = useState(false)
-  const cuentaRef = useRef(null)
-
-  const cliente = (() => {
-    try {
-      return JSON.parse(localStorage.getItem('cliente')) || {}
-    } catch {
-      return {}
-    }
-  })()
-
-  const inicial = (cliente.nombre || 'C').charAt(0).toUpperCase()
+  const [, forzarRender] = useState(0)
+  const soyAdmin = esAdmin()
+  const { totalUnidades } = useCarrito()
 
   useEffect(() => {
-    function cerrarSiClicFuera(e) {
-      if (cuentaRef.current && !cuentaRef.current.contains(e.target)) {
-        setCuentaOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', cerrarSiClicFuera)
-    return () => document.removeEventListener('mousedown', cerrarSiClicFuera)
+    // Refresca el logo (nombre, eslogan, forma, colores) cuando el admin
+    // edita desde el panel, sin necesidad de recargar la página.
+    return suscribirseContenido(() => forzarRender((v) => v + 1))
   }, [])
 
-  function cerrarSesion() {
-    localStorage.removeItem('token')
-    localStorage.removeItem('cliente')
-    navigate('/')
-  }
-
   return (
-    <div className="min-h-screen" style={{ background: '#1A0E13' }}>
+    <div className="min-h-screen bg-bg text-ink">
       {/* NAVBAR */}
-      <nav
-        className="sticky top-0 z-40 backdrop-blur-md border-b"
-        style={{ background: 'rgba(26,14,19,0.85)', borderColor: 'rgba(255,255,255,0.1)' }}
-      >
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <nav className="sticky top-0 z-40 glass border-b border-line">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-8 sm:gap-10">
-            <button type="button" onClick={() => navigate('/cliente')} className="flex items-center gap-2.5 shrink-0">
-              <LogoNathalia size={34} showText={false} />
-              <span className="font-display text-[#F9E7EE] text-lg font-semibold tracking-tight">Nathalia</span>
+            {/* Flecha para volver al inicio/tienda */}
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
+              className="w-9 h-9 rounded-full border border-line flex items-center justify-center text-ink-2 hover:text-accent hover:border-accent transition shrink-0"
+              aria-label="Volver atrás"
+              title="Volver atrás"
+            >
+              <ArrowLeft size={17} />
             </button>
+            <EditorInSitu esEdicion={soyAdmin} titulo="Personalizar marca" ancho="w-80 sm:w-[22rem]" botonPosicion="-top-1 -right-1" edicion={<PanelMarca />}>
+              <button type="button" onClick={() => navigate('/cliente')} className="flex items-center gap-2.5 shrink-0" aria-label="Inicio">
+                <LogoNathalia size={36} showText />
+              </button>
+            </EditorInSitu>
             <div className="hidden md:flex items-center gap-7">
               {ENLACES.map((l) => (
                 <NavLink key={l.to} to={l.to} end={l.end} className="text-sm transition">
                   {({ isActive }) => (
-                    <span className={`relative pb-5 -mb-5 ${isActive ? 'text-white font-medium' : 'text-white/50 hover:text-white'}`}>
+                    <span className={`relative pb-5 -mb-5 ${isActive ? 'text-accent font-semibold' : 'text-ink-2 hover:text-ink'}`}>
                       {l.label}
-                      {isActive && <span className="absolute left-0 right-0 bottom-[18px] h-[2px] bg-[#C77A9C] rounded-full"></span>}
+                      {isActive && (
+                        <span className="absolute left-0 right-0 bottom-[18px] h-[2px] bg-gradient-to-r from-accent to-gold rounded-full"></span>
+                      )}
                     </span>
                   )}
                 </NavLink>
@@ -68,60 +65,33 @@ function ClienteLayout() {
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Cuenta (desktop) */}
-            <div className="relative hidden md:block" ref={cuentaRef}>
-             <button
-  type="button"
-  onClick={() => setCuentaOpen((o) => !o)}
-                className="w-9 h-9 rounded-full bg-[#C77A9C] text-white text-sm font-semibold flex items-center justify-center hover:bg-[#A65E80] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C77A9C] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1A0E13]"
-              >
-                {inicial}
-              </button>
-              {cuentaOpen && (
-                <div
-                  className="absolute right-0 mt-2 w-48 rounded-xl overflow-hidden py-1"
-                  style={{ background: 'rgba(42,21,33,0.95)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.15)' }}
-                >
-                  <p className="px-4 py-2 text-xs text-white/40 truncate border-b" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>{cliente.email}</p>
-                  <button
-  type="button"
-  onClick={() => { setCuentaOpen(false); navigate('/cliente/cuenta') }}
-                    className="w-full text-left px-4 py-2.5 text-sm text-white/80 hover:bg-white/10 hover:text-white transition"
-                  >
-                    Mi cuenta
-                  </button>
-                  <button
-  type="button"
-  onClick={cerrarSesion}
-  className="w-full text-left px-4 py-2.5 text-sm text-[#E9CD8A] hover:bg-white/10 transition"
-                  >
-                    Cerrar sesión
-                  </button>
-                </div>
+            {/* Carrito */}
+            <button
+              type="button"
+              onClick={() => navigate('/cliente/carrito')}
+              className="relative w-9 h-9 rounded-full border border-line flex items-center justify-center text-ink-2 hover:text-accent hover:border-accent transition"
+              aria-label="Carrito"
+            >
+              <ShoppingBag size={17} />
+              {totalUnidades > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-gradient-to-br from-accent to-accent-strong text-white text-[10px] font-bold flex items-center justify-center">
+                  {totalUnidades}
+                </span>
               )}
-            </div>
+            </button>
+
+            <ThemeToggle />
 
             {/* Hamburguesa móvil */}
-            <button type="button" className="md:hidden text-white/70 hover:text-white transition p-2" onClick={() => setMenuOpen((o) => !o)}> 
-              {menuOpen ? (
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                  <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                </svg>
-              ) : (
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                  <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                </svg>
-              )}
+            <button type="button" className="md:hidden text-ink-2 hover:text-ink transition p-2" onClick={() => setMenuOpen((o) => !o)}>
+              {menuOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
           </div>
         </div>
 
         {/* Menú móvil */}
         {menuOpen && (
-          <div
-            className="md:hidden backdrop-blur-md border-t px-4 sm:px-6 py-4 flex flex-col gap-1"
-            style={{ background: 'rgba(26,14,19,0.98)', borderColor: 'rgba(255,255,255,0.1)' }}
-          >
+          <div className="md:hidden border-t border-line bg-bg px-4 sm:px-6 py-4 flex flex-col gap-1 anim-sheet-up">
             {ENLACES.map((l) => (
               <NavLink
                 key={l.to}
@@ -129,24 +99,12 @@ function ClienteLayout() {
                 end={l.end}
                 onClick={() => setMenuOpen(false)}
                 className={({ isActive }) =>
-                  `text-sm py-2.5 transition ${isActive ? 'text-white font-medium' : 'text-white/60'}`
+                  `text-sm py-2.5 px-3 rounded-lg transition ${isActive ? 'text-accent font-semibold bg-accent-light/50' : 'text-ink-2'}`
                 }
               >
                 {l.label}
               </NavLink>
             ))}
-            <div className="flex flex-col gap-1 pt-2 mt-2 border-t" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
-              <button
-  type="button"
-  onClick={() => { setMenuOpen(false); navigate('/cliente/cuenta') }}
-  className="text-left text-sm py-2.5 text-white/60"
-              >
-                Mi cuenta
-              </button>
-              <button type="button" onClick={cerrarSesion} className="text-left text-sm py-2.5 text-[#E9CD8A]">
-                Cerrar sesión
-              </button>
-            </div>
           </div>
         )}
       </nav>

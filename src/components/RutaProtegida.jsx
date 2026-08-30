@@ -24,7 +24,7 @@ function RutaProtegida({ children }) {
     }
     catch (error) {
         console.error('Error en RutaProtegida:', error)
-        return <Navigate to="/login" replace />
+        return <Navigate to="/control-interno" replace />
     }
 
     return children;

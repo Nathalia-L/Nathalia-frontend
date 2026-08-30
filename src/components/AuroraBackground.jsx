@@ -1,69 +1,64 @@
-export default function AuroraBackground() {
+// AuroraBackground — blobs animados con la paleta Nathalia (rosa, dorado, blush, ciruela).
+
+export default function AuroraBackground({ intensidad = 1 }) {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-      {/* Blob verde sage — se mueve en diagonal lenta */}
       <div
         className="aurora-blob aurora-blob-1"
         style={{
-          position: "absolute",
-          width: "600px",
-          height: "600px",
-          top: "-10%",
-          left: "-5%",
-          borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(199,122,156,0.20) 0%, transparent 70%)",
-          filter: "blur(60px)",
-          animation: "aurora-drift-1 20s ease-in-out infinite",
+          position: 'absolute',
+          width: '620px',
+          height: '620px',
+          top: '-12%',
+          left: '-6%',
+          borderRadius: '50%',
+          background: `radial-gradient(circle, rgba(199,122,156,${0.34 * intensidad}) 0%, transparent 70%)`,
+          filter: 'blur(70px)',
+          animation: 'aurora-drift-1 20s ease-in-out infinite',
         }}
       />
-
-      {/* Blob mint — se mueve en horizontal */}
       <div
         className="aurora-blob aurora-blob-2"
         style={{
-          position: "absolute",
-          width: "500px",
-          height: "500px",
-          top: "20%",
-          right: "-10%",
-          borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(235,198,214,0.18) 0%, transparent 70%)",
-          filter: "blur(50px)",
-          animation: "aurora-drift-2 25s ease-in-out infinite",
+          position: 'absolute',
+          width: '520px',
+          height: '520px',
+          top: '18%',
+          right: '-10%',
+          borderRadius: '50%',
+          background: `radial-gradient(circle, rgba(212,175,55,${0.22 * intensidad}) 0%, transparent 70%)`,
+          filter: 'blur(60px)',
+          animation: 'aurora-drift-2 25s ease-in-out infinite',
         }}
       />
-
-      {/* Blob verde brand — se mueve en vertical */}
       <div
         className="aurora-blob aurora-blob-3"
         style={{
-          position: "absolute",
-          width: "450px",
-          height: "450px",
-          bottom: "-5%",
-          left: "30%",
-          borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(199,122,156,0.15) 0%, transparent 70%)",
-          filter: "blur(55px)",
-          animation: "aurora-drift-3 18s ease-in-out infinite",
+          position: 'absolute',
+          width: '480px',
+          height: '480px',
+          bottom: '-8%',
+          left: '28%',
+          borderRadius: '50%',
+          background: `radial-gradient(circle, rgba(199,122,156,${0.26 * intensidad}) 0%, transparent 70%)`,
+          filter: 'blur(60px)',
+          animation: 'aurora-drift-3 18s ease-in-out infinite',
         }}
       />
-
-      {/* Blob verde suave — efecto de profundidad */}
       <div
         className="aurora-blob aurora-blob-4"
         style={{
-          position: "absolute",
-          width: "350px",
-          height: "350px",
-          top: "40%",
-          left: "50%",
-          borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(79,138,112,0.12) 0%, transparent 70%)",
-          filter: "blur(45px)",
-          animation: "aurora-drift-4 22s ease-in-out infinite",
+          position: 'absolute',
+          width: '360px',
+          height: '360px',
+          top: '38%',
+          left: '48%',
+          borderRadius: '50%',
+          background: `radial-gradient(circle, rgba(233,205,138,${0.2 * intensidad}) 0%, transparent 70%)`,
+          filter: 'blur(50px)',
+          animation: 'aurora-drift-4 22s ease-in-out infinite',
         }}
       />
     </div>
-  );
+  )
 }

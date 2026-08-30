@@ -45,7 +45,7 @@ export default function LoyaltyRing({ puntos = 0, nivel, progresoPct = 0, puntos
             cy={size / 2}
             r={radio}
             fill="none"
-            stroke="rgba(255,255,255,0.08)"
+            stroke="var(--bg-line)"
             strokeWidth={grosor}
           />
           {/* Progreso animado */}
@@ -69,8 +69,8 @@ export default function LoyaltyRing({ puntos = 0, nivel, progresoPct = 0, puntos
         {/* Contenido central */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span className="text-3xl mb-1">{nivel?.icono}</span>
-          <span className="text-lg font-bold text-white">{puntos.toLocaleString("es-CO")}</span>
-          <span className="text-[10px] text-white/40 uppercase tracking-wide">puntos</span>
+          <span className="text-lg font-bold text-ink">{puntos.toLocaleString("es-CO")}</span>
+          <span className="text-[10px] text-ink-3 uppercase tracking-wide">puntos</span>
         </div>
       </div>
 
@@ -80,11 +80,11 @@ export default function LoyaltyRing({ puntos = 0, nivel, progresoPct = 0, puntos
           Nivel {nivel?.nombre}
         </p>
         {puntosFaltantes > 0 ? (
-          <p className="text-xs text-white/40 mt-1">
-            Faltan <span className="text-white/60 font-medium">{puntosFaltantes.toLocaleString("es-CO")}</span> pts para el siguiente nivel
+          <p className="text-xs text-ink-3 mt-1">
+            Faltan <span className="text-ink-2 font-medium">{puntosFaltantes.toLocaleString("es-CO")}</span> pts para el siguiente nivel
           </p>
         ) : (
-          <p className="text-xs text-white/40 mt-1">Nivel máximo alcanzado 🎉</p>
+          <p className="text-xs text-ink-3 mt-1">Nivel máximo alcanzado 🎉</p>
         )}
       </div>
     </div>

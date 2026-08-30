@@ -1,11 +1,13 @@
-// Nathalia - Pantalla de Login
-import { useNavigate } from 'react-router-dom'
+// Nathalia — Pantalla de Login
+import { useNavigate, Link } from 'react-router-dom'
 import { useState, useRef } from 'react'
-import LogoNathalia from '../components/LogoNathalia'
-import registerBg from '../assets/register-bg.mp4'
-import toast from 'react-hot-toast'
-import { API_URL, FRONTEND_URL } from "../config";
+import { Eye, EyeOff, Loader2, Mail, Lock } from 'lucide-react'
+import { toast } from 'react-hot-toast'
+import AuthLayout from '../components/AuthLayout'
+import { API_URL, FRONTEND_URL } from '../config'
 import { useCarrito } from '../context/CarritoContext'
+
+const REGEX_EMAIL = /^[^\s@]{1,64}@[^\s@]{1,255}\.[^\s@]{1,24}$/
 
 function Login() {
   const navigate = useNavigate()
@@ -14,12 +16,7 @@ function Login() {
   const [verContraseña, setVerContraseña] = useState(false)
   const loginEnCurso = useRef(false)
 
-  const [formData, setFormData] = useState({
-    email: '',
-    contraseña: ''
-  })
-
-  const [error, setError] = useState('')
+  const [formData, setFormData] = useState({ email: '', contraseña: '' })
 
   function handleChange(e) {
     const { name, value } = e.target
@@ -31,8 +28,6 @@ function Login() {
 
     if (loginEnCurso.current) return
 
-    setError('')
-
     toast.dismiss()
 
     if (!formData.email.trim() || !formData.contraseña.trim()) {
@@ -40,9 +35,7 @@ function Login() {
       return
     }
 
-    const emailValido = /^[^\s@]{1,64}@[^\s@]{1,255}\.[^\s@]{1,24}$/.test(formData.email)
-
-    if (!emailValido) {
+    if (!REGEX_EMAIL.test(formData.email)) {
       toast.error('Ingresa un correo electrónico válido')
       return
     }
@@ -53,9 +46,7 @@ function Login() {
     try {
       const respuesta = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
-        headers: {
-          'Content-type': 'application/json'
-        },
+        headers: { 'Content-type': 'application/json' },
         body: JSON.stringify({
           email: formData.email,
           contraseña: formData.contraseña,
@@ -66,27 +57,21 @@ function Login() {
 
       if (!respuesta.ok) {
         toast.dismiss()
-        toast.error(
-          datos.error || 'Error al iniciar sesion'
-        )
+        toast.error(datos.error || 'Error al iniciar sesión')
         return
       }
 
       toast.dismiss()
 
       localStorage.setItem('token', datos.token)
-      localStorage.setItem(
-        'cliente',
-        JSON.stringify(datos.cliente)
-      )
+      localStorage.setItem('cliente', JSON.stringify(datos.cliente))
       actualizarPerfilCliente(datos.cliente)
 
       navigate('/cliente')
-
     } catch (error) {
       console.error('Error en Login:', error)
       toast.dismiss()
-      toast.error('Error al iniciar sesion')
+      toast.error('Error al iniciar sesión')
     } finally {
       setLoading(false)
       loginEnCurso.current = false
@@ -118,10 +103,7 @@ function Login() {
       if (error) {
         toast.dismiss()
         toast.error(error)
-        window.removeEventListener(
-          'message',
-          manejarMensaje
-        )
+        window.removeEventListener('message', manejarMensaje)
         popup.close()
         return
       }
@@ -140,163 +122,66 @@ function Login() {
         localStorage.setItem('cliente', JSON.stringify(clienteObj))
         actualizarPerfilCliente(clienteObj)
 
-        window.removeEventListener(
-          'message',
-          manejarMensaje
-        )
-
+        window.removeEventListener('message', manejarMensaje)
         popup.close()
         navigate('/cliente')
       }
     }
 
-    window.addEventListener(
-      'message',
-      manejarMensaje
-    )
+    window.addEventListener('message', manejarMensaje)
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative overflow-hidden px-4">
-
-      <style>{`
-        @keyframes spin {
-          to {
-            transform: rotate(360deg);
-          }
-        }
-
-        .spinner {
-          animation: spin 0.6s linear infinite;
-        }
-
-        .input-glow:focus {
-          box-shadow: 0 0 0 3px rgba(199, 122, 156, 0.15);
-        }
-      `}</style>
-
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover"
-        src={registerBg}
-      />
-
-      <div className="absolute inset-0 bg-[#1A0E13]/75"></div>
+    <AuthLayout subtitulo="Bienvenida a Nathalia" ancho="max-w-[440px]">
+      <h1 className="font-display text-2xl sm:text-3xl font-bold text-center mb-1.5">Bienvenido de nuevo</h1>
+      <p className="text-sm text-ink-3 text-center mb-7">Inicia sesión en tu cuenta de Nathalia</p>
 
       <button
         type="button"
-        onClick={() => navigate('/')}
-        className="absolute top-6 left-6 z-20 flex items-center gap-1.5 text-sm text-white/50 hover:text-white transition"
+        onClick={iniciarLoginGoogle}
+        className="w-full flex items-center justify-center gap-3 py-3 rounded-xl text-sm font-medium text-ink border border-line-strong hover:border-accent hover:bg-accent-light/40 transition mb-6"
       >
-        ← Volver
+        <svg width="18" height="18" viewBox="0 0 18 18">
+          <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" />
+          <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 1 9 18z" />
+          <path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" />
+          <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" />
+        </svg>
+        Continuar con Google
       </button>
 
-      <div
-        className="relative z-10 w-full max-w-md rounded-2xl p-6 sm:p-8 my-10"
-        style={{
-          background: 'rgba(42,21,33,0.45)',
-          backdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255,255,255,0.15)'
-        }}
-      >
+      <div className="flex items-center gap-3 mb-6">
+        <div className="flex-1 h-px bg-line-strong"></div>
+        <span className="text-xs text-ink-3">o continúa con tu correo</span>
+        <div className="flex-1 h-px bg-line-strong"></div>
+      </div>
 
-        <div className="flex flex-col items-center justify-center gap-2 mb-8">
-
-          <LogoNathalia size={56} />
-
-          <span className="text-[#F9E7EE] text-xl font-medium tracking-tight">
-            Bienvenida a Nathalia
-          </span>
-
-        </div>
-
-        <h2 className="text-2xl font-medium text-white mb-1 text-center">
-          Bienvenido de nuevo
-        </h2>
-
-        <p className="text-sm text-white/60 mb-8 text-center">
-          Inicia sesión en tu cuenta de Nathalia
-        </p>
-
-        <form onSubmit={handleLogin}>
-
-          <button
-            type="button"
-            onClick={iniciarLoginGoogle}
-            className="w-full flex items-center justify-center gap-3 py-2.5 rounded-xl text-sm text-white hover:bg-white/10 transition mb-6"
-            style={{
-              background: 'rgba(255,255,255,0.08)',
-              border: '1px solid rgba(255,255,255,0.15)'
-            }}
-          >
-            <svg width="18" height="18" viewBox="0 0 18 18">
-              <path
-                fill="#4285F4"
-                d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"
-              />
-
-              <path
-                fill="#34A853"
-                d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 1 9 18z"
-              />
-
-              <path
-                fill="#FBBC05"
-                d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"
-              />
-
-              <path
-                fill="#EA4335"
-                d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"
-              />
-            </svg>
-
-            Continuar con Google
-          </button>
-
-          <div className="flex items-center gap-3 mb-6">
-
-            <div className="flex-1 h-px bg-white/15"></div>
-
-            <span className="text-xs text-white/40">
-              o continúa con tu correo
-            </span>
-
-            <div className="flex-1 h-px bg-white/15"></div>
-
-          </div>
-
-          <div className="mb-4">
-
-            <label htmlFor="email-login" className="block text-sm text-white/70 mb-1.5">
-              Correo electrónico
-            </label>
-
+      <form onSubmit={handleLogin}>
+        <div className="mb-4">
+          <label htmlFor="email-login" className="block text-sm font-medium text-ink mb-1.5">
+            Correo electrónico
+          </label>
+          <div className="relative">
+            <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-3" />
             <input
               id="email-login"
               type="email"
+              name="email"
               value={formData.email}
               onChange={handleChange}
-              name="email"
               placeholder="tucorreo@ejemplo.com"
-              className="input-glow w-full px-4 py-2.5 rounded-xl text-sm text-white placeholder-white/30 focus:outline-none transition"
-              style={{
-                background: 'rgba(255,255,255,0.08)',
-                border: '1px solid rgba(255,255,255,0.15)'
-              }}
+              className="input pl-10"
+              autoComplete="email"
             />
-
           </div>
+        </div>
 
-          <div className="mb-6 relative">
-
-            <label htmlFor="password-login" className="block text-sm text-white/70 mb-1.5">
-              Contraseña
-            </label>
-
+        <div className="mb-2">
+          <label htmlFor="password-login" className="block text-sm font-medium text-ink mb-1.5">
+            Contraseña
+          </label>
+          <div className="relative">
+            <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-3" />
             <input
               id="password-login"
               type={verContraseña ? 'text' : 'password'}
@@ -304,151 +189,43 @@ function Login() {
               value={formData.contraseña}
               onChange={handleChange}
               placeholder="••••••••"
-              className="w-full px-4 py-2.5 rounded-xl text-sm text-white placeholder-white/30 focus:outline-none transition pr-10"
-              style={{
-                background: 'rgba(255,255,255,0.08)',
-                border: '1px solid rgba(255,255,255,0.15)'
-              }}
+              className="input pl-10 pr-10"
+              autoComplete="current-password"
             />
-
             <button
               type="button"
-              onClick={() =>
-                setVerContraseña(!verContraseña)
-              }
-              className="absolute right-3 top-9 text-white/40 hover:text-white/80 transition"
+              onClick={() => setVerContraseña(!verContraseña)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-3 hover:text-accent transition"
+              tabIndex={-1}
+              aria-label="Mostrar contraseña"
             >
-              {verContraseña ? (
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                >
-                  <path
-                    d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                  />
-
-                  <path
-                    d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                  />
-
-                  <line
-                    x1="1"
-                    y1="1"
-                    x2="23"
-                    y2="23"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                >
-                  <path
-                    d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                  />
-
-                  <circle
-                    cx="12"
-                    cy="12"
-                    r="3"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  />
-                </svg>
-              )}
+              {verContraseña ? <EyeOff size={17} /> : <Eye size={17} />}
             </button>
-
           </div>
+        </div>
 
-          {error && (
-            <p className="text-red-400 text-sm mb-4 text-center">
-              {error}
-            </p>
+        <Link to="/olvide-password" className="block text-right text-xs text-accent hover:underline mb-6 mt-1">
+          ¿Olvidaste tu contraseña?
+        </Link>
+
+        <button type="submit" disabled={loading} className="btn btn-primary btn-lg w-full mb-6">
+          {loading ? (
+            <>
+              <Loader2 size={16} className="animate-spin" /> Iniciando sesión...
+            </>
+          ) : (
+            'Iniciar sesión'
           )}
+        </button>
+      </form>
 
-          <button
-            type="button"
-            className="block ml-auto text-right text-xs text-[#EBC6D6] mb-6 cursor-pointer hover:underline bg-transparent border-0 p-0"
-            onClick={() =>
-              navigate('/olvide-password')
-            }
-          >
-            ¿Olvidaste tu contraseña?
-          </button>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-2.5 bg-[#C77A9C] text-white rounded-xl text-sm font-medium hover:bg-[#A65E80] transition mb-6 flex items-center justify-center gap-2 disabled:opacity-80"
-          >
-            {loading ? (
-              <>
-                <svg
-                  className="spinner"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                >
-                  <circle
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="white"
-                    strokeWidth="3"
-                    strokeOpacity="0.3"
-                  />
-
-                  <path
-                    d="M12 2a10 10 0 0 1 10 10"
-                    stroke="white"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                  />
-                </svg>
-
-                Iniciando sesión...
-              </>
-            ) : (
-              'Iniciar sesión'
-            )}
-          </button>
-
-          <p className="text-center text-sm text-white/50">
-
-            ¿No tienes cuenta?{' '}
-
-            <button
-              type="button"
-              className="text-[#EBC6D6] cursor-pointer hover:underline bg-transparent border-0 p-0 font-inherit"
-              onClick={() => navigate('/register')}
-            >
-              Regístrate aquí
-            </button>
-
-          </p>
-
-        </form>
-
-      </div>
-
-    </div>
+      <p className="text-center text-sm text-ink-3">
+        ¿No tienes cuenta?{' '}
+        <Link to="/register" className="text-accent font-semibold hover:underline">
+          Regístrate aquí
+        </Link>
+      </p>
+    </AuthLayout>
   )
 }
 

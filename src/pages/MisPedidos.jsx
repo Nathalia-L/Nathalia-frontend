@@ -6,6 +6,9 @@ import autoTable from 'jspdf-autotable';
 import { SkeletonRow } from '../components/ui/Skeleton';
 import FadeIn from '../components/ui/FadeIn';
 import OrderStepper from '../components/ui/OrderStepper';
+import { useEdicion } from '../hooks/useEdicion'
+import EditableTexto from '../components/EditableTexto'
+import { cargarPedidosLocales, reabrirPedidoWhatsApp, eliminarPedidoLocal } from '../utils/pedidos'
 
 const descargarFactura = async (id_pedido) => {
   try {
@@ -93,12 +96,12 @@ const descargarFactura = async (id_pedido) => {
 }
 
 const estadoTexto = {
-  pendiente: 'text-white/50',
-  confirmado: 'text-[#EBC6D6]',
-  en_proceso: 'text-amber-400',
-  enviado: 'text-[#EBC6D6]',
-  entregado: 'text-[#EBC6D6]',
-  cancelado: 'text-[#D4AF37]',
+  pendiente: 'text-warning',
+  confirmado: 'text-accent',
+  en_proceso: 'text-warning',
+  enviado: 'text-accent',
+  entregado: 'text-success',
+  cancelado: 'text-error',
 }
 
 const estadoLabel = {
@@ -122,15 +125,15 @@ function obtenerIdCliente() {
 function MisPedidos() {
   const navigate = useNavigate()
   const [pedidos, setPedidos] = useState([])
-  const [cargando, setCargando] = useState(true)
+  const [cargando, setCargando] = useState(() => Boolean(obtenerIdCliente()))
   const [error, setError] = useState(null)
+  const [pedidosLocales, setPedidosLocales] = useState(() => cargarPedidosLocales())
+  const { contenido, editar, esEdicion } = useEdicion()
+  const numeroWhatsApp = contenido.telefonoWhatsApp
 
   useEffect(() => {
     const id_cliente = obtenerIdCliente()
-    if (!id_cliente) {
-      setCargando(false)
-      return
-    }
+    if (!id_cliente) return
 
     let cancelado = false
     async function cargarPedidos() {
@@ -160,13 +163,17 @@ function MisPedidos() {
     `PED-${new Date().getFullYear()}-${String(id).padStart(4, '0')}`
 
   return (
-    <div className="min-h-screen" style={{ background: '#1A0E13' }}>
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12 sm:py-16 text-white">
-        <span className="text-xs font-medium text-[#EBC6D6] uppercase tracking-wide">Historial</span>
-        <h1 className="text-2xl sm:text-3xl font-semibold mt-2 mb-8 sm:mb-10 tracking-tight">Mis pedidos</h1>
+    <div className="py-12 sm:py-16">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6">
+        <span className="kicker">
+          <EditableTexto clave="pedidosKicker" valor={contenido.pedidosKicker} onCambio={editar} esEdicion={esEdicion} />
+        </span>
+        <h1 className="text-2xl sm:text-3xl font-semibold text-ink mt-2 mb-8 sm:mb-10 tracking-tight">
+          <EditableTexto clave="pedidosTitulo" valor={contenido.pedidosTitulo} onCambio={editar} esEdicion={esEdicion} />
+        </h1>
 
             {cargando && (
-          <div className="rounded-2xl overflow-hidden bg-white/[0.08] backdrop-blur-xl border border-white/15 shadow-sm divide-y divide-white/10">
+          <div className="card overflow-hidden divide-y divide-line">
             {Array.from({ length: 4 }).map((_, i) => (
               <SkeletonRow key={i} />
             ))}
@@ -174,37 +181,93 @@ function MisPedidos() {
         )}
 
         {!cargando && error && (
-          <div className="rounded-2xl p-10 sm:p-16 text-center bg-white/[0.08] backdrop-blur-xl border border-white/15 shadow-sm">
-            <p className="text-[#D4AF37] text-sm">{error}</p>
+          <div className="card p-10 sm:p-16 text-center">
+            <p className="text-error text-sm">{error}</p>
           </div>
         )}
 
-        {!cargando && !error && pedidos.length === 0 && (
-          <div className="rounded-2xl p-10 sm:p-16 text-center bg-white/[0.08] backdrop-blur-xl border border-white/15 shadow-sm">
-            <div className="w-14 h-14 rounded-2xl bg-white/10 text-white/50 flex items-center justify-center mx-auto mb-5">
+        {!cargando && !error && pedidos.length === 0 && pedidosLocales.length === 0 && (
+          <div className="card p-10 sm:p-16 text-center">
+            <div className="w-14 h-14 rounded-2xl bg-accent-light/40 text-ink-2 flex items-center justify-center mx-auto mb-5">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
                 <path d="M4 7l8-4 8 4-8 4-8-4zm0 0v10l8 4m0-14v14m8-14v10l-8 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
-            <p className="text-white font-semibold mb-2">Aún no tienes pedidos</p>
-            <p className="text-white/50 text-sm max-w-sm mx-auto mb-8 leading-relaxed">
-              Cuando compres en el catálogo, cada pedido y su estado de envío aparecerán aquí.
+            <p className="text-ink font-semibold mb-2">
+              <EditableTexto clave="pedidosVacioTitulo" valor={contenido.pedidosVacioTitulo} onCambio={editar} esEdicion={esEdicion} />
+            </p>
+            <p className="text-ink-3 text-sm max-w-sm mx-auto mb-8 leading-relaxed">
+              <EditableTexto clave="pedidosVacioTexto" valor={contenido.pedidosVacioTexto} onCambio={editar} esEdicion={esEdicion} multilinea />
             </p>
             <button
               type="button"
               onClick={() => navigate('/cliente/catalogo')}
-              className="px-6 py-3 bg-[#C77A9C] text-white rounded-xl text-sm font-medium hover:bg-[#A65E80] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C77A9C] focus-visible:ring-offset-2"
+              className="btn-gold"
             >
-              Explorar catálogo
+              <EditableTexto clave="pedidosExplorar" valor={contenido.pedidosExplorar} onCambio={editar} esEdicion={esEdicion} />
             </button>
+          </div>
+        )}
+
+        {/* Pedidos hechos por WhatsApp (locales, pendientes de cerrar en el chat) */}
+        {pedidosLocales.length > 0 && (
+          <div className="mb-6">
+            <p className="text-xs font-semibold text-ink-3 uppercase tracking-wide mb-3">
+              Pedidos por WhatsApp
+            </p>
+            <div className="card overflow-hidden divide-y divide-line">
+              {pedidosLocales.map((ped) => (
+                <div key={ped.id} className="px-5 sm:px-6 py-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-bold uppercase tracking-wide bg-warning/15 text-warning rounded px-2 py-0.5">
+                          Pendiente
+                        </span>
+                        <p className="text-xs text-ink-3">{formatearFecha(ped.fecha)}</p>
+                      </div>
+                      <p className="text-sm text-ink-2 mt-1.5 flex flex-wrap gap-x-3 gap-y-0.5">
+                        {ped.productos.map((l, i) => (
+                          <span key={i} className="text-ink-2">
+                            {l.emoji} {l.nombre} ×{l.cantidad}
+                          </span>
+                        ))}
+                      </p>
+                    </div>
+                    <div className="text-right shrink-0 flex flex-col items-end gap-2">
+                      <p className="text-sm font-semibold text-ink">
+                        ${Number(ped.total).toLocaleString('es-CO')}
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => reabrirPedidoWhatsApp(ped, numeroWhatsApp)}
+                          className="text-xs font-semibold text-accent hover:underline"
+                        >
+                          💬 Abrir chat
+                        </button>
+                        <button
+                          type="button"
+                          title="Eliminar de mi historial"
+                          onClick={() => { eliminarPedidoLocal(ped.id); setPedidosLocales(cargarPedidosLocales()) }}
+                          className="w-7 h-7 rounded-lg bg-elevated border border-line text-ink-3 hover:text-error hover:border-error/40 transition text-xs"
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
         {!cargando && !error && pedidos.length > 0 && (
         <FadeIn>
-        <div className="rounded-2xl overflow-hidden bg-white/[0.08] backdrop-blur-xl border border-white/15 shadow-sm divide-y divide-white/10">
+        <div className="card overflow-hidden divide-y divide-line">
           {pedidos.map((p) => (
-            <div key={p.id_pedido} className="flex items-center justify-between px-5 sm:px-6 py-4 hover:bg-white/[0.06] transition">
+            <div key={p.id_pedido} className="flex items-center justify-between px-5 sm:px-6 py-4 hover:bg-accent-light/20 transition">
               
               {/* Info del pedido — navega al detalle */}
               <button
@@ -212,8 +275,8 @@ function MisPedidos() {
                 onClick={() => navigate(`/cliente/pedidos/${p.id_pedido}`)}
                 className="flex-1 text-left"
               >
-                <p className="text-sm font-medium text-white">{formatearNumero(p.id_pedido)}</p>
-                <p className="text-xs text-white/40 mt-0.5">{formatearFecha(p.fecha_pedido)}</p>
+                <p className="text-sm font-medium text-ink">{formatearNumero(p.id_pedido)}</p>
+                <p className="text-xs text-ink-3 mt-0.5">{formatearFecha(p.fecha_pedido)}</p>
               </button>
 
               <div className="flex items-center gap-4">
@@ -221,10 +284,10 @@ function MisPedidos() {
                   <OrderStepper estado={p.estado} compacto />
                 </div>
                 <div className="text-right">
-                  <p className={`text-xs font-medium ${estadoTexto[p.estado] || 'text-white/50'}`}>
+                  <p className={`text-xs font-medium ${estadoTexto[p.estado] || 'text-ink-3'}`}>
                     {estadoLabel[p.estado] || p.estado}
                   </p>
-                  <p className="text-sm font-semibold text-white mt-0.5">
+                  <p className="text-sm font-semibold text-ink mt-0.5">
                     ${Number(p.total).toLocaleString('es-CO')}
                   </p>
                 </div>
@@ -234,7 +297,7 @@ function MisPedidos() {
                   type="button"
                   onClick={() => descargarFactura(p.id_pedido)}
                   title="Descargar factura"
-                  className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-white/50 hover:text-[#EBC6D6] hover:bg-white/20 transition"
+                  className="w-8 h-8 rounded-lg bg-accent-light/30 flex items-center justify-center text-ink-3 hover:text-accent hover:bg-accent-light/60 transition"
                 >
                   ⬇️
                 </button>
@@ -247,8 +310,8 @@ function MisPedidos() {
       )}
 
         <FadeIn>
-        <div className="mt-6 rounded-2xl p-6 sm:p-8 bg-white/[0.08] backdrop-blur-xl border border-white/15 shadow-sm">
-          <p className="text-sm font-semibold text-white mb-6">Así se ve el seguimiento de tu pedido</p>
+        <div className="mt-6 card p-6 sm:p-8">
+          <p className="text-sm font-semibold text-ink mb-6">Así se ve el seguimiento de tu pedido</p>
           <OrderStepper estado="enviado" />
         </div>
         </FadeIn>
