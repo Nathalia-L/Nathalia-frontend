@@ -21,7 +21,7 @@
 
       doc.setFontSize(16)
       doc.setTextColor(29, 158, 117)
-      doc.text('Nathalia', 14, 18)
+      doc.text('Beauty Esme', 14, 18)
       doc.setFontSize(10)
       doc.setTextColor(90, 90, 90)
       doc.text('Café de origen colombiano', 14, 24)
@@ -109,7 +109,7 @@
             <div className="p-6 space-y-5">
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-lg font-semibold text-[#C77A9C]">Nathalia</p>
+                  <p className="text-lg font-semibold text-[#C77A9C]">Beauty Esme</p>
                   <p className="text-xs text-gray-400">Café de origen colombiano</p>
                 </div>
                 <div className="text-right text-sm">

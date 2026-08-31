@@ -37,12 +37,22 @@ function App() {
     const syncAlEnfocar = () => sincronizarDesdeServidor()
     window.addEventListener('focus', syncAlEnfocar)
 
-    const desuscribirse = suscribirseContenido(() => {
+    // Sincronización automática: revisa el servidor cada pocos segundos para
+    // que los cambios del admin lleguen a los visitantes casi al instante,
+    // sin necesidad de recargar la página.
+    const intervalo = setInterval(() => sincronizarDesdeServidor(), 6000)
+
+    const desuscribirse = suscribirseContenido((_contenido, pasivo) => {
       aplicarTemaGuardado()
-      programarSubidaContenido()
+      // Solo se sube al servidor (y aparece el aviso "Tienda actualizada en
+      // línea") cuando el cambio vino de una edición real del admin. Los
+      // cambios que llegan por descarga en segundo plano se marcan como
+      // "pasivo" y NO se re-suben ni avisan.
+      if (!pasivo) programarSubidaContenido()
     })
 
     return () => {
+      clearInterval(intervalo)
       desuscribirse()
       window.removeEventListener('focus', syncAlEnfocar)
     }

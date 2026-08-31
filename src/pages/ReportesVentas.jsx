@@ -34,7 +34,7 @@ function ReportesVentas() {
 
   const topProductos = datos?.top_productos.map((p, i) => ({
     nombre: p.nombre,
-    detalle: p.categoria || 'Café Nathalia',
+    detalle: p.categoria || 'Café Beauty Esme',
     categoria: p.categoria || 'Sin categoría',
     kg: `${p.kg_vendidos} kg`,
     total: `$${Number(p.total_ventas).toLocaleString('es-CO')}`,

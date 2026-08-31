@@ -173,7 +173,7 @@ function Register() {
   ]
 
   return (
-    <AuthLayout subtitulo="Únete a Nathalia" ancho="max-w-[440px]">
+    <AuthLayout subtitulo="Únete a Beauty Esme" ancho="max-w-[440px]">
       {/* Indicador de pasos */}
       <div className="flex items-center justify-center gap-2 mb-8">
         {[1, 2, 3].map((s) => (

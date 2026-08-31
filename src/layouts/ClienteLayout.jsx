@@ -116,7 +116,7 @@ function ClienteLayout() {
 
       {/* Botón flotante Pedir por WhatsApp */}
       <a
-        href={`https://wa.me/${String(numeroWhatsApp).replace(/[^\d]/g, '').replace(/^0+/, '')}?text=${encodeURIComponent('Hola 👋, quiero hacer un pedido en Nathalia.')}`}
+        href={`https://wa.me/${String(numeroWhatsApp).replace(/[^\d]/g, '').replace(/^0+/, '')}?text=${encodeURIComponent('Hola 👋, quiero hacer un pedido en Beauty Esme.')}`}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Pedir por WhatsApp"

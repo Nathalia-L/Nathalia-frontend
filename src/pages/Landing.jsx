@@ -23,6 +23,7 @@ import {
 import FadeIn from '../components/ui/FadeIn'
 import LogoNathalia from '../components/LogoNathalia'
 import EditorInSitu from '../components/EditorInSitu'
+import { useClampAlViewport } from '../utils/useClampAlViewport'
 import PanelMarca from '../components/PanelMarca'
 import EditarProducto from '../components/EditarProducto'
 import EditarFlotante from '../components/EditarFlotante'
@@ -117,6 +118,8 @@ function Landing() {
   const [menuAbierto, setMenuAbierto] = useState(false)
   const [heroEditando, setHeroEditando] = useState(false)
   const [destEditando, setDestEditando] = useState(false)
+  const heroPanelRef = useClampAlViewport(heroEditando)
+  const destPanelRef = useClampAlViewport(destEditando)
   const [panelClientas, setPanelClientas] = useState(false)
   const [contenido, setContenido] = useState(() => cargarContenido())
   const soyAdmin = esAdmin()
@@ -173,7 +176,7 @@ function Landing() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between">
           <EditorInSitu esEdicion={esEdicion} titulo="Personalizar marca" ancho="w-80 sm:w-[22rem]" botonPosicion="-top-1 -right-1" edicion={<PanelMarca />}>
-            <button type="button" onClick={() => navigate('/')} className="flex items-center gap-2" aria-label="Inicio Nathalia">
+            <button type="button" onClick={() => navigate('/')} className="flex items-center gap-2" aria-label="Inicio Beauty Esme">
               <LogoNathalia size={40} config={contenido.logo} esEdicion={esEdicion} onCambiar={editar} />
             </button>
           </EditorInSitu>
@@ -250,7 +253,10 @@ function Landing() {
               {heroEditando ? <X size={15} /> : <Pencil size={15} />}
             </button>
             {heroEditando && (
-              <div className="absolute top-[7.5rem] right-5 z-40 w-80 max-h-[75vh] overflow-y-auto card rounded-xl shadow-2xl p-3.5 space-y-3 anim-pop">
+              <div
+                ref={heroPanelRef}
+                className="absolute top-[7.5rem] right-5 z-40 w-80 max-h-[75vh] overflow-y-auto card rounded-xl shadow-2xl p-3.5 space-y-3 anim-pop"
+              >
                 <p className="text-[10px] uppercase tracking-widest text-accent font-semibold">
                   Portada y marca
                 </p>
@@ -506,7 +512,10 @@ function Landing() {
                     {destEditando ? <X size={15} /> : <Pencil size={15} />}
                   </button>
                   {destEditando && (
-                    <div className="absolute top-12 right-0 z-40 w-72 card rounded-xl shadow-2xl p-3.5 space-y-3 anim-pop text-left">
+                    <div
+                      ref={destPanelRef}
+                      className="absolute top-12 right-0 z-40 w-72 card rounded-xl shadow-2xl p-3.5 space-y-3 anim-pop text-left"
+                    >
                       <p className="text-[10px] uppercase tracking-widest text-accent font-semibold">
                         Presentación de productos
                       </p>
@@ -801,7 +810,7 @@ function Landing() {
                 <EditableTexto valor={contenido.footerColEmpresa} clave="footerColEmpresa" onCambio={editar} esEdicion={esEdicion} />
               </h4>
               <ul className="space-y-2.5">
-                {['Sobre Nathalia', 'Marcas aliadas', 'Sostenibilidad', 'Contacto'].map((item, i) => (
+                {['Sobre Beauty Esme', 'Marcas aliadas', 'Sostenibilidad', 'Contacto'].map((item, i) => (
                   <li key={i}>
                     <button type="button" className="text-sm text-ink-3 hover:text-accent transition">{item}</button>
                   </li>
@@ -846,7 +855,7 @@ function Landing() {
       </footer>
 
       {/* Panel admin: carrusel de clientas */}
-      {esEdicion && (
+      {esEdicion && panelClientas && (
         <PanelClientas
           open={panelClientas}
           contenido={contenido}

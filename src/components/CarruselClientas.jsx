@@ -50,7 +50,7 @@ export default function CarruselClientas({ slides, auto = 4500, esEdicion, onEdi
                 <img
                   key={foto.id}
                   src={foto.imagen}
-                  alt={foto.titulo || 'Clienta Nathalia'}
+                  alt={foto.titulo || 'Clienta Beauty Esme'}
                   draggable="false"
                   className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ${i === ((idx % total) + total) % total ? 'opacity-100 scale-100' : 'opacity-0 scale-105'}`}
                 />
@@ -66,7 +66,7 @@ export default function CarruselClientas({ slides, auto = 4500, esEdicion, onEdi
                         <span className="absolute inline-flex w-full h-full rounded-full bg-gold pulse-ring"></span>
                         <span className="relative inline-flex w-1.5 h-1.5 rounded-full bg-gold"></span>
                       </span>
-                      {s.titulo || 'Clienta Nathalia'}
+                      {s.titulo || 'Clienta Beauty Esme'}
                     </span>
                   )}
                   {s.texto && <p className="text-sm sm:text-base text-white/90 leading-relaxed max-w-lg drop-shadow">{s.texto}</p>}

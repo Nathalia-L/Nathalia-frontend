@@ -3,7 +3,7 @@
 // que el cliente quiere. La venta se cierra conversando ahí.
 
 export const TEXTOS_PREDETERMINADOS = {
-  saludo: 'Hola 👋, quiero comprar en Nathalia:',
+  saludo: 'Hola 👋, quiero comprar en Beauty Esme:',
   cierre: '¿Me ayudan a confirmarlo? 🙏',
 }
 

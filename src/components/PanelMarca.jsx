@@ -200,6 +200,35 @@ export default function PanelMarca({ className = '' }) {
           <CampoTexto label="Nombre" valor={contenido.logo.nombre} ruta="logo.nombre" onChange={cambiar} />
           <CampoTexto label="Eslogan" valor={contenido.logo.eslogan} ruta="logo.eslogan" onChange={cambiar} />
         </fieldset>
+        <SelectorImagen
+          label="Logo personalizado"
+          valor={contenido.logo.imagen || ''}
+          limiteMB={3}
+          onCambiar={(v) => cambiar('logo.imagen', v)}
+        />
+        <div>
+          <span className="text-[10px] uppercase tracking-wider text-ink-3">Fondo del logo</span>
+          <div className="flex gap-1 mt-1">
+            {[
+              ['transparente', 'Transparente'],
+              ['negro', 'Negro'],
+              ['blanco', 'Blanco'],
+            ].map(([id, label]) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => cambiar('logo.fondo', id)}
+                className={`px-2.5 h-7 rounded-full text-xs font-medium transition border ${
+                  (contenido.logo.fondo || 'transparente') === id
+                    ? 'bg-accent text-white border-accent'
+                    : 'bg-surface text-ink-2 border-line hover:border-accent'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
         <div>
           <span className="text-[10px] uppercase tracking-wider text-ink-3">Forma</span>
           <div className="flex gap-1 mt-1">
@@ -272,6 +301,22 @@ export default function PanelMarca({ className = '' }) {
           <Lightbulb size={11} /> Ideas de diseño — un clic para aplicar
         </p>
         <div className="flex gap-2 overflow-x-auto py-1.5">
+          {/* Tarjeta con los colores seleccionados a mano (siempre visible entre los diseños) */}
+          <button
+            type="button"
+            onClick={() => aplicarNuevo({ ...contenido })}
+            className="shrink-0 w-28 rounded-xl border-2 border-accent bg-accent/5 p-2 text-left transition"
+            title="Este es tu diseño actual (colores elegidos a mano)"
+          >
+            <span className="text-[11px] font-medium text-accent flex items-center gap-1 truncate">
+              <span>🖌️</span> Mi diseño
+            </span>
+            <TiraColores colors={contenido.tema} />
+            <span className="mt-1 flex items-center gap-1.5">
+              <LogoNathalia size={16} config={contenido.logo} showText={false} />
+              <span className="text-[9px] text-ink-3 capitalize">{(contenido.logo.forma || 'anillo')}</span>
+            </span>
+          </button>
           {PALETAS.map((d) => (
             <button
               key={d.nombre}

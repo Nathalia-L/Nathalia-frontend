@@ -132,9 +132,9 @@ function Login() {
   }
 
   return (
-    <AuthLayout subtitulo="Bienvenida a Nathalia" ancho="max-w-[440px]">
+    <AuthLayout subtitulo="Bienvenida a Beauty Esme" ancho="max-w-[440px]">
       <h1 className="font-display text-2xl sm:text-3xl font-bold text-center mb-1.5">Bienvenido de nuevo</h1>
-      <p className="text-sm text-ink-3 text-center mb-7">Inicia sesión en tu cuenta de Nathalia</p>
+      <p className="text-sm text-ink-3 text-center mb-7">Inicia sesión en tu cuenta de Beauty Esme</p>
 
       <button
         type="button"

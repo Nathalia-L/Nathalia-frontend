@@ -100,7 +100,7 @@ function Inventario() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
           <h1 className="text-xl sm:text-2xl font-semibold text-[#f7fffb]">Gestión de usuarios</h1>
-          <p className="text-[#5f7268] mt-1 text-sm">Administra los usuarios y sus roles dentro de Nathalia</p>
+          <p className="text-[#5f7268] mt-1 text-sm">Administra los usuarios y sus roles dentro de Beauty Esme</p>
         </div>
         <button
           type="button"

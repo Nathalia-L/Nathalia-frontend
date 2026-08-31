@@ -77,10 +77,10 @@ function Empresas() {
         {/* HERO */}
         <FadeIn>
           <div className="text-center max-w-2xl mx-auto mb-12">
-            <span className="kicker">Nathalia Empresas</span>
+            <span className="kicker">Beauty Esme Empresas</span>
             <h1 className="text-3xl sm:text-4xl font-display font-bold text-ink mt-3 tracking-tight">Tu proveedor de belleza, sin papeleo</h1>
             <p className="text-ink-3 text-sm sm:text-base mt-4 leading-relaxed">
-              Si compras para tu negocio, Nathalia te premia desde el primer pedido: 10% siempre,
+              Si compras para tu negocio, Beauty Esme te premia desde el primer pedido: 10% siempre,
               precios por volumen y descuentos que crecen con tu pedido.
             </p>
             {esJuridica ? (
@@ -90,7 +90,7 @@ function Empresas() {
             ) : (
               <button
                 type="button"
-                onClick={() => abrirWhatsApp(`Hola 🏢, quiero comprar para mi negocio y obtener el 10% Nathalia.`, cargarContenido().telefonoWhatsApp)}
+                onClick={() => abrirWhatsApp(`Hola 🏢, quiero comprar para mi negocio y obtener el 10% Beauty Esme.`, cargarContenido().telefonoWhatsApp)}
                 className="mt-6 h-12 px-8 rounded-xl text-sm font-semibold bg-[#25D366] text-white hover:bg-[#1DAB54] border-0 shadow-lg shadow-[#25D366]/25 transition inline-flex items-center gap-2"
               >
                 <IconoWhatsApp className="w-4 h-4" /> Comienza por WhatsApp →

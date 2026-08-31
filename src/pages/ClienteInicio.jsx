@@ -126,7 +126,7 @@ function ClienteInicio() {
             </button>
             <button
               type="button"
-              onClick={() => abrirWhatsApp(`Hola 👋, me interesa conocer los productos de Nathalia y comprar por WhatsApp.`, numeroWhatsApp)}
+              onClick={() => abrirWhatsApp(`Hola 👋, me interesa conocer los productos de Beauty Esme y comprar por WhatsApp.`, numeroWhatsApp)}
               className="btn btn-md bg-[#25D366] text-white border-0 hover:bg-[#1DAB54] shadow-lg shadow-[#25D366]/25"
             >
               <IconoWhatsApp className="w-4 h-4" />
@@ -179,7 +179,7 @@ function ClienteInicio() {
         {destacados.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {destacados.map((p, i) => {
-              const cat = CATEGORIAS[p.categoria] || { label: p.categoria || 'Nathalia', emoji: '✨' }
+              const cat = CATEGORIAS[p.categoria] || { label: p.categoria || 'Beauty Esme', emoji: '✨' }
               return (
                 <div
                   key={p.id}

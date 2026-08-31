@@ -15,14 +15,11 @@ let ultimoRemoto = null
 let ultimaEscrituraLocal = 0
 let timer = null
 let reintentosSubida = 0
+let sincronizando = false
 
 function autorizacion() {
   const token = localStorage.getItem('token')
   return token ? { Authorization: `Bearer ${token}` } : {}
-}
-
-function esPersonalizado() {
-  try { return !!localStorage.getItem('nathalia_contenido') } catch { return false }
 }
 
 export async function obtenerContenidoServidor() {
@@ -50,20 +47,29 @@ export async function guardarContenidoServidor(contenido) {
 }
 
 // Descarga el contenido guardado en la base de datos y lo aplica en el
-// navegador. Se llama al cargar la app y cuando la ventana vuelve al foco.
-// No pisa cambios locales recientes ni contenido ya personalizado (para no
-// borrar los productos que el admin acaba de crear si el servidor falló).
+// navegador. Se llama al cargar la app, al volver al foco y periódicamente.
+// Para los visitantes (rol usuario) SIEMPRE se toma la versión del servidor,
+// sin importar si hay contenido guardado en su navegador: así ven los cambios
+// del admin casi al instante. Solo al admin se le respeta un pequeño margen
+// mientras acaba de guardar, para no pisarle su edición.
 export async function sincronizarDesdeServidor() {
-  if (Date.now() - ultimaEscrituraLocal < 4000) return
-  if (esPersonalizado()) return
-  const remoto = await obtenerContenidoServidor()
-  if (!remoto) return
-  const serializadoRemoto = JSON.stringify(remoto)
-  if (serializadoRemoto === ultimoRemoto) return
-  ultimoRemoto = serializadoRemoto
-  const local = cargarContenido()
-  if (JSON.stringify(local) !== serializadoRemoto) {
-    guardarContenido(remoto)
+  if (sincronizando) return
+  if (esAdmin() && Date.now() - ultimaEscrituraLocal < 4000) return
+  sincronizando = true
+  try {
+    const remoto = await obtenerContenidoServidor()
+    if (!remoto) return
+    const serializadoRemoto = JSON.stringify(remoto)
+    if (serializadoRemoto === ultimoRemoto) return
+    ultimoRemoto = serializadoRemoto
+    const local = cargarContenido()
+    if (JSON.stringify(local) !== serializadoRemoto) {
+      // Descarga en segundo plano: se aplica en el navegador y se marca "pasivo"
+      // para que no se re-subió ni se muestre el aviso "Tienda actualizada".
+      guardarContenido(remoto, { pasivo: true })
+    }
+  } finally {
+    sincronizando = false
   }
 }
 

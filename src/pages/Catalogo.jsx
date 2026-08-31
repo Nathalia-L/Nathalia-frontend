@@ -1313,19 +1313,21 @@ function CatalogoInterno() {
       )}
 
       {/* Asistente "¿No sabes qué elegir?" */}
-      <AyudaElegir
-        open={ayudaOpen}
-        onClose={() => setAyudaOpen(false)}
-        productos={productos}
-        colecciones={colecciones}
-        onAgregar={agregar}
-        onComprar={(prod) => comprarProducto(prod)}
-        onVer={verDetalle}
-        numeroWhatsApp={contenido.telefonoWhatsApp}
-      />
+      {ayudaOpen && (
+        <AyudaElegir
+          open={ayudaOpen}
+          onClose={() => setAyudaOpen(false)}
+          productos={productos}
+          colecciones={colecciones}
+          onAgregar={agregar}
+          onComprar={(prod) => comprarProducto(prod)}
+          onVer={verDetalle}
+          numeroWhatsApp={contenido.telefonoWhatsApp}
+        />
+      )}
 
       {/* Panel admin: carrusel de productos recomendados */}
-      {modoEdicion && (
+      {modoEdicion && recomendadosOpen && (
         <PanelRecomendados
           open={recomendadosOpen}
           contenido={contenido}

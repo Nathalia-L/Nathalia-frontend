@@ -140,4 +140,74 @@ export const PALETAS = [
     },
     logo: { anilloDe: '#D8F1E8', anilloA: '#4A9A88', letra: '#C77A9C', fondoDe: '#0E2B25', fondoA: '#081512', forma: 'rombo' },
   },
+  {
+    nombre: 'Atardecer Rosado',
+    emoji: '🌇',
+    tema: {
+      rose: '#E0705A', roseStrong: '#C2543F', roseSoft: '#F5C6B8', roseLight: '#FDEAE3',
+      blush: '#FFF3EE', gold: '#D98B54', goldLight: '#F0C991',
+      extra1: '#B4517B', extra2: '#8E6BB6', extra3: '#5E9C8A', extra4: '#E5A14E',
+    },
+    logo: { anilloDe: '#FFD8C9', anilloA: '#E0705A', letra: '#B4517B', fondoDe: '#33100B', fondoA: '#1A0805', forma: 'anillo' },
+  },
+  {
+    nombre: 'Océano Profundo',
+    emoji: '🌊',
+    tema: {
+      rose: '#1F6F78', roseStrong: '#16545C', roseSoft: '#A7D9DE', roseLight: '#DCEEF0',
+      blush: '#EEF7F8', gold: '#C9A227', goldLight: '#E2C560',
+      extra1: '#2F6EB8', extra2: '#4A9A88', extra3: '#7A5FA8', extra4: '#D98B54',
+    },
+    logo: { anilloDe: '#C4E4E8', anilloA: '#1F6F78', letra: '#2F6EB8', fondoDe: '#071F22', fondoA: '#030F11', forma: 'rombo' },
+  },
+  {
+    nombre: 'Café Expreso',
+    emoji: '☕',
+    tema: {
+      rose: '#6B4A31', roseStrong: '#523722', roseSoft: '#D3BBA3', roseLight: '#EFE3D4',
+      blush: '#F8F1E8', gold: '#B07D3A', goldLight: '#D9B678',
+      extra1: '#A05E3C', extra2: '#5F7C4E', extra3: '#8A6B4C', extra4: '#C9A86A',
+    },
+    logo: { anilloDe: '#E8D4BE', anilloA: '#B07D3A', letra: '#6B4A31', fondoDe: '#1C1008', fondoA: '#0E0804', forma: 'flor' },
+  },
+  {
+    nombre: 'Lavanda Sueño',
+    emoji: '💜',
+    tema: {
+      rose: '#9B6BC3', roseStrong: '#7B4EA5', roseSoft: '#D8C1EC', roseLight: '#EFE3F8',
+      blush: '#F7F0FB', gold: '#C99E3A', goldLight: '#E3CC8C',
+      extra1: '#C77A9C', extra2: '#6E3990', extra3: '#5E9C8A', extra4: '#E882A5',
+    },
+    logo: { anilloDe: '#E7D6F4', anilloA: '#9B6BC3', letra: '#5E9C8A', fondoDe: '#241637', fondoA: '#120B1E', forma: 'rombo' },
+  },
+  {
+    nombre: 'Dorado Champagne',
+    emoji: '🥂',
+    tema: {
+      rose: '#C89B4E', roseStrong: '#A87E36', roseSoft: '#F0DCAF', roseLight: '#FAF1DC',
+      blush: '#FCF8EE', gold: '#D4AF37', goldLight: '#EED587',
+      extra1: '#8E6BB6', extra2: '#B4517B', extra3: '#6F8A5E', extra4: '#C07A4E',
+    },
+    logo: { anilloDe: '#F6E7BE', anilloA: '#D4AF37', letra: '#A87E36', fondoDe: '#2E2004', fondoA: '#171002', forma: 'anillo' },
+  },
+  {
+    nombre: 'Neón Rosa',
+    emoji: '💖',
+    tema: {
+      rose: '#E0437A', roseStrong: '#C22A62', roseSoft: '#F7B8CF', roseLight: '#FDE6EF',
+      blush: '#FFF1F6', gold: '#E8B63A', goldLight: '#F5D98C',
+      extra1: '#8E6BB6', extra2: '#3AA6C9', extra3: '#7AC97A', extra4: '#F0A65A',
+    },
+    logo: { anilloDe: '#FFC9DC', anilloA: '#E0437A', letra: '#3AA6C9', fondoDe: '#33100F', fondoA: '#1A0807', forma: 'flor' },
+  },
+  {
+    nombre: 'Bosque Esmeralda',
+    emoji: '🌲',
+    tema: {
+      rose: '#2E7D6B', roseStrong: '#236152', roseSoft: '#A9D6C9', roseLight: '#DDEFF0',
+      blush: '#EFF7F4', gold: '#C9A03B', goldLight: '#E7CF8E',
+      extra1: '#4A9A88', extra2: '#7A5FA8', extra3: '#A06B3C', extra4: '#6FA85A',
+    },
+    logo: { anilloDe: '#CDECE0', anilloA: '#2E7D6B', letra: '#7A5FA8', fondoDe: '#0A241D', fondoA: '#04120E', forma: 'anillo' },
+  },
 ]

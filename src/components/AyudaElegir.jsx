@@ -129,7 +129,7 @@ export default function AyudaElegir({ open, onClose, productos, colecciones, onA
   const escribirWhatsApp = () => {
     cerrar()
     abrirWhatsApp(
-      `Hola 👋, necesito ayuda para elegir un producto de Nathalia (${opcionesCategoria.map((c) => c.label).join(' o ')}) y no sé cuál escoger.`,
+      `Hola 👋, necesito ayuda para elegir un producto de Beauty Esme (${opcionesCategoria.map((c) => c.label).join(' o ')}) y no sé cuál escoger.`,
       numeroWhatsApp
     )
   }

@@ -46,7 +46,7 @@ function MiCuenta() {
   })
 
   const inicial = (cliente.nombre || 'C').charAt(0).toUpperCase()
-  const nombreCompleto = [cliente.nombre, cliente.apellido].filter(Boolean).join(' ') || 'Cliente Nathalia'
+  const nombreCompleto = [cliente.nombre, cliente.apellido].filter(Boolean).join(' ') || 'Cliente Beauty Esme'
 
   function cerrarSesion() {
     localStorage.removeItem('token')

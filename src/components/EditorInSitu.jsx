@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { Pencil, X } from 'lucide-react'
+import { useClampAlViewport } from '../utils/useClampAlViewport'
 
 // EditorInSitu — Lápiz que aparece sobre un elemento cuando hay un admin.
 // Al darle clic abre un pequeño panel anclado justo ahí (debajo/pegado a ese
@@ -17,6 +18,7 @@ export default function EditorInSitu({
 }) {
   const [abierto, setAbierto] = useState(false)
   const ref = useRef(null)
+  const clampRef = useClampAlViewport(abierto)
 
   useEffect(() => {
     if (!abierto) return
@@ -42,7 +44,10 @@ export default function EditorInSitu({
         {abierto ? <X size={13} /> : <Pencil size={13} />}
       </button>
       {abierto && (
-        <div className={`absolute z-40 right-0 top-full mt-2 ${ancho} max-h-[70vh] overflow-y-auto card rounded-xl shadow-2xl p-3.5 space-y-3 anim-pop`}>
+        <div
+          ref={(n) => { clampRef.current = n }}
+          className={`absolute z-40 right-0 top-full mt-2 ${ancho} max-h-[70vh] overflow-y-auto card rounded-xl shadow-2xl p-3.5 space-y-3 anim-pop`}
+        >
           <p className="flex items-center justify-between text-[10px] uppercase tracking-widest text-accent font-semibold">
             <span>{titulo}</span>
             <span className="normal-case tracking-normal text-[10px] text-ink-3 font-normal">cambios en vivo · se guardan solos</span>

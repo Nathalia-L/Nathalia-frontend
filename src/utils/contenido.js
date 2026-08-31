@@ -6,12 +6,12 @@
 
 const CONTENIDO_DEFAULT = {
   // Marca
-  marca: 'Nathalia',
+  marca: 'Beauty Esme',
   eslogan: 'Moda & Belleza',
 
   // Logo (se edita en vivo desde el panel de administrador)
   logo: {
-    nombre: 'Nathalia',
+    nombre: 'Beauty Esme',
     eslogan: 'Moda & Belleza',
     forma: 'anillo', // anillo | rombo | flor
     anilloDe: '#E9CD8A',
@@ -19,6 +19,12 @@ const CONTENIDO_DEFAULT = {
     letra: '#C77A9C',
     fondoDe: '#3A1E2E',
     fondoA: '#1A0E13',
+    // Icono por imagen (opcional): si "imagen" está vacío se usa el logo por
+    // defecto (logo.png). "fondo" es la caja detrás del icono: negro|blanco|transparente.
+    imagen: '',
+    fondo: 'transparente',
+    // Tamaño del logo en toda la tienda: pequeno | normal | medio | grande
+    tamano: 'normal',
   },
 
   // Tema (sobreescribe los colores de marca; se aplican como CSS vars)
@@ -49,8 +55,8 @@ const CONTENIDO_DEFAULT = {
   explorarTodo: 'Explorar todo',
   ctaFinalTitulo1: '¿Lista para',
   ctaFinalTitulo2: 'lucir increíble',
-  ctaFinalTexto: 'Únete a cientos de personas que ya disfrutan del estilo Nathalia.',
-  ctaBadge: 'Únete al estilo Nathalia',
+  ctaFinalTexto: 'Únete a cientos de personas que ya disfrutan del estilo Beauty Esme.',
+  ctaBadge: 'Únete al estilo Beauty Esme',
   explorarTienda: 'Explorar la tienda',
   pedidosWhatsApp: 'Mis pedidos por WhatsApp',
   nosotrosTitulo: 'Por qué elegirnos',
@@ -93,7 +99,7 @@ const CONTENIDO_DEFAULT = {
 
   // Textos de la página de inicio del cliente (se editan con el lápiz)
   clienteBadge: 'Moda & Belleza',
-  clienteTitulo: 'Bienvenida a Nathalia 💖',
+  clienteTitulo: 'Bienvenida a Beauty Esme 💖',
   clienteTexto: 'Moda, maquillaje y accesorios seleccionados con amor, para que te sientas única en cada ocasión.',
   clienteCta1: 'Ir al catálogo',
   clienteCta2: 'Pedir por WhatsApp',
@@ -116,7 +122,7 @@ const CONTENIDO_DEFAULT = {
   ayudaNada: '¿Nada te convence? Escríbenos 🤳',
 
   // Textos del Foro (se editan con el lápiz)
-  foroKicker: 'Comunidad Nathalia',
+  foroKicker: 'Comunidad Beauty Esme',
   foroTitulo: 'Foro',
   foroSubtitulo: 'Calificaciones y opiniones reales de nuestros clientes.',
   foroVerOpiniones: 'Ver opiniones',
@@ -132,7 +138,7 @@ const CONTENIDO_DEFAULT = {
   footerColEmpresa: 'Empresa',
   footerColNewsletter: 'Newsletter',
   footerNewsletterTexto: 'Recibe novedades y promociones exclusivas.',
-  copyright: '© 2026 Nathalia. Todos los derechos reservados.',
+  copyright: '© 2026 Beauty Esme. Todos los derechos reservados.',
 
   // Cinta y secciones de la página (x = index; se editan en el lugar con lápiz)
   marquee: [
@@ -141,7 +147,7 @@ const CONTENIDO_DEFAULT = {
     { icono: 'shield', texto: 'Pagos 100% seguros' },
     { icono: 'gem', texto: 'Marcas aliadas de confianza' },
     { icono: 'heart', texto: 'Pensado para tu estilo' },
-    { icono: 'crown', texto: 'Programa de lealtad Nathalia' },
+    { icono: 'crown', texto: 'Programa de lealtad Beauty Esme' },
   ],
   estadisticas: [
     { numero: '1.000+', label: 'Clientas felices', icono: 'heart' },
@@ -164,9 +170,9 @@ const CONTENIDO_DEFAULT = {
     { numero: '04', icono: 'truck', titulo: 'Lo recibes', descripcion: 'Tu pedido llega a tu puerta en menos de 24 horas.' },
   ],
   testimonios: [
-    { nombre: 'Valentina R.', rol: 'Clienta Nathalia', texto: 'El labial es mi favorito, dura todo el día y el envío fue rapidísimo. ¡Me llega siempre a tiempo!', nota: 5 },
-    { nombre: 'Mariana G.', rol: 'Clienta Nathalia', texto: 'El blazer beige es hermoso, la tela se siente premium. Ya compré dos veces y todo impecable.', nota: 5 },
-    { nombre: 'Camila T.', rol: 'Clienta Nathalia', texto: 'Amo el programa de lealtad, ya soy nivel oro. La atención y calidad hacen que valga cada peso.', nota: 5 },
+    { nombre: 'Valentina R.', rol: 'Clienta Beauty Esme', texto: 'El labial es mi favorito, dura todo el día y el envío fue rapidísimo. ¡Me llega siempre a tiempo!', nota: 5 },
+    { nombre: 'Mariana G.', rol: 'Clienta Beauty Esme', texto: 'El blazer beige es hermoso, la tela se siente premium. Ya compré dos veces y todo impecable.', nota: 5 },
+    { nombre: 'Camila T.', rol: 'Clienta Beauty Esme', texto: 'Amo el programa de lealtad, ya soy nivel oro. La atención y calidad hacen que valga cada peso.', nota: 5 },
   ],
 
   // Tarjetas flotantes del hero (solo se ven sin imagen de portada)
@@ -181,7 +187,7 @@ const CONTENIDO_DEFAULT = {
   telefonoWhatsApp: '573160935626',
 
   // Catálogo
-  catalogoTitulo: 'Colección Nathalia',
+  catalogoTitulo: 'Colección Beauty Esme',
   catalogoSubtitulo: 'Belleza, moda y accesorios pensados para ti',
   colecciones: [
     { id: 'maquillaje', label: 'Maquillaje', emoji: '💄' },
@@ -243,6 +249,12 @@ export function cargarContenido() {
     }
     base.productos = (base.productos || []).filter((p) => CATEGORIAS_ACTIVAS.includes(p.categoria))
 
+    // Nombre de marca fijo: la tienda se llama "Beauty Esme", sin importar cómo
+    // quedó guardado en versiones anteriores (localStorage o servidor).
+    base.marca = CONTENIDO_DEFAULT.marca
+    base.logo.nombre = CONTENIDO_DEFAULT.logo.nombre
+    base.logo.eslogan = CONTENIDO_DEFAULT.logo.eslogan
+
     // Migración: número de WhatsApp actualizado a +57 316 093 5626.
     // Si el contenido guardado aún trae el número viejo, se reemplaza.
     const WH_NUEVO = CONTENIDO_DEFAULT.telefonoWhatsApp
@@ -256,9 +268,9 @@ export function cargarContenido() {
   }
 }
 
-export function guardarContenido(contenido) {
+export function guardarContenido(contenido, opciones = {}) {
   localStorage.setItem('nathalia_contenido', JSON.stringify(contenido))
-  window.dispatchEvent(new CustomEvent(EVENTO_CONTENIDO, { detail: cargarContenido() }))
+  window.dispatchEvent(new CustomEvent(EVENTO_CONTENIDO, { detail: cargarContenido(), ...(opciones.pasivo ? { pasivo: true } : {}) }))
 }
 
 // Actualiza un campo anidado (p. ej. "logo.nombre", "tema.rose",
@@ -285,7 +297,7 @@ export function actualizarCampo(contenido, ruta, valor) {
 }
 
 export function suscribirseContenido(callback) {
-  const escuchar = (e) => callback(e.detail)
+  const escuchar = (e) => callback(e.detail, e.pasivo)
   window.addEventListener(EVENTO_CONTENIDO, escuchar)
   return () => window.removeEventListener(EVENTO_CONTENIDO, escuchar)
 }

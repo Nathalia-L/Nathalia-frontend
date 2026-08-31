@@ -28,7 +28,7 @@ function DashboardLayout() {
   const pasos = [
     {
       target: '.sidebar-logo',
-      content: '¡Bienvenido al Panel Administrativo de Nathalia! Desde aquí controlas todo el negocio.',
+      content: '¡Bienvenido al Panel Administrativo de Beauty Esme! Desde aquí controlas todo el negocio.',
       placement: 'right',
       disableBeacon: true,
     },
@@ -249,7 +249,7 @@ function DashboardLayout() {
           {/* Logo */}
           <div className="flex items-center gap-2 px-3 mb-8">
             <LogoNathalia size={34} showText={false} />
-            <span className="sidebar-logo font-display text-lg font-semibold tracking-tight text-ink">Nathalia</span>
+            <span className="sidebar-logo font-display text-lg font-semibold tracking-tight text-ink">Beauty Esme</span>
             <span className="text-xs text-ink-3">Admin</span>
           </div>
 
@@ -363,7 +363,7 @@ function DashboardLayout() {
                 <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
               </svg>
             </button>
-            <span className="text-base font-medium text-ink">Nathalia Admin</span>
+            <span className="text-base font-medium text-ink">Beauty Esme Admin</span>
             <div className="w-6" />
           </header>
 

@@ -66,7 +66,7 @@ function AdminLogin() {
       <h1 className="font-display text-xl sm:text-2xl font-bold text-center mb-1.5 flex items-center justify-center gap-2">
         <ShieldCheck size={22} className="text-accent" /> Panel de Administración
       </h1>
-      <p className="text-sm text-ink-3 text-center mb-7">Ingresa para gestionar Nathalia</p>
+      <p className="text-sm text-ink-3 text-center mb-7">Ingresa para gestionar Beauty Esme</p>
 
       <form onSubmit={handleLogin}>
         <div className="mb-4">
@@ -79,7 +79,7 @@ function AdminLogin() {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="admin@nathalia.com"
+              placeholder="admin@beautyesme.com"
               className="input pl-10"
               autoComplete="email"
             />

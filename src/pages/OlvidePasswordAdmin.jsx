@@ -69,7 +69,7 @@ function OlvidePasswordAdmin() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="admin@nathalia.com"
+              placeholder="admin@beautyesme.com"
               className="input pl-10"
               autoComplete="email"
             />
