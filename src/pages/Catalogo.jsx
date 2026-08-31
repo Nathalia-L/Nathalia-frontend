@@ -872,7 +872,7 @@ function CatalogoInterno() {
 
   const [seccion, setSeccion] = useState(() => {
     const s = searchParams.get('seccion')
-    return ['maquillaje', 'ropa', 'accesorios', 'favoritos'].includes(s) ? s : 'maquillaje'
+    return ['maquillaje', 'ropa', 'accesorios', 'favoritos', 'todos'].includes(s) ? s : 'todos'
   })
   const [busqueda, setBusqueda] = useState('')
   const [ayudaOpen, setAyudaOpen] = useState(false)
@@ -910,7 +910,7 @@ function CatalogoInterno() {
 
   function cambiarSeccion(id) {
     setSeccion(id)
-    setSearchParams(id === 'maquillaje' ? {} : { seccion: id }, { replace: true })
+    setSearchParams(id === 'maquillaje' || id === 'todos' ? {} : { seccion: id }, { replace: true })
   }
 
   function guardarCambios(nuevoContenido) {
@@ -967,7 +967,7 @@ function CatalogoInterno() {
 
   const filtrados = useMemo(() => {
     let lista = productos.filter((p) => {
-      const matchSeccion = seccion === 'favoritos' ? favoritos.has(p.id) : p.categoria === seccion
+      const matchSeccion = seccion === 'todos' ? true : seccion === 'favoritos' ? favoritos.has(p.id) : p.categoria === seccion
       const matchBus = !busqueda.trim() || p.nombre.toLowerCase().includes(busqueda.toLowerCase())
       const matchDisp = filtroDisp === 'todos' || (filtroDisp === 'stock' ? p.stock > 0 : true)
       return matchSeccion && matchBus && matchDisp
@@ -987,7 +987,9 @@ function CatalogoInterno() {
     return productos[semilla % productos.length]
   }, [productos])
 
-  const seccionActual = colecciones.find((c) => c.id === seccion) || { label: 'Favoritos', emoji: '♥' }
+  const seccionActual =
+    colecciones.find((c) => c.id === seccion) ||
+    (seccion === 'todos' ? { label: 'Ropa y Belleza', emoji: '🎀' } : { label: 'Favoritos', emoji: '♥' })
 
   function guardarProducto(form) {
     const nuevoContenido = { ...contenido }
@@ -1009,6 +1011,15 @@ function CatalogoInterno() {
       {/* PESTAÑAS DE COLECCIONES */}
       <div className="sticky top-16 z-30 border-b border-line bg-elevated/90 backdrop-blur-md px-4 sm:px-6">
         <div className="max-w-6xl mx-auto h-14 flex items-center gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <button
+            type="button"
+            onClick={() => cambiarSeccion('todos')}
+            className={`px-3.5 h-9 rounded-full text-sm font-medium whitespace-nowrap transition-colors flex items-center gap-1.5 ${
+              seccion === 'todos' ? 'bg-accent text-white shadow-md' : 'text-ink-2 hover:text-ink hover:bg-accent-light/50'
+            }`}
+          >
+            <span>🎀</span> Ropa y Belleza
+          </button>
           {colecciones.map((c) => (
             <button
               key={c.id}
@@ -1112,7 +1123,7 @@ function CatalogoInterno() {
               </button>
               <button
                 type="button"
-                onClick={() => setEditando({ id: Date.now(), nombre: '', categoria: seccion === 'favoritos' ? 'maquillaje' : seccion, precio: 0, antes: 0, emoji: '✨', imagen: '', desc: '', stock: 10, badge: '' })}
+                onClick={() => setEditando({ id: Date.now(), nombre: '', categoria: seccion === 'favoritos' || seccion === 'todos' ? 'maquillaje' : seccion, precio: 0, antes: 0, emoji: '✨', imagen: '', desc: '', stock: 10, badge: '' })}
                 className="btn btn-primary btn-md"
               >
                 <Plus size={15} /> Agregar producto
@@ -1209,7 +1220,7 @@ function CatalogoInterno() {
         <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-display text-xl font-bold text-ink">
-              {seccion === 'favoritos' ? 'Tus favoritos' : `Colección ${seccionActual.label}`}
+              {seccion === 'favoritos' ? 'Tus favoritos' : seccion === 'todos' ? 'Todo · Ropa y Belleza' : `Colección ${seccionActual.label}`}
             </h2>
             <div className="flex items-center gap-3">
               <p className="text-sm text-ink-3">{filtrados.length} {filtrados.length === 1 ? 'producto' : 'productos'}</p>
