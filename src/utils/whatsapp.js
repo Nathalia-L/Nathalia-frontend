@@ -43,8 +43,8 @@ export function construirMensajePedido(lineas, total) {
 }
 
 // Abre el chat de WhatsApp en una pestaña nueva. El número llega formateado
-// como "573122073007" (sin el "+").
-export function abrirWhatsApp(texto, numero = '573122073007') {
+// como "573160935626" (sin el "+").
+export function abrirWhatsApp(texto, numero = '573160935626') {
   const limpio = String(numero).replace(/[^\d]/g, '').replace(/^0+/, '')
   const url = `https://wa.me/${limpio}?text=${encodeURIComponent(texto)}`
   window.open(url, '_blank', 'noopener,noreferrer')

@@ -1,10 +1,13 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import toast from 'react-hot-toast'
-import { ShoppingBag, Heart, Search, Plus, X, Pencil, Star, MessageCircle, Dices } from 'lucide-react'
+import { ShoppingBag, Heart, Search, Plus, X, Pencil, Star, Dices, ChevronLeft, ChevronRight } from 'lucide-react'
+import IconoWhatsApp from '../components/IconoWhatsApp'
+import PanelRecomendados from '../components/PanelRecomendados'
 import { cargarContenido, guardarContenido, suscribirseContenido, esAdmin, actualizarCampo, FORMAS_CATALOGO } from '../utils/contenido'
 import EditableTexto from '../components/EditableTexto'
 import EditorInSitu from '../components/EditorInSitu'
+import AyudaElegir from '../components/AyudaElegir'
 import { construirMensajeProducto, construirMensajePedido, abrirWhatsApp } from '../utils/whatsapp'
 import { registrarPedidoWhatsApp } from '../utils/pedidos'
 
@@ -104,11 +107,9 @@ function BotonesAccion({ p, onAgregar, onComprar, sobreImagen = false }) {
         type="button"
         onClick={(e) => { e.stopPropagation(); onComprar(p) }}
         disabled={p.stock <= 0}
-        className={`flex-1 h-9 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed ${
-          sobreImagen ? 'btn-primary bg-white/80 text-ink no-shine' : 'btn-primary btn-shine text-white'
-        }`}
+        className={`flex-1 h-9 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed bg-[#25D366] text-white hover:bg-[#1DAB54] shadow-lg shadow-[#25D366]/20`}
       >
-        <MessageCircle size={14} /> Comprar
+        <IconoWhatsApp className="w-3.5 h-3.5" /> Comprar
       </button>
     </div>
   )
@@ -308,6 +309,76 @@ function PanelFormaCatalogo({ valor, onChange }) {
   )
 }
 
+/* ── VISOR DE GALERÍA (deslizar fotos del producto) ───────── */
+function GaleriaProducto({ p }) {
+  const imgs = [p.imagen, ...(p.galeria || [])].filter(Boolean)
+  const [idx, setIdx] = useState(0)
+  const touchX = useRef(null)
+
+  if (imgs.length === 0) return <VisualProducto p={p} className="w-full h-full" />
+  if (imgs.length === 1) return <img src={imgs[0]} alt={p.nombre} className="w-full h-full object-cover" />
+
+  const total = imgs.length
+  const actual = ((idx % total) + total) % total
+
+  const ir = (dir) => setIdx((i) => (i + dir + total) % total)
+
+  return (
+    <div
+      className="absolute inset-0 touch-pan-y"
+      onTouchStart={(e) => { touchX.current = e.touches[0].clientX }}
+      onTouchEnd={(e) => {
+        if (touchX.current == null) return
+        const dx = e.changedTouches[0].clientX - touchX.current
+        touchX.current = null
+        if (Math.abs(dx) > 40) ir(dx < 0 ? 1 : -1)
+      }}
+    >
+      <div className="absolute inset-0 flex transition-transform duration-500 ease-out" style={{ transform: `translateX(-${actual * 100}%)` }}>
+        {imgs.map((im, i) => (
+          <img key={i} src={im} alt={`${p.nombre} ${i + 1}`} draggable="false" className="w-full h-full shrink-0 object-cover" />
+        ))}
+      </div>
+
+      {/* Flechas */}
+      <button
+        type="button"
+        onClick={() => ir(-1)}
+        aria-label="Foto anterior"
+        className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 text-white flex items-center justify-center hover:bg-black/60 transition opacity-0 group-hover:opacity-100 sm:opacity-90"
+      >
+        <ChevronLeft size={16} />
+      </button>
+      <button
+        type="button"
+        onClick={() => ir(1)}
+        aria-label="Foto siguiente"
+        className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 text-white flex items-center justify-center hover:bg-black/60 transition opacity-0 group-hover:opacity-100 sm:opacity-90"
+      >
+        <ChevronRight size={16} />
+      </button>
+
+      {/* Miniatura inferior */}
+      <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-black/35 backdrop-blur-md max-w-[90%] overflow-x-auto">
+        {imgs.map((im, i) => (
+          <button
+            key={i}
+            type="button"
+            onClick={() => setIdx(i)}
+            className={`w-7 h-7 rounded-md overflow-hidden shrink-0 ring-2 transition ${i === actual ? 'ring-gold' : 'ring-white/30 hover:ring-white/60'}`}
+          >
+            <img src={im} alt="" className="w-full h-full object-cover" />
+          </button>
+        ))}
+      </div>
+
+      <span className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-black/40 text-white/90 text-[10px] font-semibold tabular-nums">
+        {actual + 1}/{total}
+      </span>
+    </div>
+  )
+}
+
 /* ── DETALLE DE PRODUCTO ───────────────────────────────────── */
 function DetalleProducto({ p, onClose, onAgregar, onComprar, esFavorito, onFavorito }) {
   const [cant, setCant] = useState(1)
@@ -318,15 +389,15 @@ function DetalleProducto({ p, onClose, onAgregar, onComprar, esFavorito, onFavor
         className="card rounded-2xl w-full max-w-3xl flex flex-col sm:flex-row overflow-hidden max-h-[90vh] anim-pop"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="sm:w-1/2 h-56 sm:h-auto bg-bg-soft relative">
-          <VisualProducto p={p} className="w-full h-full" />
-          <button type="button" onClick={onClose} className="absolute top-3 right-3 w-8 h-8 bg-elevated rounded-full flex items-center justify-center text-ink-2 hover:text-ink shadow">
+        <div className="group sm:w-1/2 h-56 sm:h-auto bg-bg-soft relative">
+          <GaleriaProducto p={p} />
+          <button type="button" onClick={onClose} className="absolute top-2 right-2 w-8 h-8 bg-elevated rounded-full flex items-center justify-center text-ink-2 hover:text-ink shadow z-10">
             <X size={16} />
           </button>
           <button
             type="button"
             onClick={() => onFavorito(p)}
-            className={`absolute bottom-3 right-3 w-9 h-9 rounded-full flex items-center justify-center border border-line shadow ${esFavorito ? 'text-gold bg-card' : 'text-ink-2 bg-card'}`}
+            className={`absolute top-2 left-2 w-9 h-9 rounded-full flex items-center justify-center border border-line shadow z-10 ${esFavorito ? 'text-gold bg-card' : 'text-ink-2 bg-card'}`}
             aria-label="Favorito"
           >
             <Heart size={18} fill={esFavorito ? 'currentColor' : 'none'} />
@@ -365,9 +436,9 @@ function DetalleProducto({ p, onClose, onAgregar, onComprar, esFavorito, onFavor
             type="button"
             onClick={() => onComprar(p, cant)}
             disabled={p.stock <= 0}
-            className="btn w-full mt-2 h-12 text-sm border border-line text-ink-2 hover:text-accent hover:border-accent flex items-center justify-center gap-2 disabled:opacity-40"
+            className="btn w-full mt-2 h-12 text-sm flex items-center justify-center gap-2 bg-[#25D366] text-white hover:bg-[#1DAB54] disabled:opacity-40 border-0 shadow-lg shadow-[#25D366]/25"
           >
-            <MessageCircle size={16} /> Comprar por WhatsApp · {formatPrecio(p.precio * cant)}
+            <IconoWhatsApp className="w-4 h-4" /> Pedir por WhatsApp · {formatPrecio(p.precio * cant)}
           </button>
         </div>
       </div>
@@ -419,9 +490,9 @@ function CarritoDrawer({ carrito, onClose, onSumar, onRestar, onQuitar, total, o
               <button
                 type="button"
                 onClick={() => onPedirWhatsApp(carrito)}
-                className="btn btn-primary w-full py-3 flex items-center justify-center gap-2 btn-shine"
+                className="btn w-full py-3 flex items-center justify-center gap-2 bg-[#25D366] text-white hover:bg-[#1DAB54] border-0 shadow-lg shadow-[#25D366]/25"
               >
-                <MessageCircle size={16} /> Pedir por WhatsApp
+                <IconoWhatsApp className="w-4 h-4" /> Pedir por WhatsApp
               </button>
               <p className="text-[11px] text-ink-3 text-center mt-2">
                 Te llevamos a un chat para terminar tu pedido · {numeroWhatsApp}
@@ -450,13 +521,14 @@ function CampoModal({ label, valor, cambio, type = 'text', numero = false }) {
 }
 
 function EditProductoModal({ producto, onClose, onGuardar }) {
-  const [form, setForm] = useState(() => producto || { id: Date.now(), nombre: '', categoria: 'maquillaje', precio: 0, antes: 0, emoji: '✨', imagen: '', desc: '', stock: 10, badge: '' })
+  const [form, setForm] = useState(() => producto || { id: Date.now(), nombre: '', categoria: 'maquillaje', precio: 0, antes: 0, emoji: '✨', imagen: '', galeria: [], desc: '', stock: 10, badge: '' })
 
   // Si el producto ya tiene una imagen de internet, se precarga en el campo URL.
   const [urlImagen, setUrlImagen] = useState(() => {
     const img = (producto && producto.imagen) || ''
     return img.startsWith('http') ? img : ''
   })
+  const [urlGaleria, setUrlGaleria] = useState('')
 
   function subirImagen(e) {
     const archivo = e.target.files?.[0]
@@ -466,6 +538,36 @@ function EditProductoModal({ producto, onClose, onGuardar }) {
     const reader = new FileReader()
     reader.onload = () => setForm((f) => ({ ...f, imagen: reader.result, emoji: '' }))
     reader.readAsDataURL(archivo)
+  }
+
+  // Galería: varias fotos extra del producto (se ven deslizando en el detalle).
+  function subirGaleria(e) {
+    const archivos = [...(e.target.files || [])]
+    if (archivos.length === 0) return
+    const validos = archivos.filter((a) => a.type.startsWith('image/') && a.size <= 2 * 1024 * 1024)
+    if (validos.length === 0) return toast.error('Solo imágenes de max 2 MB')
+    let contador = 0
+    validos.forEach((archivo) => {
+      const reader = new FileReader()
+      reader.onload = () => {
+        contador++
+        setForm((f) => ({ ...f, galeria: [...(f.galeria || []), reader.result] }))
+        if (contador === validos.length) toast.success(`${contador} foto${contador !== 1 ? 's' : ''} agregada${contador !== 1 ? 's' : ''} a la galería`)
+      }
+      reader.readAsDataURL(archivo)
+    })
+  }
+
+  function usarUrlGaleria() {
+    const url = urlGaleria.trim()
+    if (!url.startsWith('http')) return toast.error('Pega una URL válida (https://...)')
+    setForm((f) => ({ ...f, galeria: [...(f.galeria || []), url] }))
+    setUrlGaleria('')
+    toast.success('Imagen por URL agregada a la galería')
+  }
+
+  function quitarGaleria(i) {
+    setForm((f) => ({ ...f, galeria: (f.galeria || []).filter((_, x) => x !== i) }))
   }
 
   function usarUrl() {
@@ -513,6 +615,45 @@ function EditProductoModal({ producto, onClose, onGuardar }) {
           </div>
         </div>
 
+        {/* Galería de imágenes extra */}
+        <div className="mb-4 card rounded-xl p-3.5">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs font-semibold text-ink-2 uppercase tracking-wide">Galería de fotos ({form.galeria?.length || 0})</p>
+            <label className="cursor-pointer text-xs text-accent font-semibold hover:underline inline-flex items-center gap-1">
+              ＋ Cargar fotos
+              <input type="file" accept="image/*" multiple onChange={subirGaleria} className="hidden" />
+            </label>
+          </div>
+          {form.galeria?.length > 0 && (
+            <div className="grid grid-cols-4 gap-2 mb-2">
+              {form.galeria.map((g, i) => (
+                <div key={i} className="relative aspect-square rounded-lg overflow-hidden bg-bg-soft border border-line">
+                  <img src={g} alt="" className="w-full h-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => quitarGaleria(i)}
+                    className="absolute top-0.5 right-0.5 w-5 h-5 rounded-full bg-black/60 text-white text-[10px] flex items-center justify-center hover:bg-error transition"
+                    aria-label="Quitar foto"
+                  >
+                    <X size={11} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+          <p className="text-[11px] text-ink-3 mb-1.5">…o pega el enlace de una foto para la galería</p>
+          <div className="flex gap-2">
+            <input
+              value={urlGaleria}
+              onChange={(e) => setUrlGaleria(e.target.value)}
+              placeholder="https://…/foto-extra.jpg"
+              className="input text-sm flex-1"
+            />
+            <button type="button" onClick={usarUrlGaleria} className="btn btn-ghost btn-sm shrink-0">Añadir</button>
+          </div>
+          <p className="text-[10px] text-ink-3 mt-2">El usuario podrá tocar el producto y deslizar para ver todas las fotos.</p>
+        </div>
+
         <div className="grid grid-cols-2 gap-3 mb-3">
           <div className="col-span-2"><CampoModal label="Nombre" valor={form.nombre} cambio={(v) => setForm({ ...form, nombre: v })} /></div>
           <label className="block text-xs text-ink-3 mb-1">Categoría</label>
@@ -549,6 +690,181 @@ function EditProductoModal({ producto, onClose, onGuardar }) {
   )
 }
 
+/* ── CARRUSEL DE PRODUCTOS RECOMENDADOS (vitrina de fotos) ─── */
+function CarruselRecomendados({ productos, auto, titulo, onVer, onAgregar, onComprar, esFavorito, onFavorito, modoEdicion, onEditar }) {
+  const [indice, setIndice] = useState(0)
+  const [pausado, setPausado] = useState(false)
+  const touchX = useRef(null)
+
+  // Cada imagen del producto (portada + galería) es un slide con su producto.
+  const slides = useMemo(() => {
+    const arr = []
+    productos.forEach((p) => {
+      const imgs = [...new Set([p.imagen, ...(p.galeria || [])].filter(Boolean))]
+      if (imgs.length) imgs.forEach((im) => arr.push({ id: `${p.id}-${im.slice(0, 24)}`, producto: p, imagen: im }))
+      else arr.push({ id: `emoji-${p.id}`, producto: p, imagen: '' })
+    })
+    return arr
+  }, [productos])
+
+  const total = slides.length
+  const actual = total ? ((indice % total) + total) % total : 0
+  const velocidad = Math.max(2000, auto || 3500)
+
+  useEffect(() => {
+    if (total <= 1 || pausado) return
+    const id = setInterval(() => setIndice((i) => (i + 1) % total), velocidad)
+    return () => clearInterval(id)
+  }, [total, pausado, velocidad])
+
+  if (total === 0) return null
+
+  const s = slides[actual]
+  const p = s.producto
+  const ir = (dir) => setIndice((i) => (i + dir + total) % total)
+
+  return (
+    <div className="group">
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="font-display text-lg font-bold text-ink">{titulo}</h2>
+        <div className="flex items-center gap-2">
+          {total > 1 && (
+            <button type="button" onClick={() => ir(-1)} className="w-8 h-8 rounded-full border border-line bg-elevated flex items-center justify-center text-ink-2 hover:text-accent transition" aria-label="Anterior">
+              <ChevronLeft size={15} />
+            </button>
+          )}
+          {total > 1 && (
+            <button type="button" onClick={() => ir(1)} className="w-8 h-8 rounded-full border border-line bg-elevated flex items-center justify-center text-ink-2 hover:text-accent transition" aria-label="Siguiente">
+              <ChevronRight size={15} />
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div
+        className="relative aspect-[16/9] sm:aspect-[21/9] rounded-2xl overflow-hidden border border-line shadow-xl shadow-ink/5 cursor-pointer touch-pan-y"
+        onClick={() => onVer(p)}
+        onMouseEnter={() => setPausado(true)}
+        onMouseLeave={() => setPausado(false)}
+        onTouchStart={(e) => { touchX.current = e.touches[0].clientX }}
+        onTouchEnd={(e) => {
+          if (touchX.current == null) return
+          const dx = e.changedTouches[0].clientX - touchX.current
+          touchX.current = null
+          if (Math.abs(dx) > 40) ir(dx < 0 ? 1 : -1)
+        }}
+      >
+        {/* Foto del slide actual: se muestra completa sin recortar */}
+        <div key={s.id} className="absolute inset-0 fade-in bg-gradient-to-br from-blush/60 to-accent-light/40">
+          {s.imagen ? (
+            <img
+              key={s.id}
+              src={s.imagen}
+              alt={p.nombre}
+              draggable="false"
+              className="carrusel-zoom w-full h-full object-contain"
+              style={{ animationDuration: `${velocidad}ms`, animationPlayState: pausado ? 'paused' : 'running' }}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <span className="text-7xl drop-shadow-lg">{p.emoji || '✨'}</span>
+            </div>
+          )}
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/12 to-transparent" />
+
+        {/* Barra de progreso del auto */}
+        {total > 1 && !pausado && (
+          <span
+            key={actual}
+            className="absolute bottom-0 left-0 h-1 bg-gold/90 z-20 rounded-r-full"
+            style={{ width: '100%', transformOrigin: 'left', animation: `carrusel-progreso ${velocidad}ms linear forwards` }}
+            aria-hidden="true"
+          />
+        )}
+
+        {/* Acciones superiores */}
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); onFavorito(p) }}
+          className={`absolute top-3 right-3 z-20 w-9 h-9 rounded-full flex items-center justify-center shadow border border-line transition ${esFavorito(p) ? 'text-gold bg-card' : 'text-white bg-black/30 hover:bg-black/55'}`}
+          aria-label="Favorito"
+        >
+          <Heart size={17} fill={esFavorito(p) ? 'currentColor' : 'none'} />
+        </button>
+        {modoEdicion && (
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); onEditar(p) }}
+            className="absolute top-3 left-3 z-20 w-9 h-9 rounded-full bg-accent text-white flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition"
+            aria-label="Editar producto"
+          >
+            <Pencil size={15} />
+          </button>
+        )}
+        {total > 1 && (
+          <span className="absolute bottom-3 right-3 z-20 px-2.5 py-1 rounded-full bg-black/40 backdrop-blur-md text-white/90 text-[11px] font-semibold tabular-nums">
+            {actual + 1}/{total}
+          </span>
+        )}
+
+        {/* Flechas laterales */}
+        {total > 1 && (
+          <>
+            <button
+              type="button"
+              aria-label="Anterior"
+              onClick={(e) => { e.stopPropagation(); ir(-1) }}
+              className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-black/30 backdrop-blur-md text-white flex items-center justify-center opacity-70 sm:opacity-0 sm:group-hover:opacity-100 transition hover:bg-black/55 active:scale-90"
+            >
+              <ChevronLeft size={18} />
+            </button>
+            <button
+              type="button"
+              aria-label="Siguiente"
+              onClick={(e) => { e.stopPropagation(); ir(1) }}
+              className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-black/30 backdrop-blur-md text-white flex items-center justify-center opacity-70 sm:opacity-0 sm:group-hover:opacity-100 transition hover:bg-black/55 active:scale-90"
+            >
+              <ChevronRight size={18} />
+            </button>
+          </>
+        )}
+
+        {/* Info + acciones */}
+        <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 z-10 flex flex-wrap items-end justify-between gap-3">
+          <div className="min-w-0">
+            {p.badge && <span className={`badge ${p.badge === 'Oferta' ? 'badge-gold' : 'badge-rose'} inline-flex mb-2`}>{p.badge}</span>}
+            <p className="text-white/80 text-[10px] uppercase tracking-wide font-medium">{p.categoria}</p>
+            <h3 className="font-display text-xl sm:text-3xl font-bold text-white leading-tight drop-shadow truncate max-w-[70vw]">{p.nombre}</h3>
+            <div className="flex items-baseline gap-2 mt-1">
+              <span className="text-gold-soft text-lg sm:text-2xl font-bold drop-shadow">{formatPrecio(p.precio)}</span>
+              {p.antes > p.precio && <span className="text-white/70 line-through text-xs sm:text-sm">{formatPrecio(p.antes)}</span>}
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); onAgregar(p) }}
+              disabled={p.stock <= 0}
+              className="h-10 px-4 rounded-xl bg-white text-ink text-xs font-bold flex items-center gap-1.5 shadow-lg hover:bg-gold hover:text-white transition disabled:opacity-40"
+            >
+              <ShoppingBag size={14} /> Agregar
+            </button>
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); onComprar(p) }}
+              disabled={p.stock <= 0}
+              className="h-10 px-4 rounded-xl bg-[#25D366] text-white text-xs font-bold flex items-center gap-1.5 shadow-lg shadow-[#25D366]/30 hover:bg-[#1DAB54] transition disabled:opacity-40"
+            >
+              <IconoWhatsApp className="w-3.5 h-3.5" /> Comprar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 /* ── CATÁLOGO PRINCIPAL ────────────────────────────────────── */
 function CatalogoInterno() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -559,6 +875,7 @@ function CatalogoInterno() {
     return ['maquillaje', 'ropa', 'accesorios', 'favoritos'].includes(s) ? s : 'maquillaje'
   })
   const [busqueda, setBusqueda] = useState('')
+  const [ayudaOpen, setAyudaOpen] = useState(false)
   const [filtroDisp, setFiltroDisp] = useState('todos')
   const [orden, setOrden] = useState('destacados')
 
@@ -577,11 +894,14 @@ function CatalogoInterno() {
 
   const [modoEdicion] = useState(() => esAdmin())
   const [editando, setEditando] = useState(null)
-  const inputBannerRef = useRef(null)
+  const [recomendadosOpen, setRecomendadosOpen] = useState(false)
 
   const productos = contenido.productos || []
   const colecciones = contenido.colecciones || []
   const catalogoForma = contenido.catalogoForma || 'vertical'
+  const productosRecomendados = (contenido.recomendadosActivo !== false)
+    ? productos.filter((p) => !contenido.recomendadosColeccion || p.categoria === contenido.recomendadosColeccion)
+    : []
 
   useEffect(() => { localStorage.setItem('nathalia_carrito', JSON.stringify(carrito)) }, [carrito])
   useEffect(() => { localStorage.setItem('nathalia_favoritos', JSON.stringify([...favoritos])) }, [favoritos])
@@ -680,14 +1000,8 @@ function CatalogoInterno() {
     toast.success('Producto guardado')
   }
 
-  function subirBanner(e) {
-    const archivo = e.target.files?.[0]
-    if (!archivo) return
-    if (!archivo.type.startsWith('image/')) return toast.error('Solo imágenes')
-    if (archivo.size > 2 * 1024 * 1024) return toast.error('Máx 2 MB')
-    const reader = new FileReader()
-    reader.onload = () => guardarCambios({ ...contenido, catalogoBanner: reader.result })
-    reader.readAsDataURL(archivo)
+  function guardarCarrusel(nuevoContenido) {
+    guardarCambios(nuevoContenido)
   }
 
   return (
@@ -735,8 +1049,18 @@ function CatalogoInterno() {
       </div>
 
       {/* HERO / TITULAR */}
-      <div className="px-4 sm:px-6 pt-10 pb-8 bg-gradient-to-br from-bg-soft via-blush to-accent-light/50">
-        <div className="max-w-6xl mx-auto">
+      <div
+        className="relative px-4 sm:px-6 pt-10 pb-8 overflow-hidden"
+        style={{
+          backgroundImage:
+            'radial-gradient(85% 120% at 0% 0%, color-mix(in srgb, var(--na-rose) 13%, transparent) 0%, transparent 55%),' +
+            'radial-gradient(70% 110% at 100% 15%, color-mix(in srgb, var(--na-gold) 12%, transparent) 0%, transparent 55%),' +
+            'linear-gradient(165deg, var(--bg-soft) 20%, color-mix(in srgb, var(--na-blush) 55%, var(--bg)) 100%)',
+        }}
+      >
+        <div className="absolute -top-16 -right-16 w-56 h-56 rounded-full border border-dashed border-line opacity-70" aria-hidden="true" />
+        <div className="absolute -bottom-20 -left-20 w-72 h-72 rounded-full bg-blush/40 blur-2xl" aria-hidden="true" />
+        <div className="max-w-6xl mx-auto relative">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
             <div>
               <span className="kicker">
@@ -752,6 +1076,14 @@ function CatalogoInterno() {
                     <EditableTexto clave="catalogoSubtitulo" valor={contenido.catalogoSubtitulo} onCambio={editar} esEdicion={modoEdicion} multilinea />
                   )}
               </p>
+              <button
+                type="button"
+                onClick={() => setAyudaOpen(true)}
+                className="mt-5 inline-flex h-11 items-center gap-2 rounded-full bg-gradient-to-r from-gold to-gold-strong px-5 text-sm font-bold text-[var(--text-inverse)] shadow-lg shadow-gold/20 hover:brightness-105 hover:scale-[1.02] active:scale-95 transition"
+              >
+                <Dices size={17} />
+                <EditableTexto clave="catalogoAyuda" valor={contenido.catalogoAyuda} onCambio={editar} esEdicion={modoEdicion} />
+              </button>
             </div>
             <div className="flex gap-6 sm:gap-8 shrink-0">
               <div>
@@ -770,10 +1102,14 @@ function CatalogoInterno() {
           </div>
           {modoEdicion && (
             <div className="mt-5 flex flex-wrap items-center gap-3">
-              <label className="btn btn-ghost btn-md cursor-pointer">
-                📱 Subir imagen de portada
-                <input ref={inputBannerRef} type="file" accept="image/*" onChange={subirBanner} className="hidden" />
-              </label>
+              <button
+                type="button"
+                onClick={() => setRecomendadosOpen(true)}
+                className="btn btn-ghost btn-md"
+                title="Fila de productos: Tal vez te guste"
+              >
+                <Dices size={15} /> 🎲 Carrusel de productos
+              </button>
               <button
                 type="button"
                 onClick={() => setEditando({ id: Date.now(), nombre: '', categoria: seccion === 'favoritos' ? 'maquillaje' : seccion, precio: 0, antes: 0, emoji: '✨', imagen: '', desc: '', stock: 10, badge: '' })}
@@ -785,7 +1121,27 @@ function CatalogoInterno() {
             </div>
           )}
         </div>
+
+        {/* Carrusel de productos recomendados */}
+        {productosRecomendados.length > 0 && (
+          <div className="max-w-6xl mx-auto mt-8">
+            <CarruselRecomendados
+              productos={productosRecomendados}
+              auto={contenido.recomendadosAuto}
+              titulo={contenido.recomendadosTitulo || 'Tal vez te guste ✨'}
+              onVer={verDetalle}
+              onAgregar={agregar}
+              onComprar={(prod) => comprarProducto(prod)}
+              esFavorito={(p) => favoritos.has(p.id)}
+              onFavorito={toggleFavorito}
+              modoEdicion={modoEdicion}
+              onEditar={(prod) => setEditando(prod)}
+            />
+          </div>
+        )}
       </div>
+      {/* Línea decorativa bajo el hero */}
+      <div className="h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent mx-auto max-w-6xl" />
 
       {/* BARRA DE FILTROS */}
       <div className="sticky top-[104px] z-30 px-4 sm:px-6 py-3 border-b border-line bg-bg/95 backdrop-blur-md">
@@ -942,6 +1298,29 @@ function CatalogoInterno() {
           producto={productos.find((p) => p.id === editando.id) || null}
           onClose={() => setEditando(null)}
           onGuardar={guardarProducto}
+        />
+      )}
+
+      {/* Asistente "¿No sabes qué elegir?" */}
+      <AyudaElegir
+        open={ayudaOpen}
+        onClose={() => setAyudaOpen(false)}
+        productos={productos}
+        colecciones={colecciones}
+        onAgregar={agregar}
+        onComprar={(prod) => comprarProducto(prod)}
+        onVer={verDetalle}
+        numeroWhatsApp={contenido.telefonoWhatsApp}
+      />
+
+      {/* Panel admin: carrusel de productos recomendados */}
+      {modoEdicion && (
+        <PanelRecomendados
+          open={recomendadosOpen}
+          contenido={contenido}
+          colecciones={colecciones}
+          onClose={() => setRecomendadosOpen(false)}
+          onGuardar={guardarCarrusel}
         />
       )}
     </div>

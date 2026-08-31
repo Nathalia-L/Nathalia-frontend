@@ -38,7 +38,8 @@ const CONTENIDO_DEFAULT = {
   },
 
   // Landing
-  banner: '', // imagen de fondo del hero (data URL) — opcional
+  banner: '', // imagen de fondo del hero (data URL) — opcional (legado)
+  banners: [], // carrusel de imágenes de fondo del hero (data URL o URL)
   heroBadge: 'Belleza y estilo para ti',
   heroTitulo1: 'Descubre tu',
   heroTitulo2: 'lado más bello',
@@ -71,6 +72,25 @@ const CONTENIDO_DEFAULT = {
   catalogoForma: 'vertical', // vertical | horizontal | boutique | minimal | editorial
   catalogoKicker: 'Tienda · Moda y Belleza',
 
+  // Carrusel de imágenes del catálogo (editable desde el panel admin)
+  carrusel: [], // [{ id, imagen, titulo, kicker, texto, cta, destino, posicion, overlay }]
+  carruselAuto: 5000, // velocidad del auto (ms)
+  carruselAltura: 'media', // baja | media | alta
+  carruselMostrarTexto: true,
+
+  // Carrusel de clientas en acción (inicio) — editable desde el panel admin
+  clientas: [], // [{ id, imagen, titulo, texto }]
+  clientasActivo: true,
+  clientasAuto: 4500, // velocidad (ms)
+  clientasKicker: 'En acción',
+  clientasTitulo: 'Ellas ya lo lucen',
+
+  // Carrusel de productos recomendados (catálogo) — editable desde el panel admin
+  recomendadosActivo: true,
+  recomendadosColeccion: '', // id de colección o '' para todas
+  recomendadosAuto: 3500, // velocidad (ms)
+  recomendadosTitulo: 'Tal vez te guste ✨',
+
   // Textos de la página de inicio del cliente (se editan con el lápiz)
   clienteBadge: 'Moda & Belleza',
   clienteTitulo: 'Bienvenida a Nathalia 💖',
@@ -87,6 +107,26 @@ const CONTENIDO_DEFAULT = {
   pedidosVacioTitulo: 'Aún no tienes pedidos',
   pedidosVacioTexto: 'Cuando compres en el catálogo, cada pedido y su estado aparecerán aquí.',
   pedidosExplorar: 'Explorar catálogo',
+
+  // Botón de ayuda del catálogo ("¿No sabes qué elegir?")
+  catalogoAyuda: '¿No sabes qué elegir?',
+  ayudaPregunta1: '¿Qué te apetece hoy?',
+  ayudaPregunta2: '¿Cuánto quieres gastar?',
+  ayudaReiniciar: 'Empezar de nuevo',
+  ayudaNada: '¿Nada te convence? Escríbenos 🤳',
+
+  // Textos del Foro (se editan con el lápiz)
+  foroKicker: 'Comunidad Nathalia',
+  foroTitulo: 'Foro',
+  foroSubtitulo: 'Calificaciones y opiniones reales de nuestros clientes.',
+  foroVerOpiniones: 'Ver opiniones',
+  foroCalificar: 'Calificar',
+  foroCalificado: 'Calificado',
+  foroSinCalif: 'Sin calificaciones aún',
+  foroSePrimero: 'Sé la primera en opinar 💬',
+  foroNecesitasCompra: 'Califica este producto después de recibir tu pedido 💖',
+  foroNecesitasLogin: 'Completa una compra y al recibir tu producto podrás calificarlo.',
+  foroOpinionesDe: 'Opiniones de',
   footerDescripcion: 'Moda, maquillaje y accesorios con estilo propio, pensados para ti.',
   footerColProductos: 'Productos',
   footerColEmpresa: 'Empresa',
@@ -138,7 +178,7 @@ const CONTENIDO_DEFAULT = {
   ],
 
   // WhatsApp de la tienda (se edita desde el panel de administrador)
-  telefonoWhatsApp: '573122073007',
+  telefonoWhatsApp: '573160935626',
 
   // Catálogo
   catalogoTitulo: 'Colección Nathalia',
@@ -202,6 +242,14 @@ export function cargarContenido() {
       if (!Array.isArray(base[lista]) || base[lista].length === 0) base[lista] = CONTENIDO_DEFAULT[lista]
     }
     base.productos = (base.productos || []).filter((p) => CATEGORIAS_ACTIVAS.includes(p.categoria))
+
+    // Migración: número de WhatsApp actualizado a +57 316 093 5626.
+    // Si el contenido guardado aún trae el número viejo, se reemplaza.
+    const WH_NUEVO = CONTENIDO_DEFAULT.telefonoWhatsApp
+    const WH_VIEJOS = ['573122073007', '3122073007']
+    const whLimpio = String(base.telefonoWhatsApp || '').replace(/\D/g, '')
+    if (WH_VIEJOS.includes(whLimpio)) base.telefonoWhatsApp = WH_NUEVO
+
     return base
   } catch {
     return { ...CONTENIDO_DEFAULT }

@@ -14,6 +14,7 @@ const RUTA = `${API_URL}/api/tienda/contenido`
 let ultimoRemoto = null
 let ultimaEscrituraLocal = 0
 let timer = null
+let reintentosSubida = 0
 
 function autorizacion() {
   const token = localStorage.getItem('token')
@@ -42,9 +43,9 @@ export async function guardarContenidoServidor(contenido) {
       headers: { 'Content-Type': 'application/json', ...autorizacion() },
       body: JSON.stringify({ contenido }),
     })
-    return res.ok
+    return { ok: res.ok, status: res.status, network: false }
   } catch {
-    return false
+    return { ok: false, status: 0, network: true }
   }
 }
 
@@ -68,20 +69,49 @@ export async function sincronizarDesdeServidor() {
 
 // Programa (en caliente) la subida del contenido cuando el admin edita.
 // Solo se ejecuta si hay un cambio real y el usuario es administrador.
+function subirContenido() {
+  const contenido = cargarContenido()
+  const serializado = JSON.stringify(contenido)
+  if (serializado === ultimoRemoto) return
+  guardarContenidoServidor(contenido).then((res) => {
+    if (res.ok) {
+      ultimoRemoto = serializado
+      reintentosSubida = 0
+      toast.success('Tienda actualizada en línea ✓', { id: 'sync-ok' })
+      return
+    }
+    // Sesión expirada o token inválido: no reintentar, pedir login.
+    if (!res.network && (res.status === 401 || res.status === 403)) {
+      reintentosSubida = 0
+      toast.error('Tu sesión de administrador caducó: entra de nuevo en /control-interno para volver a guardar en línea', { id: 'sync-error', duration: 6000 })
+      return
+    }
+    // Imágenes demasiado pesadas para la nube.
+    if (res.status === 413) {
+      reintentosSubida = 0
+      toast.error('Las imágenes pesan mucho para la nube: sube fotos más livianas (máx 2 MB) o usa un enlace', { id: 'sync-error', duration: 6000 })
+      return
+    }
+    // Falla temporal (servidor dormido, red): reintentar un par de veces.
+    if (reintentosSubida < 2) {
+      reintentosSubida += 1
+      timer = setTimeout(subirContenido, 6000)
+      toast.loading('Reintentando guardar en línea…', { id: 'sync-retry', duration: 1000 })
+      return
+    }
+    reintentosSubida = 0
+    toast.error(
+      res.network
+        ? 'Sin conexión con el servidor: los cambios quedaron guardados en este dispositivo'
+        : `No se pudo guardar en el servidor (error ${res.status})`,
+      { id: 'sync-error', duration: 6000 }
+    )
+  })
+}
+
 export function programarSubidaContenido() {
   if (!esAdmin()) return
   ultimaEscrituraLocal = Date.now()
   clearTimeout(timer)
-  timer = setTimeout(async () => {
-    const contenido = cargarContenido()
-    const serializado = JSON.stringify(contenido)
-    if (serializado === ultimoRemoto) return
-    const ok = await guardarContenidoServidor(contenido)
-    if (ok) {
-      ultimoRemoto = serializado
-      toast.success('Tienda actualizada en línea ✓', { id: 'sync-ok' })
-    } else {
-      toast.error('No se pudo guardar en línea: revisa que el servidor esté encendido', { id: 'sync-error' })
-    }
-  }, 1500)
+  timer = setTimeout(subirContenido, 1500)
 }

@@ -174,7 +174,7 @@ function EstadoPedidoPage() {
           </div>
           <div>
             <p className="text-sm font-medium text-ink">Te notificaremos cuando tu pedido esté en camino.</p>
-            <p className="text-xs text-ink-3">Si tienes dudas, contáctanos por WhatsApp 300 123 4567</p>
+            <p className="text-xs text-ink-3">Si tienes dudas, contáctanos por WhatsApp 316 093 5626</p>
           </div>
         </div>
 

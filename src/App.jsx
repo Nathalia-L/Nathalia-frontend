@@ -22,6 +22,7 @@ import CarritoPage from './pages/CarritoPage'
 import EstadoPedidoPage from './pages/EstadoPedidoPage'
 import ComparacionPage from './pages/ComparacionPage'
 import Empresas from './pages/Empresas'
+import Foro from './pages/Foro'
 import { aplicarTemaGuardado } from './utils/tema'
 import { suscribirseContenido } from './utils/contenido'
 import { sincronizarDesdeServidor, programarSubidaContenido } from './utils/contenidoRemoto'
@@ -85,6 +86,7 @@ function App() {
           <Route path="carrito" element={<CarritoPage />} />
           <Route path="comparar" element={<ComparacionPage />} />
           <Route path="empresas" element={<Empresas />} />
+          <Route path="foro" element={<Foro />} />
         </Route>
 
         {/* Compatibilidad: cualquier link viejo a /catalogo cae en la vista nueva */}

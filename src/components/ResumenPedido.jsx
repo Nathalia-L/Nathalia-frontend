@@ -1,10 +1,11 @@
 import { useNavigate } from 'react-router-dom'
 import { useCarrito } from '../context/CarritoContext'
-import { Settings2, ShieldCheck, Gift, Building2, Ticket, BadgePercent, MessageCircle } from 'lucide-react'
+import { Settings2, ShieldCheck, Gift, Building2, Ticket, BadgePercent } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { cargarContenido } from '../utils/contenido'
 import { construirMensajePedido, abrirWhatsApp } from '../utils/whatsapp'
 import { registrarPedidoWhatsApp } from '../utils/pedidos'
+import IconoWhatsApp from '../components/IconoWhatsApp'
 
 function ResumenPedido() {
   const navigate = useNavigate()
@@ -74,9 +75,9 @@ function ResumenPedido() {
       <button
         type="button"
         onClick={pedirPorWhatsApp}
-        className="btn-primary w-full flex items-center justify-center gap-2"
+        className="w-full flex items-center justify-center gap-2 bg-[#25D366] text-white hover:bg-[#1DAB54] border-0 shadow-lg shadow-[#25D366]/25 transition rounded-xl h-12 font-semibold text-sm"
       >
-        <MessageCircle size={16} /> Pedir por WhatsApp
+        <IconoWhatsApp className="w-4 h-4" /> Pedir por WhatsApp
       </button>
       <button
         type="button"

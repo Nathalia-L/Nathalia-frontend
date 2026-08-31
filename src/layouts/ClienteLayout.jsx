@@ -6,11 +6,13 @@ import EditorInSitu from '../components/EditorInSitu'
 import PanelMarca from '../components/PanelMarca'
 import ThemeToggle from '../components/ThemeToggle'
 import { useCarrito } from '../context/CarritoContext'
-import { suscribirseContenido, esAdmin } from '../utils/contenido'
+import { suscribirseContenido, esAdmin, cargarContenido } from '../utils/contenido'
+import IconoWhatsApp from '../components/IconoWhatsApp'
 
 const ENLACES = [
   { to: '/cliente', label: 'Inicio', end: true },
   { to: '/cliente/catalogo', label: 'Catálogo' },
+  { to: '/cliente/foro', label: 'Foro' },
   { to: '/cliente/pedidos', label: 'Mis pedidos' },
 ]
 
@@ -20,6 +22,7 @@ function ClienteLayout() {
   const [, forzarRender] = useState(0)
   const soyAdmin = esAdmin()
   const { totalUnidades } = useCarrito()
+  const numeroWhatsApp = cargarContenido().telefonoWhatsApp
 
   useEffect(() => {
     // Refresca el logo (nombre, eslogan, forma, colores) cuando el admin
@@ -110,6 +113,22 @@ function ClienteLayout() {
       </nav>
 
       <Outlet />
+
+      {/* Botón flotante Pedir por WhatsApp */}
+      <a
+        href={`https://wa.me/${String(numeroWhatsApp).replace(/[^\d]/g, '').replace(/^0+/, '')}?text=${encodeURIComponent('Hola 👋, quiero hacer un pedido en Nathalia.')}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Pedir por WhatsApp"
+        title="Pedir por WhatsApp"
+        className="fixed bottom-5 right-5 z-50 group flex items-center gap-0 rounded-full bg-[#25D366] text-white shadow-2xl shadow-black/30 hover:bg-[#1DAB54] transition-all pl-4 pr-4 py-3.5 anim-pop skip-ft"
+      >
+        <span className="absolute inset-0 rounded-full bg-[#25D366] animate-ping opacity-20" aria-hidden="true"></span>
+        <IconoWhatsApp className="w-6 h-6 relative" />
+        <span className="max-w-0 overflow-hidden whitespace-nowrap text-sm font-semibold group-hover:max-w-[140px] group-hover:pl-2 transition-all duration-300 relative">
+          Pedir por WhatsApp
+        </span>
+      </a>
     </div>
   )
 }

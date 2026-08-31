@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom'
-import { MessageCircle } from 'lucide-react'
 import { cargarContenido } from '../utils/contenido'
 import { useEdicion } from '../hooks/useEdicion'
 import EditableTexto from '../components/EditableTexto'
 import { abrirWhatsApp } from '../utils/whatsapp'
+import IconoWhatsApp from '../components/IconoWhatsApp'
 import ImagenProducto from '../components/ImagenProducto'
 import FadeIn from '../components/ui/FadeIn'
 import AuroraBackground from '../components/AuroraBackground'
@@ -127,9 +127,9 @@ function ClienteInicio() {
             <button
               type="button"
               onClick={() => abrirWhatsApp(`Hola 👋, me interesa conocer los productos de Nathalia y comprar por WhatsApp.`, numeroWhatsApp)}
-              className="btn btn-ghost btn-md"
+              className="btn btn-md bg-[#25D366] text-white border-0 hover:bg-[#1DAB54] shadow-lg shadow-[#25D366]/25"
             >
-              <MessageCircle size={16} />
+              <IconoWhatsApp className="w-4 h-4" />
               <EditableTexto clave="clienteCta2" valor={contenido.clienteCta2} onCambio={editar} esEdicion={esEdicion} />
             </button>
           </div>

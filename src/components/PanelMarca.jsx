@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Camera, Dices, Wand2, RotateCcw, Pencil, Palette, Lightbulb, Type, Sparkles } from 'lucide-react'
+import { Camera, Dices, Wand2, RotateCcw, Pencil, Palette, Lightbulb, Type, Sparkles, X } from 'lucide-react'
 import {
   cargarContenido,
   guardarContenido,
@@ -106,6 +106,16 @@ export default function PanelMarca({ className = '' }) {
     aplicarNuevo(actualizarCampo(contenido, ruta, valor))
   }
 
+  // Guarda la lista del carrusel de portada y limpia el campo viejo (banner)
+  // para que la portada quede siempre controlada por el carrusel nuevo.
+  const cambiarBanners = (lista) => aplicarNuevo({ ...contenido, banners: lista, banner: '' })
+
+  // Imágenes de portada: usan el carrusel nuevo (banners); si solo existe la
+  // portada antigua (banner), se muestra como primera imagen del carrusel.
+  const portadas = (contenido.banners && contenido.banners.length)
+    ? contenido.banners
+    : (contenido.banner ? [contenido.banner] : [])
+
   const ideasAleatorias = () => {
     const d = generarDiseñoAleatorio()
     aplicarNuevo({
@@ -145,14 +155,34 @@ export default function PanelMarca({ className = '' }) {
     <div className={className}>
       <section>
         <p className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-gold font-semibold">
-          <Camera size={11} /> Portada
+          <Camera size={11} /> Portada (carrusel de imágenes)
         </p>
-        <div className="mt-1.5">
+        <div className="mt-1.5 space-y-2">
+          {portadas.length > 0 && (
+            <div className="grid grid-cols-3 gap-1.5">
+              {portadas.map((img, i) => (
+                <div key={i} className="relative aspect-video rounded-lg overflow-hidden ring-1 ring-line bg-soft">
+                  <img src={img} alt={`Portada ${i + 1}`} className="w-full h-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => cambiarBanners(portadas.filter((_, x) => x !== i))}
+                    className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-error transition"
+                    aria-label="Quitar imagen de portada"
+                    title="Quitar imagen"
+                  >
+                    <X size={11} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
           <SelectorImagen
-            label="Imagen de portada"
-            valor={contenido.banner}
-            onCambiar={(v) => cambiar('banner', v)}
+            label="Portada"
+            valor=""
+            limiteMB={5}
+            onCambiar={(v) => { if (v) cambiarBanners([...portadas, v]) }}
           />
+          <p className="text-[10px] text-ink-3">Añade varias imágenes: girarán como carrusel en la portada de inicio.</p>
         </div>
       </section>
 

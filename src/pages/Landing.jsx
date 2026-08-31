@@ -17,7 +17,6 @@ import {
   Crown,
   Menu,
   X,
-  MessageCircle,
   Pencil,
   Dices,
 } from 'lucide-react'
@@ -29,6 +28,10 @@ import EditarProducto from '../components/EditarProducto'
 import EditarFlotante from '../components/EditarFlotante'
 import ThemeToggle from '../components/ThemeToggle'
 import AuroraBackground from '../components/AuroraBackground'
+import IconoWhatsApp from '../components/IconoWhatsApp'
+import heroArt from '../assets/hero-nathalia.svg'
+import CarruselClientas from '../components/CarruselClientas'
+import PanelClientas from '../components/PanelClientas'
 import {
   cargarContenido,
   guardarContenido,
@@ -57,12 +60,64 @@ const ICONOS = {
   bag: ShoppingBag,
 }
 
+// Carrusel de imágenes de fondo del hero: cruza con fade y avanza solo.
+// Si solo hay una imagen, se muestra estática (igual que antes).
+function HeroFondos({ imagenes, auto = 6000 }) {
+  const lista = (imagenes || []).filter(Boolean)
+  const [indice, setIndice] = useState(0)
+  const [pausado, setPausado] = useState(false)
+
+  useEffect(() => {
+    if (lista.length <= 1 || pausado) return
+    const id = setInterval(() => setIndice((i) => (i + 1) % lista.length), auto)
+    return () => clearInterval(id)
+  }, [lista.length, pausado, auto])
+
+  if (lista.length === 0) return null
+
+  return (
+    <div
+      className="absolute inset-0 overflow-hidden"
+      onMouseEnter={() => setPausado(true)}
+      onMouseLeave={() => setPausado(false)}
+    >
+      {lista.map((img, i) => (
+        <img
+          key={i}
+          src={img}
+          alt=""
+          aria-hidden="true"
+          draggable="false"
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-out ${i === indice ? 'opacity-100' : 'opacity-0'}`}
+        />
+      ))}
+      {lista.length > 1 && (
+        <div
+          className="absolute bottom-5 right-5 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/25 backdrop-blur-md"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {lista.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              aria-label={`Imagen ${i + 1}`}
+              onClick={() => setIndice(i)}
+              className={`rounded-full transition-all ${i === indice ? 'w-5 h-2 bg-gold' : 'w-2 h-2 bg-white/60 hover:bg-white'}`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function Landing() {
   const navigate = useNavigate()
   const [scrolled, setScrolled] = useState(false)
   const [menuAbierto, setMenuAbierto] = useState(false)
   const [heroEditando, setHeroEditando] = useState(false)
   const [destEditando, setDestEditando] = useState(false)
+  const [panelClientas, setPanelClientas] = useState(false)
   const [contenido, setContenido] = useState(() => cargarContenido())
   const soyAdmin = esAdmin()
 
@@ -100,6 +155,13 @@ function Landing() {
     irANosotros(mapa[label])
   }
   const productosDestacados = contenido.productos.slice(0, 4)
+
+  // Imágenes de fondo del hero: usan el carrusel nuevo (banners); si solo
+  // existe la portada antigua (banner), se muestra como imagen única.
+  const imagenesPortada = (contenido.banners && contenido.banners.length)
+    ? contenido.banners
+    : (contenido.banner ? [contenido.banner] : [])
+  const hayBanner = imagenesPortada.length > 0
 
   return (
     <div className="min-h-screen bg-bg text-ink selection:bg-accent/20">
@@ -173,8 +235,8 @@ function Landing() {
 
       {/* ── HERO ───────────────────────────────── */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {contenido.banner && (
-          <img src={contenido.banner} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        {hayBanner && (
+          <HeroFondos imagenes={imagenesPortada} />
         )}
         {esEdicion && (
           <>
@@ -197,18 +259,24 @@ function Landing() {
             )}
           </>
         )}
-        {!contenido.banner && (
+        {!hayBanner && (
           <div className="hero-ring" aria-hidden="true" />
         )}
         <div className="absolute inset-0" aria-hidden="true">
-          <AuroraBackground intensidad={contenido.banner ? 0.35 : 1} />
+          <AuroraBackground intensidad={hayBanner ? 0.35 : 1} />
         </div>
-        {contenido.banner && (
+        <img
+          src={heroArt}
+          alt=""
+          aria-hidden="true"
+          className="absolute bottom-0 right-0 w-[46%] max-w-md opacity-[0.14] pointer-events-none select-none mix-blend-plus-lighter"
+        />
+        {hayBanner && (
           <div className="absolute inset-0" style={{ background: 'linear-gradient(160deg, var(--bg) 0%, transparent 55%, var(--bg) 100%)' }} />
         )}
 
         {/* Destellos flotantes ✨ */}
-        {!contenido.banner && (
+        {!hayBanner && (
           <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
             {[
               { e: '✨', top: '16%', left: '14%', d: '0s' },
@@ -230,7 +298,7 @@ function Landing() {
         )}
 
         {/* Tarjetas flotantes */}
-        {!contenido.banner && (
+        {!hayBanner && (
           <div className="absolute inset-0 hidden lg:block pointer-events-none" aria-hidden="true">
             {contenido.flotantes.map((f, i) => (
               <div
@@ -621,6 +689,18 @@ function Landing() {
         </div>
       </section>
 
+      {/* ── CLIENTAS EN ACCIÓN ──────────────────── */}
+      {contenido.clientasActivo !== false && contenido.clientas && contenido.clientas.length > 0 && (
+        <CarruselClientas
+          slides={contenido.clientas}
+          auto={contenido.clientasAuto}
+          esEdicion={esEdicion}
+          onEditar={() => setPanelClientas(true)}
+          contenido={contenido}
+          onCambio={editar}
+        />
+      )}
+
       {/* ── CTA FINAL ──────────────────────────── */}
       <section className="py-16 sm:py-28">
         <FadeIn>
@@ -645,8 +725,8 @@ function Landing() {
                   <button type="button" onClick={() => navigate('/cliente/catalogo')} className="btn btn-gold btn-lg btn-shine">
                     <EditableTexto valor={contenido.explorarTienda} clave="explorarTienda" onCambio={editar} esEdicion={esEdicion} /> <ArrowRight size={17} />
                   </button>
-                  <button type="button" onClick={() => navigate('/cliente/pedidos')} className="btn btn-white btn-lg">
-                    <MessageCircle size={17} />{' '}
+                  <button type="button" onClick={() => navigate('/cliente/pedidos')} className="btn btn-lg bg-[#25D366] text-white border-0 hover:bg-[#1DAB54] shadow-lg shadow-[#25D366]/25 inline-flex items-center gap-2">
+                    <IconoWhatsApp className="w-4 h-4" />
                     <EditableTexto valor={contenido.pedidosWhatsApp} clave="pedidosWhatsApp" onCambio={editar} esEdicion={esEdicion} />
                   </button>
                 </div>
@@ -764,6 +844,16 @@ function Landing() {
           </div>
         </div>
       </footer>
+
+      {/* Panel admin: carrusel de clientas */}
+      {esEdicion && (
+        <PanelClientas
+          open={panelClientas}
+          contenido={contenido}
+          onClose={() => setPanelClientas(false)}
+          onGuardar={(nuevo) => { guardarContenido(nuevo); setContenido(nuevo) }}
+        />
+      )}
     </div>
   )
 }
@@ -897,9 +987,9 @@ function VitrinaDestacados({ productos, esEdicion, onEditar, onIr, telefono }) {
                 <button
                   type="button"
                   onClick={() => abrirWhatsApp(construirMensajeProducto(estrella, 1), telefono)}
-                  className="btn btn-primary btn-lg btn-shine"
+                  className="btn btn-lg bg-[#25D366] text-white border-0 hover:bg-[#1DAB54] shadow-lg shadow-[#25D366]/25"
                 >
-                  <MessageCircle size={17} /> Comprar por WhatsApp
+                  <IconoWhatsApp className="w-4 h-4" /> Comprar por WhatsApp
                 </button>
                 <button type="button" onClick={onIr} className="btn btn-ghost btn-lg">
                   Ver catálogo <ArrowRight size={16} />

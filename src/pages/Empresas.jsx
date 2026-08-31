@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { API_URL as BASE_API_URL } from "../config";
 import { cargarContenido } from '../utils/contenido'
 import { abrirWhatsApp } from '../utils/whatsapp'
+import IconoWhatsApp from '../components/IconoWhatsApp'
 import { useCarrito } from '../context/CarritoContext'
 import FadeIn from '../components/ui/FadeIn'
 
@@ -90,9 +91,9 @@ function Empresas() {
               <button
                 type="button"
                 onClick={() => abrirWhatsApp(`Hola 🏢, quiero comprar para mi negocio y obtener el 10% Nathalia.`, cargarContenido().telefonoWhatsApp)}
-                className="mt-6 h-12 px-8 rounded-xl btn-primary text-sm font-semibold"
+                className="mt-6 h-12 px-8 rounded-xl text-sm font-semibold bg-[#25D366] text-white hover:bg-[#1DAB54] border-0 shadow-lg shadow-[#25D366]/25 transition inline-flex items-center gap-2"
               >
-                Comienza por WhatsApp →
+                <IconoWhatsApp className="w-4 h-4" /> Comienza por WhatsApp →
               </button>
             )}
           </div>
