@@ -86,10 +86,11 @@ function subirContenido() {
       toast.success('Tienda actualizada en línea ✓', { id: 'sync-ok' })
       return
     }
-    // Sesión expirada o token inválido: no reintentar, pedir login.
+    // Sesión expirada o token inválido: no molestar al usuario, simplemente
+    // reintentar en silencio (el contenido queda guardado localmente).
     if (!res.network && (res.status === 401 || res.status === 403)) {
       reintentosSubida = 0
-      toast.error('Tu sesión de administrador caducó: entra de nuevo en /control-interno para volver a guardar en línea', { id: 'sync-error', duration: 6000 })
+      timer = setTimeout(subirContenido, 6000)
       return
     }
     // Imágenes demasiado pesadas para la nube.
