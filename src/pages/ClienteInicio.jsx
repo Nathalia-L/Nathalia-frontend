@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { cargarContenido } from '../utils/contenido'
 import { useEdicion } from '../hooks/useEdicion'
@@ -8,9 +7,7 @@ import IconoWhatsApp from '../components/IconoWhatsApp'
 import ImagenProducto from '../components/ImagenProducto'
 import FadeIn from '../components/ui/FadeIn'
 import AuroraBackground from '../components/AuroraBackground'
-import LogoNathalia from '../components/LogoNathalia'
-import ThemeToggle from '../components/ThemeToggle'
-import { ArrowRight, Truck, ShieldCheck, BadgeCheck, Star, Heart, Gem, Clock } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 
 const CATEGORIAS = {
   maquillaje: { label: 'Maquillaje', emoji: '💄' },
@@ -79,35 +76,9 @@ function ClienteInicio() {
   const { contenido, editar, esEdicion } = useEdicion()
   const numeroWhatsApp = contenido.telefonoWhatsApp
   const destacados = obtenerDestacados()
-  const [scrolled, setScrolled] = useState(false)
-
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 40)
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
 
   return (
     <div className="bg-bg">
-      {/* NAVBAR FLOTANTE */}
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'glass shadow-lg py-2' : 'bg-transparent py-3'}`}>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-10 flex items-center justify-between">
-          <button type="button" onClick={() => navigate('/')} className="flex items-center gap-2" aria-label="Inicio Beauty Esme">
-            <LogoNathalia size={34} showText />
-          </button>
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
-            <button
-              type="button"
-              onClick={() => navigate('/cliente/catalogo')}
-              className="hidden sm:inline-flex items-center gap-1.5 btn btn-primary btn-sm"
-            >
-              Ir a la tienda <ArrowRight size={14} />
-            </button>
-          </div>
-        </div>
-      </nav>
-
       {/* HERO DE BIENVENIDA */}
       <section className="relative overflow-hidden min-h-[520px] flex items-end">
         <AuroraBackground />
@@ -132,7 +103,7 @@ function ClienteInicio() {
           ))}
         </div>
 
-        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 pt-24 pb-12 sm:pb-16 w-full">
+        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 pt-8 pb-12 sm:pb-16 w-full">
           <div className="flex items-center gap-2 mb-4">
             <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></span>
             <span className="text-xs text-ink-3 uppercase tracking-wide">
@@ -354,22 +325,6 @@ function ClienteInicio() {
           </div>
         </section>
       </FadeIn>
-
-      {/* Botón flotante Pedir por WhatsApp */}
-      <a
-        href={`https://wa.me/${String(numeroWhatsApp).replace(/[^\d]/g, '').replace(/^0+/, '')}?text=${encodeURIComponent('Hola 👋, quiero hacer un pedido en Beauty Esme.')}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Pedir por WhatsApp"
-        title="Pedir por WhatsApp"
-        className="fixed bottom-5 right-5 z-50 group flex items-center gap-0 rounded-full bg-[#25D366] text-white shadow-2xl shadow-black/30 hover:bg-[#1DAB54] transition-all pl-4 pr-4 py-3.5 anim-pop skip-ft"
-      >
-        <span className="absolute inset-0 rounded-full bg-[#25D366] animate-ping opacity-20" aria-hidden="true"></span>
-        <IconoWhatsApp className="w-6 h-6 relative" />
-        <span className="max-w-0 overflow-hidden whitespace-nowrap text-sm font-semibold group-hover:max-w-[140px] group-hover:pl-2 transition-all duration-300 relative">
-          Pedir por WhatsApp
-        </span>
-      </a>
     </div>
   )
 }
