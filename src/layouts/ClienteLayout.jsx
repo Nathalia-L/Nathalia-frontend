@@ -39,10 +39,10 @@ function ClienteLayout() {
             {/* Flecha para volver al inicio/tienda */}
             <button
               type="button"
-              onClick={() => navigate(-1)}
+              onClick={() => navigate('/')}
               className="w-9 h-9 rounded-full border border-line flex items-center justify-center text-ink-2 hover:text-accent hover:border-accent transition shrink-0"
-              aria-label="Volver atrás"
-              title="Volver atrás"
+              aria-label="Ir al inicio"
+              title="Ir al inicio"
             >
               <ArrowLeft size={17} />
             </button>

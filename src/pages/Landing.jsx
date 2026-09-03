@@ -112,7 +112,7 @@ function HeroFondos({ imagenes, auto = 6000 }) {
   )
 }
 
-function Landing() {
+function Landing({ dentroCliente = false }) {
   const navigate = useNavigate()
   const [scrolled, setScrolled] = useState(false)
   const [menuAbierto, setMenuAbierto] = useState(false)
@@ -169,7 +169,7 @@ function Landing() {
   return (
     <div className="min-h-screen bg-bg text-ink selection:bg-accent/20">
       {/* ── NAVBAR ─────────────────────────────── */}
-      <nav
+      {!dentroCliente && (<nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           scrolled ? 'glass shadow-lg py-2.5' : 'bg-transparent py-4'
         }`}
@@ -234,7 +234,7 @@ function Landing() {
           </div>
         )}
 
-      </nav>
+      </nav>)}
 
       {/* ── HERO ───────────────────────────────── */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -746,7 +746,7 @@ function Landing() {
       </section>
 
       {/* ── FOOTER ─────────────────────────────── */}
-      <footer className="border-t border-line bg-bg-soft/50">
+      {!dentroCliente && (<footer className="border-t border-line bg-bg-soft/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-14">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
             <div className="col-span-2 md:col-span-1">
@@ -852,7 +852,7 @@ function Landing() {
             </div>
           </div>
         </div>
-      </footer>
+      </footer>)}
 
       {/* Panel admin: carrusel de clientas */}
       {esEdicion && panelClientas && (

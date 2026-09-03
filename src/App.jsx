@@ -83,13 +83,13 @@ function App() {
       />
       <BotonSorpresa />
       <Routes>
-        <Route path="/" element={<Landing />} />
+        <Route path="/" element={<ClienteInicio />} />
         <Route path="/control-interno" element={<AdminLogin />} />
         <Route path="/olvide-password-admin" element={<OlvidePasswordAdmin />} />
         <Route path="/reset-password-admin" element={<ResetPasswordAdmin />} />
 
         <Route path="/cliente" element={<ClienteLayout />}>
-          <Route index element={<ClienteInicio />} />
+          <Route index element={<Landing dentroCliente />} />
           <Route path="catalogo" element={<Catalogo />} />
           <Route path="pedidos" element={<MisPedidos />} />
           <Route path="pedidos/:id" element={<EstadoPedidoPage />} />

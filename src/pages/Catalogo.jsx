@@ -1090,9 +1090,9 @@ function CatalogoInterno() {
               <button
                 type="button"
                 onClick={() => setAyudaOpen(true)}
-                className="mt-5 inline-flex h-11 items-center gap-2 rounded-full bg-gradient-to-r from-gold to-gold-strong px-5 text-sm font-bold text-[var(--text-inverse)] shadow-lg shadow-gold/20 hover:brightness-105 hover:scale-[1.02] active:scale-95 transition"
+                className="group mt-5 inline-flex h-12 items-center gap-2.5 rounded-full border-2 border-gold/70 bg-gold/10 px-6 text-sm font-bold text-gold hover:bg-gold hover:text-white hover:border-gold hover:shadow-lg hover:shadow-gold/25 active:scale-95 transition-all duration-200"
               >
-                <Dices size={17} />
+                <Dices size={18} className="group-hover:rotate-12 transition-transform duration-200" />
                 <EditableTexto clave="catalogoAyuda" valor={contenido.catalogoAyuda} onCambio={editar} esEdicion={modoEdicion} />
               </button>
             </div>

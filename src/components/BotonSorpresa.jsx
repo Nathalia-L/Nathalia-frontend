@@ -42,7 +42,7 @@ export default function BotonSorpresa() {
       type="button"
       onClick={lanzarSorpresa}
       title="Mezcla todo al azar: colores, logo, tipografía y formas de tarjetas"
-      className="fixed bottom-5 right-5 z-[70] flex items-center gap-2 h-12 pl-4 pr-5 rounded-full shadow-2xl text-sm font-semibold text-white cursor-pointer hover:scale-[1.03] active:scale-95 transition-all bg-gradient-to-r from-accent to-gold anim-pop"
+      className="group fixed bottom-5 right-5 z-[70] flex items-center gap-2 h-12 pl-4 pr-5 rounded-full shadow-2xl shadow-black/25 text-sm font-semibold text-white cursor-pointer hover:scale-[1.03] active:scale-95 transition-all bg-gradient-to-r from-accent to-gold ring-2 ring-white/25 anim-pop"
     >
       <Sparkles size={17} className="shrink-0" />
       <span className="max-w-[230px] truncate text-left leading-tight">
