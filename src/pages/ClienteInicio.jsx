@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { cargarContenido } from '../utils/contenido'
 import { useEdicion } from '../hooks/useEdicion'
@@ -7,6 +8,9 @@ import IconoWhatsApp from '../components/IconoWhatsApp'
 import ImagenProducto from '../components/ImagenProducto'
 import FadeIn from '../components/ui/FadeIn'
 import AuroraBackground from '../components/AuroraBackground'
+import LogoNathalia from '../components/LogoNathalia'
+import ThemeToggle from '../components/ThemeToggle'
+import { ArrowRight, Truck, ShieldCheck, BadgeCheck, Star, Heart, Gem, Clock } from 'lucide-react'
 
 const CATEGORIAS = {
   maquillaje: { label: 'Maquillaje', emoji: '💄' },
@@ -62,9 +66,9 @@ function obtenerDestacados() {
   const alternados = []
   const listas = Object.values(porColeccion)
   const maximo = Math.max(...listas.map((l) => l.length), 0)
-  for (let i = 0; i < Math.min(4, maximo); i++) {
+  for (let i = 0; i < Math.min(8, maximo); i++) {
     for (const lista of listas) {
-      if (lista[i] && alternados.length < 4) alternados.push(lista[i])
+      if (lista[i] && alternados.length < 8) alternados.push(lista[i])
     }
   }
   return alternados
@@ -75,9 +79,35 @@ function ClienteInicio() {
   const { contenido, editar, esEdicion } = useEdicion()
   const numeroWhatsApp = contenido.telefonoWhatsApp
   const destacados = obtenerDestacados()
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 40)
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   return (
     <div className="bg-bg">
+      {/* NAVBAR FLOTANTE */}
+      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'glass shadow-lg py-2' : 'bg-transparent py-3'}`}>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-10 flex items-center justify-between">
+          <button type="button" onClick={() => navigate('/')} className="flex items-center gap-2" aria-label="Inicio Beauty Esme">
+            <LogoNathalia size={34} showText />
+          </button>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <button
+              type="button"
+              onClick={() => navigate('/cliente/catalogo')}
+              className="hidden sm:inline-flex items-center gap-1.5 btn btn-primary btn-sm"
+            >
+              Ir a la tienda <ArrowRight size={14} />
+            </button>
+          </div>
+        </div>
+      </nav>
+
       {/* HERO DE BIENVENIDA */}
       <section className="relative overflow-hidden min-h-[520px] flex items-end">
         <AuroraBackground />
@@ -155,6 +185,38 @@ function ClienteInicio() {
         </div>
       </section>
 
+      {/* CATEGORÍAS / COLECCIONES */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
+        <div className="text-center mb-8">
+          <span className="kicker justify-center">Explora por categoría</span>
+          <h2 className="text-2xl sm:text-3xl font-display font-bold text-ink mt-2">
+            Encuentra lo que buscas
+          </h2>
+          <div className="w-16 h-px bg-gold/50 mx-auto mt-4" />
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {(contenido.colecciones || []).map((col, i) => {
+            const Cat = CATEGORIAS[col.id] || { label: col.label || 'Colección', emoji: col.emoji || '✨' }
+            return (
+              <FadeIn key={col.id} delay={i * 0.08}>
+                <button
+                  type="button"
+                  onClick={() => navigate(col.id === 'maquillaje' ? '/cliente/catalogo' : `/cliente/catalogo?seccion=${col.id}`)}
+                  className="card card-hover group relative overflow-hidden p-7 text-center w-full h-full"
+                >
+                  <span className="absolute -top-8 -right-8 w-28 h-28 rounded-full bg-accent-light opacity-60 blur-2xl group-hover:opacity-100 transition" />
+                  <span className="text-4xl block mb-3 group-hover:scale-110 transition-transform duration-300">{Cat.emoji}</span>
+                  <span className="font-display text-lg font-semibold group-hover:text-accent transition">{Cat.label}</span>
+                  <span className="inline-flex items-center gap-1 text-xs text-accent font-medium mt-1">
+                    Ver colección <ArrowRight size={12} />
+                  </span>
+                </button>
+              </FadeIn>
+            )
+          })}
+        </div>
+      </section>
+
       {/* DESTACADOS DEL CATÁLOGO */}
       <FadeIn>
         <section className="max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20">
@@ -177,7 +239,7 @@ function ClienteInicio() {
         )}
 
         {destacados.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
             {destacados.map((p, i) => {
               const cat = CATEGORIAS[p.categoria] || { label: p.categoria || 'Beauty Esme', emoji: '✨' }
               return (
@@ -189,18 +251,21 @@ function ClienteInicio() {
                   onClick={() => navigate(p.categoria === 'maquillaje' ? '/cliente/catalogo' : `/cliente/catalogo?seccion=${p.categoria}`)}
                   onKeyDown={(e) => { if (e.key === 'Enter') navigate(p.categoria === 'maquillaje' ? '/cliente/catalogo' : `/cliente/catalogo?seccion=${p.categoria}`) }}
                   style={{ animationDelay: `${i * 70}ms` }}
-                  className="anim-pop card-hover group rounded-2xl overflow-hidden cursor-pointer"
+                  className="relative anim-pop card-hover group rounded-2xl overflow-hidden cursor-pointer"
                 >
-                  <div className="h-48 overflow-hidden">
+                  <div className="h-40 sm:h-48 overflow-hidden">
                     {p.imagen ? (
                       <ImagenProducto src={p.imagen} alt={p.nombre} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blush to-accent-light/70 text-6xl">
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blush to-accent-light/70 text-5xl sm:text-6xl">
                         {p.emoji || '✨'}
                       </div>
                     )}
+                    {p.badge && (
+                      <span className="absolute top-3 left-3 badge badge-gold">{p.badge}</span>
+                    )}
                   </div>
-                  <div className="p-4">
+                  <div className="p-3.5 sm:p-4">
                     <p className="text-[10px] font-medium text-accent uppercase tracking-wide">{cat.emoji} {cat.label}</p>
                     <p className="text-sm font-medium text-ink mt-0.5 line-clamp-2">{p.nombre}</p>
                     <div className="flex items-center justify-between mt-2">
@@ -221,6 +286,56 @@ function ClienteInicio() {
       </section>
       </FadeIn>
 
+      {/* ESTADÍSTICAS DE CONFIANZA */}
+      <section className="border-y border-line bg-bg-soft/60 py-10 sm:py-14">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 text-center">
+          {(contenido.estadisticas || [
+            { numero: '1.000+', label: 'Clientas felices' },
+            { numero: '15', label: 'Marcas aliadas' },
+            { numero: '98%', label: 'Nos recomiendan' },
+            { numero: '24h', label: 'De entrega' },
+          ]).map((item, i) => (
+            <FadeIn key={i} delay={i * 0.08}>
+              <div className="flex flex-col items-center gap-2.5">
+                <span className="font-display text-2xl sm:text-3xl font-bold text-gold">
+                  {item.numero}
+                </span>
+                <span className="text-xs sm:text-sm text-ink-3">{item.label}</span>
+              </div>
+            </FadeIn>
+          ))}
+        </div>
+      </section>
+
+      {/* CÓMO COMPRAR */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
+        <div className="text-center mb-10">
+          <span className="kicker justify-center">Así de fácil</span>
+          <h2 className="text-2xl sm:text-3xl font-display font-bold text-ink mt-2">
+            ¿Cómo comprar?
+          </h2>
+          <div className="w-16 h-px bg-gold/50 mx-auto mt-4" />
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+          {(contenido.pasos || [
+            { numero: '01', titulo: 'Elige tu estilo', descripcion: 'Explora el catálogo y escoge lo que más te guste.' },
+            { numero: '02', titulo: 'Haz tu pedido', descripcion: 'Agrega al carrito y confirma tu compra.' },
+            { numero: '03', titulo: 'Confirmamos', descripcion: 'Preparamos tu pedido con el mayor cuidado.' },
+            { numero: '04', titulo: 'Lo recibes', descripcion: 'Llega a tu puerta en menos de 24 horas.' },
+          ]).map((paso, i) => (
+            <FadeIn key={i} delay={i * 0.08}>
+              <div className="flex flex-col items-center text-center group">
+                <div className="relative w-16 h-16 rounded-full card flex items-center justify-center mb-3 transition-transform duration-300 group-hover:-translate-y-1">
+                  <span className="font-mono text-gold text-sm font-bold">{paso.numero}</span>
+                </div>
+                <p className="font-display text-sm font-semibold mb-1">{paso.titulo}</p>
+                <p className="text-xs text-ink-3 leading-relaxed max-w-[200px]">{paso.descripcion}</p>
+              </div>
+            </FadeIn>
+          ))}
+        </div>
+      </section>
+
       {/* ACCESOS SECUNDARIOS */}
       <FadeIn>
         <section className="max-w-6xl mx-auto px-4 sm:px-6 pb-16 sm:pb-24">
@@ -239,6 +354,22 @@ function ClienteInicio() {
           </div>
         </section>
       </FadeIn>
+
+      {/* Botón flotante Pedir por WhatsApp */}
+      <a
+        href={`https://wa.me/${String(numeroWhatsApp).replace(/[^\d]/g, '').replace(/^0+/, '')}?text=${encodeURIComponent('Hola 👋, quiero hacer un pedido en Beauty Esme.')}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Pedir por WhatsApp"
+        title="Pedir por WhatsApp"
+        className="fixed bottom-5 right-5 z-50 group flex items-center gap-0 rounded-full bg-[#25D366] text-white shadow-2xl shadow-black/30 hover:bg-[#1DAB54] transition-all pl-4 pr-4 py-3.5 anim-pop skip-ft"
+      >
+        <span className="absolute inset-0 rounded-full bg-[#25D366] animate-ping opacity-20" aria-hidden="true"></span>
+        <IconoWhatsApp className="w-6 h-6 relative" />
+        <span className="max-w-0 overflow-hidden whitespace-nowrap text-sm font-semibold group-hover:max-w-[140px] group-hover:pl-2 transition-all duration-300 relative">
+          Pedir por WhatsApp
+        </span>
+      </a>
     </div>
   )
 }

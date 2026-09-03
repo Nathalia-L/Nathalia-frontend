@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { ShoppingBag, Menu, X, ArrowLeft } from 'lucide-react'
+import { ShoppingBag, Menu, X, ArrowLeft, LogOut } from 'lucide-react'
 import LogoNathalia from '../components/LogoNathalia'
 import EditorInSitu from '../components/EditorInSitu'
 import PanelMarca from '../components/PanelMarca'
@@ -23,6 +23,15 @@ function ClienteLayout() {
   const soyAdmin = esAdmin()
   const { totalUnidades } = useCarrito()
   const numeroWhatsApp = cargarContenido().telefonoWhatsApp
+
+  function handleLogout() {
+    localStorage.removeItem('token')
+    localStorage.removeItem('usuario')
+    localStorage.removeItem('cliente')
+    setMenuOpen(false)
+    navigate('/')
+    window.location.reload()
+  }
 
   useEffect(() => {
     // Refresca el logo (nombre, eslogan, forma, colores) cuando el admin
@@ -85,6 +94,18 @@ function ClienteLayout() {
 
             <ThemeToggle />
 
+            {soyAdmin && (
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="w-9 h-9 rounded-full border border-line flex items-center justify-center text-ink-2 hover:text-error hover:border-error hover:bg-error/10 transition"
+                aria-label="Cerrar sesión"
+                title="Cerrar sesión de administrador"
+              >
+                <LogOut size={16} />
+              </button>
+            )}
+
             {/* Hamburguesa móvil */}
             <button type="button" className="md:hidden text-ink-2 hover:text-ink transition p-2" onClick={() => setMenuOpen((o) => !o)}>
               {menuOpen ? <X size={22} /> : <Menu size={22} />}
@@ -108,6 +129,15 @@ function ClienteLayout() {
                 {l.label}
               </NavLink>
             ))}
+            {soyAdmin && (
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="mt-1 w-full text-sm py-2.5 px-3 rounded-lg transition flex items-center gap-2 text-error bg-error/10 hover:bg-error/20 font-medium"
+              >
+                <LogOut size={15} /> Cerrar sesión de administrador
+              </button>
+            )}
           </div>
         )}
       </nav>
